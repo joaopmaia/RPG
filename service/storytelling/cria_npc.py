@@ -386,23 +386,8 @@ def gerar_runas(nivel):
 # ═══════════════════════════════════════════════════
 
 def gerar_tesouro(nivel):
-    """Gera ouro base + bônus de moedas em bronze total."""
-    # Ouro Base: (1d10 x 10) x Nível (em bronze)
-    ouro_base = rolar(10) * 10 * nivel
-
-    # Bônus de Moedas
-    if nivel == 1:
-        bonus = rolar(4) * 10           # +1d4 x 10 Bronze
-    elif nivel == 2:
-        bonus = rolar(8) * 10           # +1d8 x 10 Bronze
-    elif nivel == 3:
-        bonus = rolar(4) * 10 * 100     # +1d4 x 10 Prata (x100 para bronze)
-    elif nivel == 4:
-        bonus = rolar(8) * 10 * 100     # +1d8 x 10 Prata (x100 para bronze)
-    else:
-        bonus = rolar(4) * 10 * 10000   # +1d4 x 10 Ouro (x10000 para bronze)
-
-    return ouro_base + bonus
+    """Gera ouro: (1d10 x 10) x Nível."""
+    return rolar(10) * 10 * nivel
 
 
 # ═══════════════════════════════════════════════════
