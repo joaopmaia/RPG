@@ -1,0 +1,11 @@
+[
+  {
+    "nome": "Adaga",
+    "dano": "1d4",
+    "durabilidade": "15",
+    "peso": "leve",
+    "preco": "5",
+    "efeitos": null,
+    "tipo": "melee"
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "nome": "Arco Curto",
+    "dano": "1d4",
+    "durabilidade": "20.0",
+    "peso": "Leve",
+    "preco": "30.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Arco Longo",
+    "dano": "1d6",
+    "durabilidade": "25.0",
+    "peso": "Médio",
+    "preco": "45.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Besta",
+    "dano": "1d4",
+    "durabilidade": "25.0",
+    "peso": "Médio",
+    "preco": "40.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Balestra",
+    "dano": "1d8",
+    "durabilidade": "30.0",
+    "peso": "Pesado",
+    "preco": "60.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Funda",
+    "dano": "1d4",
+    "durabilidade": "10.0",
+    "peso": "Leve",
+    "preco": "15.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Mosquete",
+    "dano": "1d12",
+    "durabilidade": "5.0",
+    "peso": "Leve",
+    "preco": "100.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Shuriken",
+    "dano": "1d4",
+    "durabilidade": "1.0",
+    "peso": "Muito Leve",
+    "preco": "5.0",
+    "tipo": "ranged"
+  },
+  {
+    "nome": "Zarabatana",
+    "dano": "1d4",
+    "durabilidade": "5.0",
+    "peso": "Leve",
+    "preco": "20.0",
+    "tipo": "ranged"
+  }
+]

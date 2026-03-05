@@ -1,0 +1,242 @@
+[
+  {
+    "rank": "F",
+    "material": "Garra de Demônio Inferior",
+    "bonus": "2",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "-15.0",
+    "efeito": "Perde 1 de HP por uso",
+    "tipo": "demon"
+  },
+  {
+    "rank": "F",
+    "material": "Dente de Demônio Inferior",
+    "bonus": "0.0",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "-5.0",
+    "efeito": "Causa Envenenamento no usuário",
+    "tipo": "demon"
+  },
+  {
+    "rank": "F",
+    "material": "Couro de Demônio Inferior",
+    "bonus": "2",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "10.0",
+    "efeito": "Nenhum",
+    "tipo": "demon"
+  },
+  {
+    "rank": "E",
+    "material": "Osso de Demônio Inferior",
+    "bonus": "4",
+    "peso": "Pesado",
+    "raridade": "Comum",
+    "durabilidade": "5",
+    "efeito": "Perde 1d4 de HP por uso",
+    "tipo": "demon"
+  },
+  {
+    "rank": "E",
+    "material": "Carapaça de Demônio Inferior",
+    "bonus": "1.0",
+    "peso": "Pesado",
+    "raridade": "Incomum",
+    "durabilidade": "30.0",
+    "efeito": "Nenhum",
+    "tipo": "demon"
+  },
+  {
+    "rank": "E",
+    "material": "Coração de Demônio Inferior",
+    "bonus": "0.0",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "0.0",
+    "efeito": "Armazena 1d4 de arcana",
+    "tipo": "demon"
+  },
+  {
+    "rank": "D",
+    "material": "Chifre de Demônio Inferior",
+    "bonus": "6",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "20",
+    "efeito": "Nenhum",
+    "tipo": "demon"
+  },
+  {
+    "rank": "D",
+    "material": "Garra de Demônio",
+    "bonus": "7",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "10",
+    "efeito": "Perde 1 de Arcana por uso",
+    "tipo": "demon"
+  },
+  {
+    "rank": "D",
+    "material": "Dente de Demônio",
+    "bonus": "2.0",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "15",
+    "efeito": "Causa Queimadura no usuário",
+    "tipo": "demon"
+  },
+  {
+    "rank": "C",
+    "material": "Couro de Demônio",
+    "bonus": "5.0",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "20",
+    "efeito": "Nenhum",
+    "tipo": "demon"
+  },
+  {
+    "rank": "C",
+    "material": "Osso de Demônio",
+    "bonus": "9",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "30",
+    "efeito": "Nenhum",
+    "tipo": "demon"
+  },
+  {
+    "rank": "C",
+    "material": "Carapaça de Demônio",
+    "bonus": "7",
+    "peso": "Pesado",
+    "raridade": "Épico",
+    "durabilidade": "5",
+    "efeito": "Causa Confusão no usuário (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "B",
+    "material": "Coração de Demônio",
+    "bonus": "8.0",
+    "peso": "Pesado",
+    "raridade": "Épico",
+    "durabilidade": "10.0",
+    "efeito": "Permite trocar HP por Arcana",
+    "tipo": "demon"
+  },
+  {
+    "rank": "B",
+    "material": "Chifre de Demônio",
+    "bonus": "9",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "10",
+    "efeito": "Rouba 1d4 de HP (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "B",
+    "material": "Garra de Demônio Superior",
+    "bonus": "2.0",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "-5.0",
+    "efeito": "Causa Cegueira (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "A",
+    "material": "Dente de Demônio Superior",
+    "bonus": "15",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "45",
+    "efeito": "Causa Pânico/Fuga (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "A",
+    "material": "Couro de Demônio Superior",
+    "bonus": "16",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "0",
+    "efeito": "Perde 1d6 de HP por uso",
+    "tipo": "demon"
+  },
+  {
+    "rank": "A",
+    "material": "Osso de Demônio Superior",
+    "bonus": "14",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "20",
+    "efeito": "Causa Paralisia (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "S",
+    "material": "Carapaça de Demônio Superior",
+    "bonus": "20",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "60",
+    "efeito": "Usuário morre se durabilidade chegar a 0",
+    "tipo": "demon"
+  },
+  {
+    "rank": "S",
+    "material": "Coração de Demônio Superior",
+    "bonus": "20",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "30",
+    "efeito": "Rouba 1d6 de HP e Arcana (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": "S",
+    "material": "Chifre de Demônio Superior",
+    "bonus": "18",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "50",
+    "efeito": "Causa todos os status (Crítico)",
+    "tipo": "demon"
+  },
+  {
+    "rank": null,
+    "material": null,
+    "bonus": null,
+    "peso": null,
+    "raridade": null,
+    "durabilidade": null,
+    "efeito": null,
+    "tipo": "demon"
+  },
+  {
+    "rank": null,
+    "material": null,
+    "bonus": null,
+    "peso": null,
+    "raridade": null,
+    "durabilidade": null,
+    "efeito": null,
+    "tipo": "demon"
+  },
+  {
+    "rank": null,
+    "material": null,
+    "bonus": null,
+    "peso": null,
+    "raridade": null,
+    "durabilidade": null,
+    "efeito": null,
+    "tipo": "demon"
+  }
+]

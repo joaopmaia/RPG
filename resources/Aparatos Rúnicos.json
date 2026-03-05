@@ -1,0 +1,92 @@
+[
+  {
+    "Aparato Rúnico": "Totens Demoníacos",
+    "Descrição": "Criam barreiras contra demônios.",
+    "Preço Base (Moedas de Ouro)": "10.000 (por trio)"
+  },
+  {
+    "Aparato Rúnico": "Cinturão do Aventureiro",
+    "Descrição": "Proteção portátil contra demônios.",
+    "Preço Base (Moedas de Ouro)": "500.0"
+  },
+  {
+    "Aparato Rúnico": "Fogão Rúnico",
+    "Descrição": "Fogão mágico a AP.",
+    "Preço Base (Moedas de Ouro)": "1.0"
+  },
+  {
+    "Aparato Rúnico": "Refrigerador Rúnico",
+    "Descrição": "Refrigerador mágico a baterias arcanas.",
+    "Preço Base (Moedas de Ouro)": "500.0"
+  },
+  {
+    "Aparato Rúnico": "Cantil Eterno",
+    "Descrição": "Cantil que se reabastece sozinho.",
+    "Preço Base (Moedas de Ouro)": "1000.0"
+  },
+  {
+    "Aparato Rúnico": "Bolsa Infinita",
+    "Descrição": "Bolsa com capacidade infinita.",
+    "Preço Base (Moedas de Ouro)": "9000.0"
+  },
+  {
+    "Aparato Rúnico": "Portal de Teletransporte",
+    "Descrição": "Teletransporte instantâneo entre locais fixos.",
+    "Preço Base (Moedas de Ouro)": "50.00 (para usar portal)"
+  },
+  {
+    "Aparato Rúnico": "Tocha Rúnica",
+    "Descrição": "Tocha mágica que não atrai demônios.",
+    "Preço Base (Moedas de Ouro)": "5.0"
+  },
+  {
+    "Aparato Rúnico": "Planadores Rúnicos",
+    "Descrição": "Permitem planar e voar.",
+    "Preço Base (Moedas de Ouro)": "250.0"
+  },
+  {
+    "Aparato Rúnico": "Respiradores Rúnicos",
+    "Descrição": "Permitem respirar debaixo d'água ou em gases tóxicos.",
+    "Preço Base (Moedas de Ouro)": "150.0"
+  },
+  {
+    "Aparato Rúnico": "Bateria Rúnica",
+    "Descrição": "Armazena energia arcana.",
+    "Preço Base (Moedas de Ouro)": "50.0"
+  },
+  {
+    "Aparato Rúnico": "Luvas de Escalada Rúnicas",
+    "Descrição": "Facilitam a escalada.",
+    "Preço Base (Moedas de Ouro)": "20.0"
+  },
+  {
+    "Aparato Rúnico": "Óculos de Visão Rúnica",
+    "Descrição": "Permitem enxergar no escuro.",
+    "Preço Base (Moedas de Ouro)": "30.0"
+  },
+  {
+    "Aparato Rúnico": "Botas de Velocidade Rúnicas",
+    "Descrição": "Aumentam a velocidade de movimento.",
+    "Preço Base (Moedas de Ouro)": "40.0"
+  },
+  {
+    "Aparato Rúnico": "Anel da Telepatia Rúnica",
+    "Descrição": "Permite comunicação telepática.",
+    "Preço Base (Moedas de Ouro)": "100.0"
+  },
+  {
+    "Aparato Rúnico": "Grimório Rúnico",
+    "Descrição": "Armazena runas para uso instantâneo.",
+    "Preço Base (Moedas de Ouro)": "50 (comum) / 150 (couro)"
+  },
+  {
+    "Aparato Rúnico": "Luvas Rúnicas",
+    "Descrição": "Permitem conjurar runas instantaneamente.",
+    "Preço Base (Moedas de Ouro)": "200.0"
+  },
+  {
+    "Aparato Rúnico": "Ferramentas de Ferreiro Rúnicas",
+    "Descrição": "Permitem criar armas e armaduras rúnicas.",
+    "Preço Base (Moedas de Ouro)": "750.0"
+  }
+]

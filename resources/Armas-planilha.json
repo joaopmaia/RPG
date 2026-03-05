@@ -1,0 +1,194 @@
+[
+  {
+    "nome": "Adaga",
+    "dano": "1d4",
+    "durabilidade": "15.0",
+    "peso": "Leve",
+    "preco": "5.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Alabarda",
+    "dano": "1d12",
+    "durabilidade": "80.0",
+    "peso": "Pesado",
+    "preco": "80.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Cajado",
+    "dano": "1d4",
+    "durabilidade": "15.0",
+    "peso": "Pesado",
+    "preco": "10.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Chicote",
+    "dano": "1d4",
+    "durabilidade": "5.0",
+    "peso": "Leve",
+    "preco": "8.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Cimitarra",
+    "dano": "1d6",
+    "durabilidade": "30.0",
+    "peso": "Médio",
+    "preco": "30.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Dirk",
+    "dano": "1d4",
+    "durabilidade": "10.0",
+    "peso": "Leve",
+    "preco": "8.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Espada",
+    "dano": "1d6",
+    "durabilidade": "20.0",
+    "peso": "Médio",
+    "preco": "25.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Espada Longa",
+    "dano": "1d8",
+    "durabilidade": "25.0",
+    "peso": "Médio",
+    "preco": "35.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Espada Bastarda",
+    "dano": "1d10",
+    "durabilidade": "30.0",
+    "peso": "Pesado",
+    "preco": "40.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Foice",
+    "dano": "1d10",
+    "durabilidade": "40.0",
+    "peso": "Pesado",
+    "preco": "50.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Katana",
+    "dano": "1d8",
+    "durabilidade": "20.0",
+    "peso": "Médio",
+    "preco": "35.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Katar",
+    "dano": "1d6",
+    "durabilidade": "10.0",
+    "peso": "Leve",
+    "preco": "12.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Lança",
+    "dano": "1d6",
+    "durabilidade": "15.0",
+    "peso": "Médio",
+    "preco": "20.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Machado",
+    "dano": "1d6",
+    "durabilidade": "20.0",
+    "peso": "Médio",
+    "preco": "25.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Machado de Guerra",
+    "dano": "1d8",
+    "durabilidade": "45.0",
+    "peso": "Pesado",
+    "preco": "60.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Machado de Batalha",
+    "dano": "1d10",
+    "durabilidade": "60.0",
+    "peso": "Pesado",
+    "preco": "75.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Maça",
+    "dano": "1d8",
+    "durabilidade": "40.0",
+    "peso": "Médio",
+    "preco": "50.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Mangual",
+    "dano": "1d10",
+    "durabilidade": "55.0",
+    "peso": "Pesado",
+    "preco": "70.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Martelo de Guerra",
+    "dano": "1d8",
+    "durabilidade": "45.0",
+    "peso": "Médio",
+    "preco": "60.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Martelo de Batalha",
+    "dano": "1d12",
+    "durabilidade": "60.0",
+    "peso": "Pesado",
+    "preco": "80.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Porrete",
+    "dano": "1d6",
+    "durabilidade": "15.0",
+    "peso": "Médio",
+    "preco": "20.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Punhal",
+    "dano": "1d6",
+    "durabilidade": "25.0",
+    "peso": "Leve",
+    "preco": "30.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Sabre",
+    "dano": "1d6",
+    "durabilidade": "15.0",
+    "peso": "Médio",
+    "preco": "20.0",
+    "tipo": "melee"
+  },
+  {
+    "nome": "Tridente",
+    "dano": "1d10",
+    "durabilidade": "40.0",
+    "peso": "Pesado",
+    "preco": "50.0",
+    "tipo": "melee"
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "nome": "Acolchoado",
+    "defesa": "1.0",
+    "durabilidade": "20.0",
+    "peso": "Leve",
+    "preco": "15.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Armadura Completa",
+    "defesa": "6.0",
+    "durabilidade": "60.0",
+    "peso": "Pesado",
+    "preco": "120.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Brunea",
+    "defesa": "3.0",
+    "durabilidade": "45.0",
+    "peso": "Médio",
+    "preco": "60.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Camisão de Malha",
+    "defesa": "3.0",
+    "durabilidade": "35.0",
+    "peso": "Médio",
+    "preco": "45.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Couro",
+    "defesa": "2.0",
+    "durabilidade": "25.0",
+    "peso": "Leve",
+    "preco": "25.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Couro Batido",
+    "defesa": "2.0",
+    "durabilidade": "30.0",
+    "peso": "Leve",
+    "preco": "30.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Cota de Anéis",
+    "defesa": "4.0",
+    "durabilidade": "35.0",
+    "peso": "Médio",
+    "preco": "50.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Cota de Malha",
+    "defesa": "4.0",
+    "durabilidade": "30.0",
+    "peso": "Médio",
+    "preco": "40.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Cota de Placas",
+    "defesa": "4.0",
+    "durabilidade": "55.0",
+    "peso": "Pesado",
+    "preco": "80.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Gibão de Peles",
+    "defesa": "3.0",
+    "durabilidade": "30.0",
+    "peso": "Leve",
+    "preco": "35.0",
+    "tipo": "Armadura"
+  },
+  {
+    "nome": "Peitoral de Aço",
+    "defesa": "5.0",
+    "durabilidade": "40.0",
+    "peso": "Pesado",
+    "preco": "70.0",
+    "tipo": "Armadura"
+  }
+]

@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ficha de Personagem - Khonum</title>
+
+ <style>
+    :root{
+      --gap: 12px;
+      --muted: #666;
+      --border: #ddd; /* Variável para a cor da linha */
+      --card-bg: #fff;
+      --bg: #f6f7fb;
+      font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    body{
+      margin:0;
+      padding:20px;
+      background:var(--bg);
+      color:#111;
+      box-sizing:border-box;
+    }
+
+    /* ---------------------- PÁGINAS ----------------------- */
+
+    .page1, .page2{
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:24px;
+      margin-bottom:10px;
+      align-items:start;
+    }
+
+    @media print {
+      .page1{
+        page-break-after: always;
+      }
+      .page2{
+        page-break-after: always;
+      }
+      body{
+        margin:0;
+        -webkit-print-color-adjust: exact;
+      }
+      .card{
+        box-shadow:none !important;
+      }
+    }
+
+    /* ---------------------- COMPONENTES ----------------------- */
+
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:16px;
+    }
+    h1{margin:0 0 8px 0}
+    h2{margin:0 0 12px 0;font-size:16px}
+    h3{margin-top:12px;margin-bottom:8px;font-size:14px}
+    
+    /* Regras de Linhas e Colunas */
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .col{flex:1;min-width:120px}
+    
+    /* FIX: A classe .col-4 agora usa CALC para subtrair os gaps e caber 3 colunas em 100% da largura. */
+    .col-4 {
+        width: calc((100% - (2 * 12px)) / 3); 
+        /* Explicação: (Largura Total - 2 Gaps de 12px) / 3 Colunas */
+    }
+    
+    /* Correção de Layout: Garante que as colunas ocupem o espaço corretamente */
+    .row > div {
+        box-sizing: border-box;
+        padding: 0 5px; /* Adicionando um padding lateral pequeno para manter o espaçamento visual */
+    }
+
+    label{display:block;font-size:12px;color:#666;margin-bottom:6px}
+    
+    /* ESTILO PADRÃO (Ainda usado em Atributos, etc.) */
+    input[type="text"], input[type="number"], textarea{
+      width:100%; padding:8px 10px; border-radius:6px;
+      border:1px solid var(--border); font-size:14px;
+      background:white; box-sizing:border-box;
+    }
+    
+    /* ESTILO SIMPLES DE LINHA (Usado em Equipamentos/Moedas/Itens/Runas - Estilo aplicado inline no HTML) */
+    input[style*="border:none"] { 
+        padding: 2px 0; /* Menos padding vertical */
+        border-radius: 0;
+        background: transparent;
+    }
+    
+    textarea{min-height:84px;resize:vertical}
+
+    .separator{
+      height:1.2px;
+      background:black;
+      margin:12px 0;
+    }
+
+    /* ---------------------- ATRIBUTOS ----------------------- */
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+    }
+    .stat{
+      display:flex; align-items:center; gap:8px;
+    }
+    .stat .value{
+      width:64px; text-align:center; padding:10px;
+      border-radius:8px; border:1px solid var(--border);
+      background:#fafafa; font-weight:700;
+    }
+
+    /* ---------------------- PERÍCIAS ----------------------- */
+    .skill-list{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .skill{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+    }
+    .skill-name{
+      flex:1;
+    }
+    .skill input[type="number"]{
+      width:50px;
+      text-align:center;
+      font-size:12px;
+      padding:4px;
+    }
+
+    /* ---------------------- EQUIPAMENTOS ----------------------- */
+    .equip-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+    }
+
+    /* ---------------------- INVENTÁRIO E RUNAS ----------------------- */
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+    table th{
+      text-align:left;
+      font-size:12px;
+      color:#444;
+      padding-bottom:4px;
+    }
+    table td{
+      padding:4px 4px;
+    }
+    table input{
+      width:100%;
+      padding:6px;
+      box-sizing:border-box;
+      font-size:13px;
+    }
+
+    .runas-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .runas-header input{
+      width:120px;
+      padding:6px;
+      font-size:12px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ------------- PÁGINA 1 ---------------- -->
+  <div class="page1">
+
+    <!-- ESQUERDA (FICHA PRINCIPAL) -->
+    <section class="card">
+
+      <h1>Ficha de Personagem — Khonum</h1>
+
+      <!-- Cabeçalho -->
+      <div class="row" style="margin-top:12px;">
+        <div class="col"><label>Nome do Personagem</label><input type="text"></div>
+        <div class="col"><label>Raça</label><input type="text"></div>
+        <div class="col"><label>Experiência</label><input type="number"></div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Atributos -->
+      <h2>Atributos</h2>
+      <div class="stats-grid">
+
+        <!-- 7 atributos principais -->
+        <div><label>Força (FOR)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Destreza (DEX)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Vitalidade (VIT)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Inteligência (INT)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Espírito (ESP)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Carisma (CAR)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+        <div><label>Percepção (PER)</label><div class="stat"><div class="value"><input type="number"></div><div style="flex:1"><label>Mod</label><input type="text"></div></div></div>
+
+        <!-- Status -->
+        <div style="grid-column: span 2;">
+          <label>Status</label>
+          <textarea></textarea>
+        </div>
+
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Combate -->
+      <h2>Combate</h2>
+
+      <div class="row">
+        <div class="col"><label>HP Total</label><input type="text"></div>
+        <div class="col"><label>HP Atual</label><input type="text"></div>
+        <div class="col"><label>Arcana</label><input type="text"></div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col"><label>Munição</label><input type="text"></div>
+        <div class="col"><label>Dano bônus munição</label><input type="text"></div>
+        <div class="col"><label>Tipo de dano</label><input type="text"></div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Perícias -->
+      <h2>Perícias</h2>
+      <div class="skill-list">
+
+        <!-- Todas as suas perícias personalizadas -->
+        <div class="skill"><span class="skill-name">Armas Leves (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Armas Médias (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Armas Pesadas (FOR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Pontaria (CAR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Briga (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Esquiva (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Resistência (VIT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Arcanum (ESP)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Rúnicos (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Alquimia (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Artista (CAR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Furtividade (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Ofícios (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Percepção (ESP)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Atletismo (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Sobrevivência (PER)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Prontidão (PER)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Sobrevivência (ESP)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Empatia (CAR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Lábia (CAR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Condução (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Afinidade Animal (CAR)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Cultura (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Idiomas (INT)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Ladinagem (DEX)</span>Nível <input type="number"> Bônus <input type="number"></div>
+        <div class="skill"><span class="skill-name">Mentalidade (ESP)</span>Nível <input type="number"> Bônus <input type="number"></div>
+
+      </div>
+
+      <div class="separator"></div>
+
+
+    </section>
+
+    <!-- DIREITA (EQUIPAMENTOS + INVENTÁRIO + RUNAS) -->
+   <aside class="card">
+
+      <h2>Equipamentos</h2>
+
+      <h3>Arma Primária</h3>
+      <div class="row" style="margin-bottom:4px;">
+        <div class="col-4"><label>Nome</label></div>
+        <div class="col-4"><label>Dano / Bônus</label></div>
+        <div class="col-4"><label>Peso</label></div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+      </div>
+
+      <h3 style="margin-top:16px;">Arma Secundária</h3>
+      <div class="row" style="margin-bottom:4px;">
+        <div class="col-4"><label>Nome</label></div>
+        <div class="col-4"><label>Dano / Bônus</label></div>
+        <div class="col-4"><label>Peso</label></div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+      </div>
+
+      <h3 style="margin-top:16px;">Armadura</h3>
+      <div class="row" style="margin-bottom:4px;">
+        <div class="col-4"><label>Nome</label></div>
+        <div class="col-4"><label>Bônus Armadura</label></div>
+        <div class="col-4"><label>Peso</label></div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+      </div>
+
+      <h3 style="margin-top:16px;">Escudo</h3>
+      <div class="row" style="margin-bottom:4px;">
+        <div class="col-4"><label>Nome</label></div>
+        <div class="col-4"><label>Bônus Defesa</label></div>
+        <div class="col-4"><label>Peso</label></div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:33.33%; border:none; border-bottom:1px solid var(--border);">
+      </div>
+
+      <div class="separator"></div>
+
+      <h3>Moedas</h3>
+      <div class="row">
+        <div class="col-4"><label>Cobre</label><input type="text" style="border:none; border-bottom:1px solid var(--border);"></div>
+        <div class="col-4"><label>Prata</label><input type="text" style="border:none; border-bottom:1px solid var(--border);"></div>
+        <div class="col-4"><label>Ouro</label><input type="text" style="border:none; border-bottom:1px solid var(--border);"></div>
+      </div>
+
+      <div class="separator"></div>
+
+      <h3>Itens</h3>
+      <div class="row">
+        <div style="width: calc((100% - 24px) / 2);"><label>Nome</label></div> 
+        <div style="width: calc((100% - 24px) / 4);"><label>Preço</label></div>
+        <div style="width: calc((100% - 24px) / 4);"><label>Peso</label></div>
+      </div>
+      
+      <div style="display:flex; gap:12px; margin-top:4px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <input type="text" style="width:calc((100% - 24px) / 2); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+        <input type="text" style="width:calc((100% - 24px) / 4); border:none; border-bottom:1px solid var(--border);">
+      </div>
+      
+
+      <div class="separator"></div>
+
+            <h2>Runas Aprendidas</h2>
+      <div style="grid-column: span 2;">
+          <label>Custo de Arcana - Runas Básicas: 3, Runas Intermediárias: 6, Runas Avançadas: 9</label>
+          <textarea></textarea>
+        </div>
+
+    </aside>
+  </div>
+
+  <!-- ---------------- PÁGINA 2 ---------------- -->
+  <div class="page2">
+
+    <!-- ESQUERDA -->
+    <section class="card">
+
+      <h2>Informações</h2>
+      <label>Nome do Personagem</label><input type="text">
+
+      <div class="row">
+        <div class="col"><label>Idade</label><input type="text"></div>
+        <div class="col"><label>Altura</label><input type="text"></div>
+      </div>
+
+      <div class="row">
+        <div class="col"><label>Peso</label><input type="text"></div>
+        <div class="col"><label>Olhos</label><input type="text"></div>
+      </div>
+
+      <label>Cabelos</label><input type="text">
+      <label>Pele</label><input type="text">
+
+      <div class="separator"></div>
+
+      <h2>Antecedentes</h2>
+      <textarea rows="8"></textarea>
+
+      <h2>Background</h2>
+      <textarea rows="8"></textarea>
+
+      <h2>Informações da Campanha</h2>
+      <textarea rows="16"></textarea>
+
+    </section>
+
+    <!-- DIREITA (Tabelas de regras) -->
+    <aside class="card">
+
+      <h3>Fórmula de HP Total</h3>
+      <p style="font-size:12px;">5 * nível de Força + 10 * nível de Vitalidade + 1d10 + 10.</p>
+
+      <h3>Regras de Inventário e Carga</h3>
+      <p style="font-size:12px;">Espaços totais = Força + Vitalidade.</p>
+      <table style="font-size:12px;">
+        <thead><tr><th>Item</th><th>Custo</th></tr></thead>
+        <tbody>
+          <tr><td>Armamento leve</td><td>1 espaço</td></tr>
+          <tr><td>Armamento médio</td><td>2 espaços</td></tr>
+          <tr><td>Armamento pesado</td><td>3 espaços</td></tr>
+          <tr><td>5 itens muito pequenos</td><td>1 espaço</td></tr>
+        </tbody>
+      </table>
+
+      <div class="separator"></div>
+
+      <h3>Experiência — Atributos</h3>
+      <table style="font-size:12px;">
+        <thead><tr><th>Nível</th><th>XP</th></tr></thead>
+        <tbody>
+          <tr><td>1→2</td><td>50</td></tr>
+          <tr><td>2→3</td><td>75</td></tr>
+          <tr><td>3→4</td><td>100</td></tr>
+          <tr><td>4→5</td><td>125</td></tr>
+          <tr><td>5→6</td><td>150</td></tr>
+          <tr><td>6→7</td><td>200</td></tr>
+          <tr><td>7→8</td><td>250</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Experiência — Perícias</h3>
+      <table style="font-size:12px;">
+        <thead><tr><th>Nível</th><th>XP</th></tr></thead>
+        <tbody>
+          <tr><td>1→2</td><td>10</td></tr>
+          <tr><td>2→3</td><td>20</td></tr>
+          <tr><td>3→4</td><td>35</td></tr>
+          <tr><td>4→5</td><td>50</td></tr>
+          <tr><td>5→6</td><td>70</td></tr>
+          <tr><td>6→7</td><td>90</td></tr>
+          <tr><td>7→8</td><td>120</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dificuldade das Ações</h3>
+      <table style="font-size:12px;">
+        <thead><tr><th>DC</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td>10</td><td>Muito fácil</td></tr>
+          <tr><td>12</td><td>Fácil</td></tr>
+          <tr><td>14</td><td>Média</td></tr>
+          <tr><td>17</td><td>Difícil</td></tr>
+          <tr><td>20</td><td>Muito difícil</td></tr>
+          <tr><td>23</td><td>Quase impossível</td></tr>
+        </tbody>
+      </table>
+
+    </aside>
+  </div>
+
+</body>
+</html>

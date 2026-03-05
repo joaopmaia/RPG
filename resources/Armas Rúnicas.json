@@ -1,0 +1,37 @@
+[
+  {
+    "Nome": "Cajado",
+    "Efeito": null,
+    "Durabilidade": "50.0",
+    "Peso": "Leve",
+    "Preço Base": "90.0"
+  },
+  {
+    "Nome": "Orbe",
+    "Efeito": null,
+    "Durabilidade": "20.0",
+    "Peso": "Leve",
+    "Preço Base": "200.0"
+  },
+  {
+    "Nome": "Tinta Rúnica",
+    "Efeito": null,
+    "Durabilidade": "1.0",
+    "Peso": "Leve",
+    "Preço Base": "60.0"
+  },
+  {
+    "Nome": "Grimório",
+    "Efeito": null,
+    "Durabilidade": "10.0",
+    "Peso": "Leve",
+    "Preço Base": "150.0"
+  },
+  {
+    "Nome": "Pedras Rúnicas",
+    "Efeito": null,
+    "Durabilidade": "1.0",
+    "Peso": "Muito Leve",
+    "Preço Base": "50.0"
+  }
+]

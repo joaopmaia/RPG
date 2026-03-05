@@ -1,0 +1,212 @@
+[
+  {
+    "rank": "F",
+    "material": "Pedra Lascada",
+    "bonus": "1",
+    "peso": "Pesado",
+    "raridade": "Comum",
+    "durabilidade": "-5.0",
+    "efeito": "Quebra após um uso",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "F",
+    "material": "Cobre",
+    "bonus": "1",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "0",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "F",
+    "material": "Carvão Mineral",
+    "bonus": "0",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "5",
+    "efeito": "Quebra após um uso",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "E",
+    "material": "Ferro",
+    "bonus": "2",
+    "peso": "Pesado",
+    "raridade": "Comum",
+    "durabilidade": "10",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "E",
+    "material": "Bronze",
+    "bonus": "3",
+    "peso": "Pesado",
+    "raridade": "Incomum",
+    "durabilidade": "5",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "E",
+    "material": "Estanho",
+    "bonus": "2",
+    "peso": "Leve",
+    "raridade": "Incomum",
+    "durabilidade": "-10.0",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "D",
+    "material": "Aço",
+    "bonus": "4",
+    "peso": "Pesado",
+    "raridade": "Incomum",
+    "durabilidade": "20",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "D",
+    "material": "Quartzo",
+    "bonus": "3",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "-5.0",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "D",
+    "material": "Granito",
+    "bonus": "3",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "30",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "C",
+    "material": "Aço Negro",
+    "bonus": "6",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "35",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "C",
+    "material": "Prata",
+    "bonus": "5",
+    "peso": "Leve",
+    "raridade": "Incomum",
+    "durabilidade": "10",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "C",
+    "material": "Obsidiana",
+    "bonus": "7",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "-10.0",
+    "efeito": "Causa Sangramento (Crítico)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "B",
+    "material": "Cobalto",
+    "bonus": "8",
+    "peso": "Pesado",
+    "raridade": "Épico",
+    "durabilidade": "40",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "B",
+    "material": "Cristalita",
+    "bonus": "6",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "0",
+    "efeito": "Restaura 1d4 de durabilidade (Crítico)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "B",
+    "material": "Platina",
+    "bonus": "7",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "20",
+    "efeito": "Nenhum",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "A",
+    "material": "Oricalco",
+    "bonus": "5.0",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "0.0",
+    "efeito": "Armazena 1d4 de Arcana (Crítico)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "A",
+    "material": "Jade Imperial",
+    "bonus": "10",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "25",
+    "efeito": "Causa Paralisia (Crítico)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "A",
+    "material": "Adamante",
+    "bonus": "14",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "50",
+    "efeito": "Reduz dano na durabilidade em 2",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "S",
+    "material": "Mythril",
+    "bonus": "18",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "45",
+    "efeito": "Rouba 1d4 de Arcana (Crítico)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "S",
+    "material": "Eternium",
+    "bonus": "15",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "60",
+    "efeito": "Indestrutível (Não perde durabilidade)",
+    "tipo": "mineral"
+  },
+  {
+    "rank": "S",
+    "material": "Diamante Negro",
+    "bonus": "10.0",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "30.0",
+    "efeito": "Armazena 1d4 de Arcana (Crítico)",
+    "tipo": "mineral"
+  }
+]

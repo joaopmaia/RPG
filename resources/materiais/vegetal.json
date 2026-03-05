@@ -1,0 +1,212 @@
+[
+  {
+    "rank": "F",
+    "material": "Graveto Seco",
+    "bonus": "+0",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "-10.0",
+    "efeito": "Quebra após um uso",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "F",
+    "material": "Bambu Oco",
+    "bonus": "+1",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "-5.0",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "F",
+    "material": "Casca de Pinheiro",
+    "bonus": "+1",
+    "peso": "Pesado",
+    "raridade": "Comum",
+    "durabilidade": "+5",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "E",
+    "material": "Madeira de Bétula",
+    "bonus": "+1",
+    "peso": "Leve",
+    "raridade": "Incomum",
+    "durabilidade": "+5",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "E",
+    "material": "Fibra de Cânhamo",
+    "bonus": "+0",
+    "peso": "Leve",
+    "raridade": "Comum",
+    "durabilidade": "+10",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "E",
+    "material": "Espinho de Arbusto",
+    "bonus": "+2",
+    "peso": "Leve",
+    "raridade": "Incomum",
+    "durabilidade": "-5.0",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "D",
+    "material": "Carvalho Branco",
+    "bonus": "+0",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "+10",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "D",
+    "material": "Madeira de Ferro",
+    "bonus": "+0",
+    "peso": "Pesado",
+    "raridade": "Raro",
+    "durabilidade": "+20",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "D",
+    "material": "Raiz de Teixo",
+    "bonus": "+4",
+    "peso": "Pesado",
+    "raridade": "Incomum",
+    "durabilidade": "-5.0",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "C",
+    "material": "Cerne de Bordo",
+    "bonus": "+5",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "+10",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "C",
+    "material": "Casca de Salgueiro",
+    "bonus": "+2",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "+5",
+    "efeito": "Reduz dano na durabilidade em 1",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "C",
+    "material": "Resina de Âmbar",
+    "bonus": "+4",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "+15",
+    "efeito": "Nenhum",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "B",
+    "material": "Pétalas de Beladona",
+    "bonus": "+5",
+    "peso": "Leve",
+    "raridade": "Raro",
+    "durabilidade": "-5.0",
+    "efeito": "Causa Alucinação (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "B",
+    "material": "Madeira de Ébano",
+    "bonus": "+6",
+    "peso": "Pesado",
+    "raridade": "Épico",
+    "durabilidade": "+25",
+    "efeito": "Causa Sangramento (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "B",
+    "material": "Lótus Azul",
+    "bonus": "+2",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "-5.0",
+    "efeito": "Permite trocar HP por Arcana",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "A",
+    "material": "Raiz de Mandrágora",
+    "bonus": "+8",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "+15",
+    "efeito": "Causa Confusão (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "A",
+    "material": "Galho de Árvore Arcana",
+    "bonus": "+4",
+    "peso": "Pesado",
+    "raridade": "Lendário",
+    "durabilidade": "+10",
+    "efeito": "Armazena 1d4 de Arcana (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "A",
+    "material": "Cipó de Sangue",
+    "bonus": "+9",
+    "peso": "Leve",
+    "raridade": "Épico",
+    "durabilidade": "+5",
+    "efeito": "Rouba 1d4 de HP (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "S",
+    "material": "Madeira de Yggdrasil",
+    "bonus": "+18",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "+40",
+    "efeito": "Metade do dano na durabilidade",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "S",
+    "material": "Flor do Éden",
+    "bonus": "+15",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "+20",
+    "efeito": "Causa Petrificação (Crítico)",
+    "tipo": "vegetal"
+  },
+  {
+    "rank": "S",
+    "material": "Semente Estelar",
+    "bonus": "+4",
+    "peso": "Leve",
+    "raridade": "Lendário",
+    "durabilidade": "+10",
+    "efeito": "Armazena 1d4 de Arcana (Crítico)",
+    "tipo": "vegetal"
+  }
+]
