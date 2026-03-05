@@ -16,10 +16,10 @@ MONGO_URI = "mongodb://localhost:27017"
 DATABASE = "rpg"
 COLLECTION = "armas"
 
-CAMPOS_OBRIGATORIOS = ["nome", "dano", "durabilidade", "peso", "preco", "efeitos", "tipo"]
+CAMPOS_OBRIGATORIOS = ["nome", "dano", "durabilidade", "peso", "preco", "tipo"]
 
 # Caminho relativo à raiz do projeto
-RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "resources", "armas.json")
+RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "resources", "armas.json")
 
 
 def conectar():

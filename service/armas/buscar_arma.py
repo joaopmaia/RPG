@@ -4,11 +4,12 @@ Busca uma arma pelo nome no banco de dados MongoDB.
 Uso:
     python buscar_arma.py
     (o nome da arma será solicitado interativamente)
+    Digite 'listar' para ver todas as armas cadastradas.
 """
 
 import json
-import re
 import sys
+import unicodedata
 
 from pymongo import MongoClient
 
@@ -22,25 +23,67 @@ def conectar():
     return client[DATABASE]
 
 
-def buscar_arma(nome: str):
+def remover_acentos(texto):
+    nfkd = unicodedata.normalize('NFKD', texto)
+    return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
+
+def buscar_arma(nome):
     db = conectar()
     colecao = db[COLLECTION]
 
-    arma = colecao.find_one({"nome": re.compile(f"^{re.escape(nome)}$", re.IGNORECASE)})
+    nome_normalizado = remover_acentos(nome).lower()
 
-    if arma is None:
-        print(f"Nenhuma arma encontrada com o nome '{nome}'.")
+    for arma in colecao.find():
+        valor = remover_acentos(arma.get("nome", "")).lower()
+        if nome_normalizado == valor:
+            arma.pop("_id", None)
+            print(json.dumps(arma, indent=2, ensure_ascii=False))
+            return
+
+    print(f"Nenhuma arma encontrada com o nome '{nome}'.")
+
+
+def listar_armas():
+    db = conectar()
+    colecao = db[COLLECTION]
+    itens = list(colecao.find({}, {"nome": 1}).sort("nome", 1))
+
+    if not itens:
+        print("Nenhuma arma cadastrada.")
         return
 
-    # Remove o _id do MongoDB para exibição limpa
-    arma.pop("_id", None)
+    print("\nArmas cadastradas:\n")
+    for i, item in enumerate(itens, start=1):
+        print(f"  [{i}] {item['nome']}")
 
-    print(json.dumps(arma, indent=2, ensure_ascii=False))
+    print()
+    escolha = input("Digite o número do item para ver detalhes (ou Enter para sair): ").strip()
+
+    if not escolha:
+        return
+
+    try:
+        indice = int(escolha) - 1
+        if indice < 0 or indice >= len(itens):
+            raise ValueError
+    except ValueError:
+        print("Opção inválida.")
+        sys.exit(1)
+
+    resultado = colecao.find_one({"_id": itens[indice]["_id"]})
+    resultado.pop("_id", None)
+    print(json.dumps(resultado, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    nome = input("Digite o nome da arma que deseja buscar: ").strip()
-    if not nome:
+    entrada = input("Digite o nome da arma (ou 'listar'): ").strip()
+
+    if not entrada:
         print("Nenhum nome informado.")
         sys.exit(1)
-    buscar_arma(nome)
+
+    if entrada.lower() == "listar":
+        listar_armas()
+    else:
+        buscar_arma(entrada)

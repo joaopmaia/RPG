@@ -21,7 +21,7 @@ CAMPOS_OBRIGATORIOS = [
     "mineral_rar", "mineral_pot", "demoníaco_rar", "demoníaco_pot", "descrição"
 ]
 
-RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "resources", "Alquimia.json")
+RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "resources", "Alquimia.json")
 
 
 def conectar():

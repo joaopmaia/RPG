@@ -86,5 +86,93 @@
     "peso": "Pesado",
     "preco": "70.0",
     "tipo": "Armadura"
+  },
+  {
+    "nome": "Bróquel",
+    "defesa": "1d4",
+    "durabilidade": "35.0",
+    "peso": "Médio",
+    "preco": "20.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Céltico",
+    "defesa": "1d6",
+    "durabilidade": "40.0",
+    "peso": "Médio",
+    "preco": "30.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Gótico",
+    "defesa": "1d8",
+    "durabilidade": "70.0",
+    "peso": "Pesado",
+    "preco": "70.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Grego",
+    "defesa": "1d6",
+    "durabilidade": "50.0",
+    "peso": "Médio",
+    "preco": "45.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Heater",
+    "defesa": "1d8",
+    "durabilidade": "65.0",
+    "peso": "Médio",
+    "preco": "60.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Kite",
+    "defesa": "1d10",
+    "durabilidade": "75.0",
+    "peso": "Pesado",
+    "preco": "80.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Micênico",
+    "defesa": "1d8",
+    "durabilidade": "45.0",
+    "peso": "Médio",
+    "preco": "55.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Parede",
+    "defesa": "1d12",
+    "durabilidade": "130.0",
+    "peso": "Pesado",
+    "preco": "150.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Rodada",
+    "defesa": "1d6",
+    "durabilidade": "75.0",
+    "peso": "Médio",
+    "preco": "70.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Targe",
+    "defesa": "1d4",
+    "durabilidade": "40.0",
+    "peso": "Médio",
+    "preco": "25.0",
+    "tipo": "Escudo"
+  },
+  {
+    "nome": "Torre",
+    "defesa": "1d10",
+    "durabilidade": "80.0",
+    "peso": "Pesado",
+    "preco": "90.0",
+    "tipo": "Escudo"
   }
 ]

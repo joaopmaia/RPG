@@ -18,7 +18,7 @@ COLLECTION = "armaduras"
 
 CAMPOS_OBRIGATORIOS = ["nome", "defesa", "durabilidade", "peso", "tipo", "preco"]
 
-RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "resources", "Armaduras.json")
+RESOURCES_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "resources", "Armaduras.json")
 
 
 def conectar():
