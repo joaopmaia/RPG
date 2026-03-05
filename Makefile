@@ -1,4 +1,4 @@
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc
+.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera
 
 VENV = .venv
 PYTHON = $(VENV)/bin/python3
@@ -117,3 +117,9 @@ cria-estabelecimento: ## Gera um estabelecimento aleatório com estoque
 
 cria-npc: ## Gera um NPC aleatório com atributos, equipamentos e tesouro
 	$(PYTHON) service/storytelling/cria_npc.py
+
+cria-demon: ## Gera um demônio aleatório com atributos, ataques e loot
+	$(PYTHON) service/storytelling/cria_demon.py
+
+cria-fera: ## Gera uma fera aleatória com atributos, ataques e loot
+	$(PYTHON) service/storytelling/cria_fera.py
