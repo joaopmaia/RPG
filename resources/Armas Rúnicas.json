@@ -1,37 +1,42 @@
 [
   {
-    "Nome": "Cajado",
-    "Efeito": null,
-    "Durabilidade": "50.0",
-    "Peso": "Leve",
-    "Preço Base": "90.0"
+    "nome": "Cajado",
+    "dano": "aumenta dano de runas em 1d4, armazena apenas uma runa",
+    "durabilidade": "50.0",
+    "peso": "Leve",
+    "preco": "90.0",
+    "tipo": "arcane"
   },
   {
-    "Nome": "Orbe",
-    "Efeito": null,
-    "Durabilidade": "20.0",
-    "Peso": "Leve",
-    "Preço Base": "200.0"
+    "nome": "Orbe",
+    "dano": "20 de Arcana, armazena apenas uma runa",
+    "durabilidade": "20.0",
+    "peso": "Leve",
+    "preco": "200.0",
+    "tipo": "arcane"
   },
   {
-    "Nome": "Tinta Rúnica",
-    "Efeito": null,
-    "Durabilidade": "1.0",
-    "Peso": "Leve",
-    "Preço Base": "60.0"
+    "nome": "Tinta Rúnica",
+    "dano": "não tem efeito adicional",
+    "durabilidade": "1.0",
+    "peso": "Leve",
+    "preco": "60.0",
+    "tipo": "arcane"
   },
   {
-    "Nome": "Grimório",
-    "Efeito": null,
-    "Durabilidade": "10.0",
-    "Peso": "Leve",
-    "Preço Base": "150.0"
+    "nome": "Grimório",
+    "dano": "permite armazenar múltiplas runas",
+    "durabilidade": "10.0",
+    "peso": "Leve",
+    "preco": "150.0",
+    "tipo": "arcane"
   },
   {
-    "Nome": "Pedras Rúnicas",
-    "Efeito": null,
-    "Durabilidade": "1.0",
-    "Peso": "Muito Leve",
-    "Preço Base": "50.0"
+    "nome": "Pedras Rúnicas",
+    "dano": "uso único",
+    "durabilidade": "1.0",
+    "peso": "Muito Leve",
+    "preco": "50.0",
+    "tipo": "arcane"
   }
 ]

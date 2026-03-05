@@ -1,4 +1,4 @@
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais converter-planilha
+.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa converter-planilha calcula-preco cria-estabelecimento cria-npc
 
 VENV = .venv
 PYTHON = $(VENV)/bin/python3
@@ -35,6 +35,7 @@ db-migrate: ## Executa as migrations Python
 	$(PYTHON) database/migrations/03_init_alquimia.py
 	$(PYTHON) database/migrations/04_init_reinos.py
 	$(PYTHON) database/migrations/05_init_materiais.py
+	$(PYTHON) database/migrations/06_init_runas.py
 
 start: db-up db-migrate ## Inicia o MongoDB e executa as migrations
 
@@ -45,7 +46,7 @@ db-clean: ## Limpa todas as collections do banco
 # Scripts de serviço
 # ──────────────────────────────────────────────
 
-salvar-tudo: salvar-arma salvar-armadura salvar-alquimia salvar-reino salvar-material ## Salva todos os recursos no banco
+salvar-tudo: salvar-arma salvar-armadura salvar-alquimia salvar-reino salvar-material salvar-runa ## Salva todos os recursos no banco
 
 salvar-arma: ## Salva armas a partir de resources/armas.json
 	$(PYTHON) service/armas/salvar_arma.py
@@ -92,5 +93,24 @@ buscar-material: ## Busca materiais por tipo (interativo)
 listar-materiais: ## Lista todos os materiais cadastrados
 	$(PYTHON) service/materiais/listar_materiais.py
 
+salvar-runa: ## Salva runas a partir dos JSONs em resources/runas/
+	$(PYTHON) service/runas/salvar_runa.py
+
+buscar-runa: ## Busca runas por tier e elemento (interativo)
+	$(PYTHON) service/runas/buscar_runa.py
+
 converter-planilha: ## Converte uma planilha xlsx de docs/ em JSONs em resources/
 	$(PYTHON) service/utils/planilha_para_json.py
+
+# ──────────────────────────────────────────────
+# Storytelling
+# ──────────────────────────────────────────────
+
+calcula-preco: ## Calcula o preço de um item com base no reino e material
+	$(PYTHON) service/storytelling/calcula_preco.py
+
+cria-estabelecimento: ## Gera um estabelecimento aleatório com estoque
+	$(PYTHON) service/storytelling/cria_estabelecimento.py
+
+cria-npc: ## Gera um NPC aleatório com atributos, equipamentos e tesouro
+	$(PYTHON) service/storytelling/cria_npc.py

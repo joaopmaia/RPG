@@ -19,9 +19,10 @@ def run_migration():
     validator = {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["efeito", "vegetal_rar", "vegetal_pot", "animal_rar", "animal_pot",
+            "required": ["nome", "efeito", "vegetal_rar", "vegetal_pot", "animal_rar", "animal_pot",
                          "mineral_rar", "mineral_pot", "demoníaco_rar", "demoníaco_pot", "descrição"],
             "properties": {
+                "nome": {"bsonType": "string", "description": "Nome do elixir alquímico"},
                 "efeito": {"bsonType": "string", "description": "Efeito da receita alquímica"},
                 "vegetal_rar": {"bsonType": "string", "description": "Raridade do componente vegetal"},
                 "vegetal_pot": {"bsonType": "string", "description": "Potência do componente vegetal"},
@@ -42,8 +43,8 @@ def run_migration():
     except CollectionInvalid:
         print("Collection 'alquimia' já existe – pulando criação.")
 
-    db["alquimia"].create_index("efeito", unique=True)
-    print("Índice único em 'efeito' garantido.")
+    db["alquimia"].create_index("nome", unique=True)
+    print("Índice único em 'nome' garantido.")
 
     client.close()
     print("Migration concluída.")

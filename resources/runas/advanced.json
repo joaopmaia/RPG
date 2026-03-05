@@ -1,0 +1,194 @@
+[
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Pascalia", "Reetear"],
+    "efeito": "Lança uma singularidade térmica que colapsa e libera uma detonação concentrada ao atingir o alvo.",
+    "bonus": "Causa 1d20 de Dano",
+    "nome": "Chama do Vazio",
+    "descricao": "Esta runa compacta a Arcana de Genia através das dobras de Pascalia e a acelera com Reetear. O resultado é um projétil de energia instável que ruge pelo ar, desintegrando tecidos e materiais no momento do impacto."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Pascalia", "Reetear"],
+    "efeito": "Cria uma fenda instantânea no espaço que manifesta uma lâmina invisível de vácuo puro.",
+    "bonus": "Causa 1d10 de Dano (ignora completamente Escudos, Armaduras e Barreiras Místicas)",
+    "nome": "Corte Dimensional",
+    "descricao": "O Arcanista dobra a realidade entre a origem e o alvo. Como o ataque ocorre através de uma fissura dimensional, ele ignora qualquer obstáculo físico ou místico, atravessando placas de aço como se não existissem."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Pascalia", "Reetear"],
+    "efeito": "Gera uma implosão espacial seguida de uma expansão sônica e térmica em área.",
+    "bonus": "Causa 1d10 de Dano em até 1d20 alvos na área",
+    "nome": "Colapso de Ondas",
+    "descricao": "Esta runa consome o ar e o espaço ao redor para criar um vácuo súbito que puxa tudo para o centro, expelindo logo em seguida uma onda de choque catastrófica. É a ferramenta definitiva para limpar campos de batalha."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Saltrat"],
+    "efeito": "Emite pulsação de luz que reconstrói tecidos e órgãos, forçando o retorno ao estado biológico ideal.",
+    "bonus": "Restaura 100% do HP do alvo",
+    "nome": "Restauração Plena",
+    "descricao": "Esta runa ressoa com a frequência da saúde perfeita. Ao ser aplicada, a Arcana reconstrói tecidos e ossos instantaneamente, enquanto Saltrat restabelece o vigor mental. É o ápice da medicina rúnica, fechando feridas mortais em um piscar de olhos."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Saltrat"],
+    "efeito": "Ancoragem dimensional que resgata a consciência e reanima o corpo após o falecimento.",
+    "bonus": "Revive o alvo com 50% do HP máximo (limite de 3 turnos após a morte)",
+    "nome": "Sopro do Renascimento",
+    "descricao": "Uma das matrizes mais sagradas da arte rúnica. A estase de Degila impede a decomposição, enquanto Saltrat 'pesca' a consciência em transição e a força a reocupar o invólucro carnal reanimado por Arunalt."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Saltrat"],
+    "efeito": "Condensa matéria líquida para gerar poções, venenos ou elixires através de geometria rúnica.",
+    "bonus": "Custo de 9 de Arcana por frasco; Rolagem de Rúnicos substitui o teste de Alquimia",
+    "nome": "Matriz do Elixir",
+    "descricao": "Esta runa funciona como um laboratório alquímico concentrado. O Arcanista utiliza a Arcana para materializar substâncias líquidas, podendo gerar qualquer composto que possua conhecimento técnico para fabricar, sem necessidade de ingredientes físicos."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "efeito": "Sobrecarrega os canais de energia do alvo para forçar o corpo e a mente além dos limites biológicos.",
+    "bonus": "Bônus de +1d4 em um Atributo à escolha",
+    "nome": "Ascensão de Atributo",
+    "descricao": "Ao imbuir esta runa, o Arcanista utiliza uma ressonância harmônica para otimizar fibras musculares ou processos sinápticos. O beneficiado sente uma clareza e vigor sobrenaturais enquanto a marca brilhar em sua pele."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "efeito": "Projeta uma frequência dissonante que interfere na conexão entre a vontade e as capacidades físicas do alvo.",
+    "bonus": "Penalidade de -1d4 em um Atributo à escolha",
+    "nome": "Declínio de Atributo",
+    "descricao": "A essência de Degila atua como um 'gelo psíquico', retardando reações e enfraquecendo a estrutura do oponente. Sob este efeito, um guerreiro veloz sente os pés pesados e um sábio perde o fio de seus pensamentos."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "efeito": "Identifica fontes de Arcana inata e as drena violentamente para recarregar as próprias reservas ou de objetos.",
+    "bonus": "Drena Arcana de inimigos ou seres arcanos para converter em combustível puro",
+    "nome": "Sifão de Éter",
+    "descricao": "Esta matriz transforma o Arcanista em um vácuo espiritual. Através de um feixe ou toque, a runa rouba a essência caótica ou o poder latente do alvo, tratando o inimigo como uma bateria energética em meio ao combate."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Genia", "Arunalt"],
+    "efeito": "Projeta uma imagem complexa e estável que se fixa permanentemente na realidade.",
+    "bonus": "Duração permanente (até que a matriz física seja destruída)",
+    "nome": "Trama Eterna",
+    "descricao": "O ápice da ilusão estática. Graças à estabilidade de Arunalt, a imagem de um objeto, paisagem ou multidão não oscila nem se dissipa com o tempo, agindo como uma parte integrante e duradoura do cenário local."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Genia", "Arunalt"],
+    "efeito": "Gera uma cópia física, funcional e obediente de um ser vivo.",
+    "bonus": "Clone persiste mesmo após a morte do mestre (ganhando livre-arbítrio)",
+    "nome": "Doppleganger",
+    "descricao": "Uma aplicação sombria que molda carne e osso temporários com Arunalt e infunde consciência servil com Saltrat. O clone é uma réplica idêntica ao original, exceto por um glifo na testa, e obedece cegamente às ordens do criador."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Genia", "Arunalt"],
+    "efeito": "Suprime rastros visuais, térmicos, sonoros e olfativos para garantir invisibilidade absoluta.",
+    "bonus": "Invisibilidade completa contra visão, faro e calor; Efeito desfeito ao atacar ou ser atacado",
+    "nome": "Manto do Esquecimento",
+    "descricao": "Esta runa dobra a luz e neutraliza assinaturas físicas. A essência de Genia oculta o calor, Reetear abafa sons e Arunalt camufla o odor, tornando o usuário indetetável até para predadores com sentidos aguçados, permitindo infiltrações perfeitas."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Pascalia"],
+    "efeito": "Envolve o alvo em uma crosta cristalina que absorve impacto e reflete a força contra o atacante.",
+    "bonus": "Mitiga 1d20 de dano; o valor mitigado é refletido como dano de força contra o ofensor",
+    "nome": "Escudo de Espinhos",
+    "descricao": "Esta matriz utiliza a rigidez de Arunalt para absorver o impacto enquanto Pascalia devolve a força cinética ao ponto de origem. Atacar esta barreira torna-se um ato perigoso, pois o agressor é atingido por estilhaços de força pura proporcionais ao seu próprio golpe."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Pascalia"],
+    "efeito": "Manipula o espaço imediato para tornar o alvo intangível a forças cinéticas e ataques físicos.",
+    "bonus": "Imunidade total a ataques físicos por 1 turno",
+    "nome": "Égide Corpórea",
+    "descricao": "Através de uma micro-dobra espacial criada por Pascalia, a matéria física perde a capacidade de interagir com o corpo do alvo. Espadas, flechas e impactos de queda simplesmente deslizam sem causar dano, permitindo caminhar incólume em campos de batalha."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Degila", "Arunalt", "Pascalia"],
+    "efeito": "Cria uma barreira de estase que congela e dissipa fluxos de energia mística hostil.",
+    "bonus": "Imunidade total a dano ou efeitos mágicos por 1 turno",
+    "nome": "Nulificação Arcana",
+    "descricao": "Projetada para anular o sobrenatural, esta runa utiliza a estase de Degila para isolar o alvo do tecido místico. Encantamentos, projéteis de fogo e maldições apagam-se ou perdem o rastro ao tocar a aura, tornando-se o escudo supremo contra outros conjuradores."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Arunalt", "Pascalia"],
+    "efeito": "Estabelece um túnel de vácuo entre duas matrizes para teletransporte instantâneo.",
+    "bonus": "Custo de 9 de Arcana por pessoa e 20 espaços de inventário; Independente da distância",
+    "nome": "Portal de Passagem",
+    "descricao": "Esta matriz consiste em um par de runas que forçam a convergência de dois pontos geográficos. A Arcana rasga o tecido da realidade para criar um buraco de minhoca funcional, permitindo o trânsito imediato de pessoas, cargas ou mensagens sem que a estrutura colapse sobre os viajantes."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Arunalt", "Pascalia"],
+    "efeito": "Dobra o vácuo para criar um plano extra-dimensional isolado e indetectável.",
+    "bonus": "Volume de uma sala pequena; Custo de 9 de Arcana",
+    "nome": "Santuário Dimensional",
+    "descricao": "Uma aplicação sofisticada de engenharia espacial que cria uma entrada para um refúgio seguro. Pode ser imbuído em recipientes para criar bolsas rúnicas de armazenamento infinito, onde o volume interno não afeta o peso ou a aparência no mundo exterior."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Arunalt", "Pascalia"],
+    "efeito": "Emite uma onda purificadora que desfaz qualquer alteração indesejada na estrutura do alvo.",
+    "bonus": "Remove 100% de qualquer status negativo (físico ou mental)",
+    "nome": "Panaceia Rúnica",
+    "descricao": "Atuando como um 'reset' sistêmico, esta runa varre o corpo e a alma para eliminar impurezas. A energia de Genia queima venenos, doenças e controles mentais, enquanto Arunalt restaura a ordem natural do ser ao seu estado mais puro e funcional."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Saltrat", "Reetear"],
+    "efeito": "Cria um vínculo assimétrico que sufoca o livre-arbítrio e transforma o alvo em uma extensão física do mestre.",
+    "bonus": "Rolagem de Rúnicos define a dificuldade do teste de Mentalidade do alvo",
+    "nome": "Elo de Marionete",
+    "descricao": "Esta matriz vincula duas almas de forma inquebrável. O escravo perde a autonomia sobre movimentos e pensamentos, podendo ser forçado a agir contra sua natureza ou revelar segredos profundos em um estado de transe submisso."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Saltrat", "Reetear"],
+    "efeito": "Impõe uma ordem rúnica sobre a essência demoníaca para forçar a obediência de criaturas do Vazio.",
+    "bonus": "Rolagem de Rúnicos define a dificuldade do teste de Mentalidade do demônio",
+    "nome": "Grilhão Abissal",
+    "descricao": "Uma aplicação violenta projetada para lidar com a malícia do Vazio. A runa de Genia queima qualquer tentativa de rebelião, enquanto Saltrat mantém o jugo de autoridade, transformando horrores em guardiões ou ferramentas de guerra relutantes."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Genia", "Saltrat", "Reetear"],
+    "efeito": "Moldura o éter em uma forma semi-material de pura energia para criar um servo sem alma própria.",
+    "bonus": "HP = 5 * Rolagem de Rúnicos; Ataque = Espírito + Arcanum + 1d10; Defesa/Eficácia = Espírito + Arcanum",
+    "nome": "Invocação Primordial",
+    "descricao": "O Arcanista condensa a Arcana para manifestar um ser animado inteiramente por sua potência rúnica. A criatura não possui vontade própria, operando como um combatente robusto guiado pela conexão espiritual do mestre."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Degila", "Reetear"],
+    "efeito": "Paralisa o fluxo do tempo para o alvo, tornando-o uma estátua invulnerável e em suspensão total.",
+    "bonus": "Alvo torna-se imune a qualquer efeito externo; Teste de resistência contra Rolagem de Rúnicos para libertação",
+    "nome": "Prisão Temporal",
+    "descricao": "Esta matriz projeta um campo de resfriamento cronológico extremo. O indivíduo é congelado na linha do tempo, permanecendo preservado e intocado pelo passar dos anos ou por ataques, vivenciando séculos em um piscar de olhos até que a barreira seja rompida."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Degila", "Reetear"],
+    "efeito": "Estabelece uma conexão simbiótica distorcida entre um ser vivo e um objeto para impor maldições irreversíveis.",
+    "bonus": "Efeitos: Erosão Arcana (perda de magia), Fragilidade (HP máx = 1), Flagelo (vampirismo e 1d20 de dano solar) ou Estase (alma em objeto)",
+    "nome": "Vínculo da Maldição",
+    "descricao": "Uma das aplicações mais cruéis da arte rúnica. Enquanto a runa no objeto âncora não for destruída, o alvo sofre corrupção temporal e espiritual, podendo perder seus poderes, sua vitalidade ou ter sua alma aprisionada permanentemente."
+  },
+  {
+    "tier": "Superior",
+    "elementos": ["Saltrat", "Degila", "Reetear"],
+    "efeito": "Acelera a percepção temporal do alvo para que ele viva mais tempo no mesmo intervalo cronológico.",
+    "bonus": "Concede um turno extra completo ao final da rodada (após todos os personagens)",
+    "nome": "Aceleração de Chronos (Haste)",
+    "descricao": "Diferente de runas de agilidade física, esta matriz vibra a Arcana em uma frequência que dilata o tempo para o sujeito. Isso permite que o aliado execute ações adicionais com precisão tática, agindo quando o mundo ao seu redor parece ter desacelerado."
+  }
+]

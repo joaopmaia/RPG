@@ -1,5 +1,6 @@
 [
   {
+    "nome": "Cura",
     "efeito": "Cura HP",
     "vegetal_rar": "Comum",
     "vegetal_pot": "1d4",
@@ -12,6 +13,7 @@
     "descrição": "Restaura a vida (HP) instantaneamente."
   },
   {
+    "nome": "Éter",
     "efeito": "Cura Arcana",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "1d4",
@@ -24,6 +26,7 @@
     "descrição": "Repõe a energia mágica (Arcana) no corpo."
   },
   {
+    "nome": "Bálsamo",
     "efeito": "Cura Queimadura",
     "vegetal_rar": "Comum",
     "vegetal_pot": "Fixo",
@@ -36,6 +39,7 @@
     "descrição": "Remove o status Queimadura."
   },
   {
+    "nome": "Antídoto",
     "efeito": "Cura Envenenamento",
     "vegetal_rar": "Comum",
     "vegetal_pot": "Fixo",
@@ -48,6 +52,7 @@
     "descrição": "Remove o status Envenenamento."
   },
   {
+    "nome": "Aquecente",
     "efeito": "Cura Congelamento",
     "vegetal_rar": "Comum",
     "vegetal_pot": "Fixo",
@@ -60,6 +65,7 @@
     "descrição": "Remove o status Congelamento."
   },
   {
+    "nome": "Mobilidade",
     "efeito": "Cura Paralisia",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -72,6 +78,7 @@
     "descrição": "Remove o status Paralisia."
   },
   {
+    "nome": "Alívio",
     "efeito": "Cura Aflição",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -84,6 +91,7 @@
     "descrição": "Remove o status Aflição."
   },
   {
+    "nome": "Vigor",
     "efeito": "Cura Cansado",
     "vegetal_rar": "Comum",
     "vegetal_pot": "Fixo",
@@ -96,6 +104,7 @@
     "descrição": "Remove o status Cansado."
   },
   {
+    "nome": "Amolecente",
     "efeito": "Cura Petrificado",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Fixo",
@@ -108,6 +117,7 @@
     "descrição": "Remove o status Petrificado."
   },
   {
+    "nome": "Esperança",
     "efeito": "Cura Desolado",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -120,6 +130,7 @@
     "descrição": "Remove o status mental Desolado."
   },
   {
+    "nome": "Lucidez",
     "efeito": "Cura Confusão",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -132,6 +143,7 @@
     "descrição": "Remove o status mental Confusão."
   },
   {
+    "nome": "Serenidade",
     "efeito": "Cura Enfurecido",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -144,6 +156,7 @@
     "descrição": "Remove o status mental Enfurecido."
   },
   {
+    "nome": "Purificação",
     "efeito": "Cura Doente",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Fixo",
@@ -156,6 +169,7 @@
     "descrição": "Remove o status Doente."
   },
   {
+    "nome": "Ungüento",
     "efeito": "Cura Ferido",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Fixo",
@@ -168,6 +182,7 @@
     "descrição": "Trata ferimentos graves (status Ferido)."
   },
   {
+    "nome": "Incendiário",
     "efeito": "Causa Queimaduras",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "1",
@@ -180,6 +195,7 @@
     "descrição": "Aplica acúmulos de queimadura no alvo."
   },
   {
+    "nome": "Veneno",
     "efeito": "Causa Envenenar",
     "vegetal_rar": "Comum",
     "vegetal_pot": "1d4",
@@ -192,6 +208,7 @@
     "descrição": "Causa dano de veneno por turno."
   },
   {
+    "nome": "Glacial",
     "efeito": "Causa Congelamento",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -204,6 +221,7 @@
     "descrição": "Dificuldade para o alvo não congelar."
   },
   {
+    "nome": "Paralisante",
     "efeito": "Causa Paralisia",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -216,6 +234,7 @@
     "descrição": "Dificuldade para o alvo não paralisar."
   },
   {
+    "nome": "Agonia",
     "efeito": "Causa Aflição",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -228,6 +247,7 @@
     "descrição": "Dificuldade para o alvo não sofrer Aflição."
   },
   {
+    "nome": "Torpor",
     "efeito": "Causa Cansado",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Dif: 10",
@@ -240,6 +260,7 @@
     "descrição": "Dificuldade para o alvo não cansar."
   },
   {
+    "nome": "Petrificante",
     "efeito": "Causa Petrificado",
     "vegetal_rar": "Épico",
     "vegetal_pot": "Dif: 15",
@@ -252,6 +273,7 @@
     "descrição": "Dificuldade para o alvo não petrificar."
   },
   {
+    "nome": "Desespero",
     "efeito": "Causa Desolado",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -264,6 +286,7 @@
     "descrição": "Dificuldade do teste contra Desolação."
   },
   {
+    "nome": "Demência",
     "efeito": "Causa Confusão",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Dif: 10",
@@ -276,6 +299,7 @@
     "descrição": "Dificuldade do teste contra Confusão."
   },
   {
+    "nome": "Fúria",
     "efeito": "Causa Enfurecido",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Dif: 10",
@@ -288,6 +312,7 @@
     "descrição": "Dificuldade do teste contra Fúria."
   },
   {
+    "nome": "Pestilência",
     "efeito": "Causa Doente",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -300,6 +325,7 @@
     "descrição": "Dificuldade para o alvo não adoecer."
   },
   {
+    "nome": "Corrosivo",
     "efeito": "Causa Ferido",
     "vegetal_rar": "Raro",
     "vegetal_pot": "Dif: 12",
@@ -312,6 +338,7 @@
     "descrição": "Dificuldade para o alvo não ser Ferido."
   },
   {
+    "nome": "Fumaça",
     "efeito": "Bomba de Fumaça",
     "vegetal_rar": "Comum",
     "vegetal_pot": "3m",
@@ -324,6 +351,7 @@
     "descrição": "Área afetada pela cortina de fumaça."
   },
   {
+    "nome": "Explosivo",
     "efeito": "Explosivo",
     "vegetal_rar": "-",
     "vegetal_pot": "-",
@@ -336,6 +364,7 @@
     "descrição": "Dano explosivo causado em área."
   },
   {
+    "nome": "Brânquias",
     "efeito": "Respirar n'água",
     "vegetal_rar": "Raro",
     "vegetal_pot": "1 Cena",
@@ -348,6 +377,7 @@
     "descrição": "Tempo de duração do efeito subaquático."
   },
   {
+    "nome": "Repelente",
     "efeito": "Repelir Demônios",
     "vegetal_rar": "Épico",
     "vegetal_pot": "5m",
@@ -360,6 +390,7 @@
     "descrição": "Área de afastamento de demônios."
   },
   {
+    "nome": "Atraente",
     "efeito": "Atrair Demônios",
     "vegetal_rar": "Épico",
     "vegetal_pot": "5m",
@@ -372,6 +403,7 @@
     "descrição": "Área de atração de demônios."
   },
   {
+    "nome": "Afiação",
     "efeito": "Dano de Armas",
     "vegetal_rar": "-",
     "vegetal_pot": "-",
@@ -384,6 +416,7 @@
     "descrição": "Aumento fixo no dano da arma."
   },
   {
+    "nome": "Antigelo",
     "efeito": "Resistência Calor",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -396,6 +429,7 @@
     "descrição": "Proteção contra calor/fogo."
   },
   {
+    "nome": "Antifrio",
     "efeito": "Resistência Frio",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "Fixo",
@@ -408,6 +442,7 @@
     "descrição": "Proteção contra frio/gelo."
   },
   {
+    "nome": "Aprimoramento",
     "efeito": "Modificar Atributo",
     "vegetal_rar": "-",
     "vegetal_pot": "-",
@@ -420,6 +455,7 @@
     "descrição": "Aplica bônus ou penalidade (1 ou 2)."
   },
   {
+    "nome": "Restaurador",
     "efeito": "Restaurar Durab.",
     "vegetal_rar": "-",
     "vegetal_pot": "-",
@@ -432,6 +468,7 @@
     "descrição": "Quantidade de durabilidade recuperada."
   },
   {
+    "nome": "Sanidade",
     "efeito": "Status Mental Aleat.",
     "vegetal_rar": "Incomum",
     "vegetal_pot": "1",
@@ -444,6 +481,7 @@
     "descrição": "Quantidade de status mentais curados."
   },
   {
+    "nome": "Pílula",
     "efeito": "Pílula Arcana",
     "vegetal_rar": "-",
     "vegetal_pot": "-",

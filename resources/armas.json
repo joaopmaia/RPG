@@ -254,5 +254,45 @@
     "peso": "Leve",
     "preco": "20.0",
     "tipo": "ranged"
+  },
+  {
+    "nome": "Cajado",
+    "dano": "aumenta dano de runas em 1d4, armazena apenas uma runa",
+    "durabilidade": "50.0",
+    "peso": "Leve",
+    "preco": "90.0",
+    "tipo": "arcane"
+  },
+  {
+    "nome": "Orbe",
+    "dano": "20 de Arcana, armazena apenas uma runa",
+    "durabilidade": "20.0",
+    "peso": "Leve",
+    "preco": "200.0",
+    "tipo": "arcane"
+  },
+  {
+    "nome": "Tinta Rúnica",
+    "dano": "não tem efeito adicional",
+    "durabilidade": "1.0",
+    "peso": "Leve",
+    "preco": "60.0",
+    "tipo": "arcane"
+  },
+  {
+    "nome": "Grimório",
+    "dano": "permite armazenar múltiplas runas",
+    "durabilidade": "10.0",
+    "peso": "Leve",
+    "preco": "150.0",
+    "tipo": "arcane"
+  },
+  {
+    "nome": "Pedras Rúnicas",
+    "dano": "uso único",
+    "durabilidade": "1.0",
+    "peso": "Muito Leve",
+    "preco": "50.0",
+    "tipo": "arcane"
   }
 ]

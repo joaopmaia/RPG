@@ -1,5 +1,5 @@
 """
-Lista todas as receitas de alquimia cadastradas no banco de dados MongoDB.
+"""Lista todas as receitas de alquimia cadastradas no banco de dados MongoDB (nome e efeito).
 
 Uso:
     python listar_alquimia.py

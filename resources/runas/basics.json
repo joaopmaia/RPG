@@ -1,0 +1,242 @@
+[
+  {
+    "tier": "Básico",
+    "elementos": ["Genia"],
+    "efeito": "Exige contato físico direto e aplica o status Queimadura.",
+    "bonus": "1d4 de dano",
+    "nome": "O Toque de Vulcan",
+    "descricao": "Ao ser imbuída, a Arcana circula velozmente pelos sulcos da runa, gerando uma fricção energética que eleva drasticamente a temperatura da superfície em contato. É a ferramenta definitiva de utilidade: pode ser usada para cauterizar feridas, ferver água, acender tochas ou fundir elos de correntes."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Genia"],
+    "efeito": "Emite uma aura alaranjada de luz estável que ignora ventos e umidade.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Fulgor Eterno",
+    "descricao": "Esta runa converte a Arcana em uma luminescência constante e pura. Ao ser ativada, o glifo preenche um pequeno espaço com luz. Diferente de uma tocha, o Fulgor Eterno não produz fumaça nem consome oxigênio, sendo uma fonte de luz divina."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Genia"],
+    "efeito": "Atua como isca mística para atrair seres demoníacos.",
+    "bonus": "Duração de 1 hora",
+    "nome": "O Chamado do Abismo",
+    "descricao": "Uma aplicação perturbadora da essência Genia. Em vez de emitir calor físico, a Arcana vibra em uma frequência térmica 'caótica' que simula o calor de uma alma desprotegida. Esta runa atua como uma isca invisível aos olhos mortais, mas irresistível para seres do Vazio."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Genia"],
+    "efeito": "Repele criaturas abissais de baixo nível e causa fadiga em demônios poderosos.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Selo de Repúdio",
+    "descricao": "Esta runa modula a Arcana para emitir um calor seco e uma radiação espectral extremamente desconfortável para a natureza profana. Para os demônios, a área ao redor da runa parece 'arder' de uma forma que agride sua essência."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Genia"],
+    "efeito": "Gera um feixe de luz tênue que aponta na direção da runa contraparte.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Trilhas Incandescentes",
+    "descricao": "Esta é uma Runa de Conjunto que demonstra a conexão intrínseca da Arcana. Ao traçar duas destas matrizes, elas se entrelaçam através do éter, funcionando como uma bússola mística infalível para guiar o portador até a outra extremidade."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Degila"],
+    "efeito": "Torna objeto hidrofóbico e permite caminhar sobre líquidos.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Passo de Lótus",
+    "descricao": "Esta runa altera a tensão superficial e as propriedades moleculares ao redor de um objeto para torná-lo absolutamente hidrofóbico. Ao ser traçada em botas ou na base de um objeto, a Arcana repele a água com tal força que permite ao portador caminhar sobre superfícies líquidas como se fossem solo sólido."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Degila"],
+    "efeito": "Decanta impurezas e anula toxinas de líquidos, tornando-os potáveis.",
+    "bonus": "Ativação instantânea",
+    "nome": "Cristalização de Aluviana",
+    "descricao": "Ao tocar um recipiente ou fonte de líquido, a Arcana de Degila age como um filtro místico, forçando a decantação imediata de impurezas e a anulação de toxinas. O glifo transforma qualquer substância líquida em água potável, pura e refrescante."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Degila"],
+    "efeito": "Injeta toxina via toque e aplica status Envenenamento.",
+    "bonus": "1d4 de dano e Doença (nível 1) em 3 turnos",
+    "nome": "Destilação Peçonhenta",
+    "descricao": "Invertendo o princípio da pureza, esta runa concentra as impurezas latentes no ar ou no corpo do Arcanista para manifestar uma toxina fria nos traços do glifo. Ao tocar um alvo, a Arcana injeta essa peçonha diretamente na corrente sanguínea ou poros."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Degila"],
+    "efeito": "Força estado de calma e encerra status Enfurecido (Berserker).",
+    "bonus": "Ativação instantânea",
+    "nome": "Selo da Mente Serena",
+    "descricao": "Esta runa emite uma frequência de estase que desacelerar os batimentos cardíacos e a adrenalina de quem é tocado. A Arcana flui para o sistema nervoso do alvo, forçando um estado de calma absoluta e limpando a névoa da raiva."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Degila"],
+    "efeito": "Congela volumes de líquido ou remove status Queimadura.",
+    "bonus": "Volume de até um barril pequeno e remove 1 acúmulo de Queimadura",
+    "nome": "Sopro da Geada",
+    "descricao": "Ao tocar um volume de líquido, a runa drena todo o calor local, transformando-o em gelo sólido instantaneamente. Ao tocar uma criatura ferida por chamas, ela neutraliza imediatamente um dos acúmulos do status Queimadura."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Reetear"],
+    "efeito": "Torna o alvo parcialmente insubstancial, concede imunidade a dano de queda, permite planar e reduz o peso de equipamento.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Pena de Zephyrus",
+    "descricao": "Ao ser imbuída em um ser ou objeto, esta runa altera a interação da massa física com a gravidade. Se o Arcanista saltar de um local elevado, a Arcana sustenta seu corpo no ar, permitindo que ele plane suavemente por longas distâncias."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Reetear"],
+    "efeito": "Runa de Conjunto que cria um canal de transmissão sonora entre duas matrizes.",
+    "bonus": "Comunicação a quilômetros de distância",
+    "nome": "Ressonância de Ecos",
+    "descricao": "Esta é uma Runa de Conjunto que utiliza o éter como condutor de vibrações acústicas. Qualquer som emitido próximo a uma das runas é transmitido instantaneamente para a outra, permitindo a comunicação verbal clara."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Reetear"],
+    "efeito": "Expele fumaça densa que obscurece contornos e abafa ruídos.",
+    "bonus": "+1d4 em testes de Furtividade",
+    "nome": "Véu de Névoa Cinzenta",
+    "descricao": "A runa atua como uma fenda microscópica que expele constantemente uma fumaça densa e acinzentada, originada da condensação da própria Arcana Etérea. A névoa se espalha silenciosamente a partir da runa."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Reetear"],
+    "efeito": "Libera descarga vibratória de alta frequência via toque e aplica status Atordoado (Stun).",
+    "bonus": "Duração de 1 turno",
+    "nome": "Pulso Estilhante",
+    "descricao": "Ao tocar um alvo, o Arcanista libera toda a energia acumulada na runa em uma única e violenta descarga sônica. O impacto busca desestabilizar o equilíbrio interno e os sentidos do oponente."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Reetear"],
+    "efeito": "Runa de Conjunto que filtra o ar de toxinas, gases ou água, permitindo a respiração.",
+    "bonus": "Duração de 1 hora",
+    "nome": "Filtro de Aether",
+    "descricao": "Projetada para o controle da pureza atmosférica. A primeira runa atua como um vácuo místico sugando o ar ao redor, enquanto a segunda processa e expele o ar completamente purificado e oxigenado."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Arunalt"],
+    "efeito": "Cura a energia vital de um ser vivo através do toque.",
+    "bonus": "Restaura 1d4 de HP",
+    "nome": "Alento do Florescer",
+    "descricao": "Esta é a manifestação mais fundamental da bio-regeneração. Ao tocar um ser vivo, o Arcanista canaliza a Arcana de Arunalt para curar a energia vital do alvo. O fluxo místico atua como um fertilizante para as células, deixando para trás um leve aroma de terra úmida."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Arunalt"],
+    "efeito": "Projeta um invólucro arcano rígido que protege o corpo ou vestimenta.",
+    "bonus": "Mitiga 1d4 de dano (até ser atingida uma vez)",
+    "nome": "Casca de Ferro",
+    "descricao": "Ao ser imbuída, a runa projeta um invólucro arcano translúcido e rígido, semelhante à textura de uma casca de árvore milenar ou pedra polida. Essa proteção mística atua como uma camada extra de resistência contra ataques recebido."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Arunalt"],
+    "efeito": "Restaura a integridade estrutural de objetos compostos por materiais naturais.",
+    "bonus": "Restaura 1d4 de Durabilidade",
+    "nome": "Restauraçao Material",
+    "descricao": "Esta runa foca na 'vitalidade' de objetos inanimados compostos de materiais naturais como madeira, couro, osso ou metal bruto. Ao tocar um equipamento danificado, a Arcana força as moléculas a se realinharem e se soldarem novamente."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Arunalt"],
+    "efeito": "Estabelece conexão psíquica rudimentar para sentir vibrações de vegetais.",
+    "bonus": "Ativação por toque",
+    "nome": "Murmúrios da Clorofila",
+    "descricao": "A Arcana permite uma conexão psíquica rudimentar com o sistema nervoso primitivo das plantas. Ao tocar uma árvore, arbusto ou flor, o Arcanista pode 'sentir' e traduzir as vibrações do vegetal em conceitos abstratos e sensações básicas."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Arunalt"],
+    "efeito": "Trata traumas profundos e devolve a Vida Máxima subtraída.",
+    "bonus": "Remove 1 acúmulo do status Ferido",
+    "nome": "Selo da Cicatriz",
+    "descricao": "Diferente da cura comum, esta runa é focada em tratar traumas profundos que comprometem a integridade permanente do corpo. Ela não regenera o vigor atual (HP), mas permite que o corpo possa ser curado plenamente por outros meios."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Saltrat"],
+    "efeito": "Dissipa interferências espirituais e ancoragem à realidade via toque na têmpora.",
+    "bonus": "Remove instantaneamente os status Confusão e Alucinação",
+    "nome": "Claridade de Selene",
+    "descricao": "Esta runa atua como um farol de ordem em meio ao caos mental. Ao tocar a têmpora de um indivíduo, a Arcana de Saltrat varre interferências espirituais e distorções cognitivas, ancorando a consciência do alvo de volta à realidade."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Saltrat"],
+    "efeito": "Runa de Conjunto que faz duas matrizes idênticas vibrarem e brilharem em uníssono por proximidade.",
+    "bonus": "Identificação visual por brilho crescente",
+    "nome": "Estigma de Constelação",
+    "descricao": "Esta é uma Runa de Conjunto que funciona através do entrelaçamento de essências. Ao traçar esta runa em um ser e possuir uma cópia idêntica consigo, as duas matrizes passam a vibrar em uníssono, brilhando com intensidade ao se aproximarem."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Saltrat"],
+    "efeito": "Sobrecarrega o sistema emocional do alvo via toque, removendo a distinção entre aliados e inimigos.",
+    "bonus": "Aplica o status Enfurecido (Berserker)",
+    "nome": "Fúria das Plêiades",
+    "descricao": "Ao tocar um alvo, o Arcanista sobrecarrega o sistema emocional da vítima com um surto de energia astral caótica. A runa ignora a dor física e ataca diretamente o instinto de preservação, mergulhando o indivíduo em um estado de violência cega."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Saltrat"],
+    "efeito": "Libera uma descarga de energia dissonante que fragmenta o fluxo de pensamentos.",
+    "bonus": "Aplica o status Confusão",
+    "nome": "Eco Psíquico",
+    "descricao": "Semelhante a um choque elétrico, mas direcionado à mente, esta runa libera uma descarga de energia dissonante ao toque. O alvo fica desorientado e incapaz de formular estratégias complexas ou manter a noção de suas ações imediatas."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Saltrat"],
+    "efeito": "Desvincula a consciência do corpo físico, permitindo flutuar e atravessar barreiras materiais.",
+    "bonus": "Duração de 1 hora de Projeção Astral",
+    "nome": "Transcendência Estelar",
+    "descricao": "Esta runa permite que a consciência do Arcanista se desvincule da carne. Enquanto a runa estiver em contato com o corpo físico, o Arcanista entra em um estado de Projeção Astral. O corpo físico permanece inerte e vulnerável durante o processo."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Pascalia"],
+    "efeito": "Cria uma tranca quântica entre duas matrizes que só pode ser desfeita por uma terceira runa chave.",
+    "bonus": "Selamento físico impossível de romper",
+    "nome": "O Tríptico de Ferro",
+    "descricao": "Esta é uma Runa de Conjunto composta por três matrizes distintas. Duas runas fundem partes móveis de um objeto em uma tranca dimensional, enquanto a terceira atua como a única chave mística capaz de colapsar o selamento."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Pascalia"],
+    "efeito": "Estabelece uma malha de monitoramento que emite alerta vibratório ao detectar deslocamento de massa.",
+    "bonus": "Detecção em área delimitada por 4 ou mais runas",
+    "nome": "Perímetro Vibrante",
+    "descricao": "Conjunto de runas posicionadas em vértices que criam uma barreira invisível e sensível. Caso qualquer ser ou objeto atravesse o perímetro, as runas vibram violentamente, emitindo um alerta silencioso a uma runa receptora."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Pascalia"],
+    "efeito": "Registra a luz e geometria local para projetar um holograma translúcido estático posteriormente.",
+    "bonus": "Representação visual estática do ambiente",
+    "nome": "Espelho do Horizonte",
+    "descricao": "Esta runa atua como um capturador de momentos dimensionais. Ao ser ativada, armazena uma representação do ambiente à sua frente, funcionando como uma câmera rúnica para preservar evidências visuais ou mapeamentos."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Pascalia"],
+    "efeito": "Distorce o espaço ao redor de uma arma de curto alcance para aumentar a pressão gravitacional do golpe.",
+    "bonus": "1d4 de dano extra",
+    "nome": "Golpe de Singularidade",
+    "descricao": "Ao ser traçada em uma arma, esta runa comprime o espaço no momento do impacto. Essa distorção faz com que o ataque atinja o alvo com uma força gravitacional aumentada, potencializando o dano físico."
+  },
+  {
+    "tier": "Básico",
+    "elementos": ["Pascalia"],
+    "efeito": "Dobra a curvatura do espaço para trazer objetos distantes ao foco imediato do usuário.",
+    "bonus": "Visão de detalhes longínquos com clareza absoluta",
+    "nome": "Lente do Vácuo",
+    "descricao": "Esta runa manipula o trajeto da luz acima do glifo. Ao olhar através da área afetada, o Arcanista enxerga o espaço 'dobrado', funcionando como uma luneta mística fixa ideal para vigias e batedores."
+  }
+]

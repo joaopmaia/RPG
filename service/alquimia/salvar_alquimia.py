@@ -17,7 +17,7 @@ DATABASE = "rpg"
 COLLECTION = "alquimia"
 
 CAMPOS_OBRIGATORIOS = [
-    "efeito", "vegetal_rar", "vegetal_pot", "animal_rar", "animal_pot",
+    "nome", "efeito", "vegetal_rar", "vegetal_pot", "animal_rar", "animal_pot",
     "mineral_rar", "mineral_pot", "demoníaco_rar", "demoníaco_pot", "descrição"
 ]
 
@@ -62,10 +62,10 @@ def salvar_alquimia(caminho_json):
 
         try:
             resultado = colecao.insert_one(receita)
-            print(f"Receita '{receita['efeito']}' salva com sucesso! (id: {resultado.inserted_id})")
+            print(f"Receita '{receita['nome']}' salva com sucesso! (id: {resultado.inserted_id})")
             salvos += 1
         except DuplicateKeyError:
-            print(f"Receita '{receita['efeito']}' já existe – pulando.")
+            print(f"Receita '{receita['nome']}' já existe – pulando.")
 
     print(f"\n{salvos}/{len(dados)} receita(s) salva(s).")
 

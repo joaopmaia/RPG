@@ -1,70 +1,70 @@
 [
   {
-    "Item": "Básicas",
-    "Preço Base (Moedas de Bronze)": "50 - 150"
+    "item": "Básicas",
+    "preco": "50 - 150"
   },
   {
-    "Item": "Intermediárias",
-    "Preço Base (Moedas de Bronze)": "200 - 500"
+    "item": "Intermediárias",
+    "preco": "200 - 500"
   },
   {
-    "Item": "Avançadas",
-    "Preço Base (Moedas de Bronze)": "5000 - 7000"
+    "item": "Avançadas",
+    "preco": "5000 - 7000"
   },
   {
-    "Item": "Viagem Terrestre (por dia)",
-    "Preço Base (Moedas de Bronze)": "50 - 200"
+    "item": "Viagem Terrestre (por dia)",
+    "preco": "50 - 200"
   },
   {
-    "Item": "Viagem Marítima (por dia)",
-    "Preço Base (Moedas de Bronze)": "100 - 300"
+    "item": "Viagem Marítima (por dia)",
+    "preco": "100 - 300"
   },
   {
-    "Item": "Viagem Fluvial (por dia)",
-    "Preço Base (Moedas de Bronze)": "80 - 250"
+    "item": "Viagem Fluvial (por dia)",
+    "preco": "80 - 250"
   },
   {
-    "Item": "Taverna (Refeição Completa)",
-    "Preço Base (Moedas de Bronze)": "1 - 15"
+    "item": "Taverna (Refeição Completa)",
+    "preco": "1 - 15"
   },
   {
-    "Item": "Hospedagem 1 Estrela (por noite)",
-    "Preço Base (Moedas de Bronze)": "50 - 150"
+    "item": "Hospedagem 1 Estrela (por noite)",
+    "preco": "50 - 150"
   },
   {
-    "Item": "Hospedagem 2 Estrelas (por noite)",
-    "Preço Base (Moedas de Bronze)": "150 - 300"
+    "item": "Hospedagem 2 Estrelas (por noite)",
+    "preco": "150 - 300"
   },
   {
-    "Item": "Hospedagem 3 Estrelas (por noite)",
-    "Preço Base (Moedas de Bronze)": "300 - 600"
+    "item": "Hospedagem 3 Estrelas (por noite)",
+    "preco": "300 - 600"
   },
   {
-    "Item": "Hospedagem 4 Estrelas (por noite)",
-    "Preço Base (Moedas de Bronze)": "900 - 1200"
+    "item": "Hospedagem 4 Estrelas (por noite)",
+    "preco": "900 - 1200"
   },
   {
-    "Item": "Hospedagem 5 Estrelas (por noite)",
-    "Preço Base (Moedas de Bronze)": "2000 - 25000"
+    "item": "Hospedagem 5 Estrelas (por noite)",
+    "preco": "2000 - 25000"
   },
   {
-    "Item": "Vegetais",
-    "Preço Base (Moedas de Bronze)": "50 - 300"
+    "item": "Vegetais",
+    "preco": "50 - 300"
   },
   {
-    "Item": "Minerais ",
-    "Preço Base (Moedas de Bronze)": "50 - 300"
+    "item": "Minerais ",
+    "preco": "50 - 300"
   },
   {
-    "Item": "Demoníacos ",
-    "Preço Base (Moedas de Bronze)": "50 - 300"
+    "item": "Demoníacos ",
+    "preco": "50 - 300"
   },
   {
-    "Item": "Animais",
-    "Preço Base (Moedas de Bronze)": "50 - 300"
+    "item": "Animais",
+    "preco": "50 - 300"
   },
   {
-    "Item": "Papel",
-    "Preço Base (Moedas de Bronze)": "100-200"
+    "item": "Papel",
+    "preco": "100-200"
   }
 ]

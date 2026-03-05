@@ -1,0 +1,386 @@
+[
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Arunalt"],
+    "efeito": "Cauteriza feridas e força a regeneração, removendo condições adversas do alvo.",
+    "bonus": "Rolagem de Rúnicos substitui o teste de resistência; remove Sangramento/Queimadura ou limpa Envenenamento, Paralisia ou Congelamento",
+    "nome": "Sangue Novo",
+    "descricao": "Esta inscrição utiliza o fogo de Genia para cauterizar e o vigor de Arunalt para regenerar tecidos. A energia térmica varre o sistema circulatório eliminando toxinas ou gelo, enquanto as propriedades da terra restauram o fluxo vital."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Arunalt"],
+    "efeito": "Cria uma armadilha rúnica camuflada que detona por proximidade.",
+    "bonus": "1d8 de dano ígneo em área; rolagem define a dificuldade de Percepção para o inimigo",
+    "nome": "Semeadura de Fulgor",
+    "descricao": "O Arcanista inscreve uma matriz latente em uma superfície. A energia de Arunalt ancora a runa na matéria enquanto Genia permanece comprimida. Quando um ser cruza o perímetro, a runa explode em estilhaços e chamas."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Arunalt"],
+    "efeito": "Transforma as mãos em ferramentas de forja para reparar equipamentos através do toque constante.",
+    "bonus": "Rolagem de Rúnicos determina o valor de Durabilidade recuperado",
+    "nome": "Oficinas de Vulcan",
+    "descricao": "Uma evolução da técnica de reparo que gera calor controlado para tornar metal ou madeira maleáveis. Reforça as moléculas do objeto com fibras minerais arcanas, devolvendo a integridade estrutural perdida em combate."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Arunalt"],
+    "efeito": "Molda terra ou argila em uma réplica perfeita de um objeto inanimado.",
+    "bonus": "Duração de 1 hora; rolagem define a dificuldade de Percepção para identificar a falsificação",
+    "nome": "Efígie de Barro",
+    "descricao": "O Arcanista canaliza Arcana para o solo para criar um simulacro físico. O calor de Genia 'coze' a estrutura para dar a textura correta, enquanto Arunalt provê a fidelidade física. A cópia é indistinguível a olho nu."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Saltrat"],
+    "efeito": "Abre uma fissura instável que invoca uma entidade do Vazio aleatória e hostil.",
+    "bonus": "1d4 define a entidade: 1 (Falha), 2 (Inferior: 2d6 dano), 3 (Médio: 3d6 dano) ou 4 (Superior: 4d6 dano)",
+    "nome": "Fenda do Vazio",
+    "descricao": "Uma inscrição de altíssimo risco que utiliza o fogo como catalisador para rasgar o véu entre as dimensões. O Arcanista não tem controle sobre o que cruzará o portal; o demônio convocado ataca qualquer ser em seu campo de visão, incluindo o invocador."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Saltrat"],
+    "efeito": "Projeta um clone visual de um objeto ou pessoa para enganar o observador.",
+    "bonus": "Rolagem de Rúnicos define a dificuldade do teste de Percepção do inimigo",
+    "nome": "Ilusão de Calor",
+    "descricao": "Através da manipulação da luz e ondas de calor, a runa cria uma manifestação visual que mimetiza movimentos e detalhes. A ilusão brilha como uma miragem, forçando o cérebro do observador a preencher as lacunas da realidade."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Saltrat"],
+    "efeito": "Infiltra febre psíquica nos canais espirituais para estilhaçar o foco do alvo.",
+    "bonus": "Debuff de 1d6 em testes de Mentalidade; Rolagem de Rúnicos define a dificuldade para resistir",
+    "nome": "Queimar a Mente",
+    "descricao": "Esta runa atua como um parasita mental que incendeia a clareza do alvo. O alvo sente como se seus pensamentos estivessem sendo incinerados, tornando qualquer esforço de concentração, lógica ou resistência mental uma tarefa agoniante."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Saltrat"],
+    "efeito": "Dispara um projétil de chamas azuladas que ressoa no espírito e drena a vontade.",
+    "bonus": "1d8 de dano e aplica o status Desolado; Rolagem de Rúnicos define a dificuldade de Esquiva e Mentalidade",
+    "nome": "Fogo Espiritual",
+    "descricao": "O Arcanista molda uma esfera de chamas azuladas que flutua silenciosamente. Diferente do fogo comum, este projétil causa um impacto que deixa o alvo em um estado de profunda melancolia e desesperança, tornando-o apático e lento."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Pascalia"],
+    "efeito": "Projeta uma coluna de calor em altíssima velocidade que perfura defesas e incendeia o alvo.",
+    "bonus": "1d10 de Dano e 1 acúmulo de Queimadura (2 acúmulos em Crítico); Rolagem de Rúnicos define dificuldade de Esquiva/Defesa",
+    "nome": "Projeção Flamejante",
+    "descricao": "Esta runa atua como um acelerador linear para a Arcana ígnea. Através de Pascalia, o Arcanista cria um túnel de vácuo instantâneo. Pela força da compressão espacial, o fogo adere à vítima com facilidade, tornando as chamas difíceis de apagar."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Pascalia"],
+    "efeito": "Distorce a geometria ao redor das feridas para impedir a regeneração e manter a combustão constante.",
+    "bonus": "Impede que acúmulos de Queimadura diminuam; Rolagem de Rúnicos define dificuldade do Teste de Resistência do alvo",
+    "nome": "Condenado ao Fogo",
+    "descricao": "Uma runa de punição que selar o espaço imediato que envolve o calor sobre o corpo do alvo, impedindo que a temperatura baixe. Enquanto a matriz estiver ativa, as chamas rúnicas recusam-se a apagar, desafiando tratamentos naturais."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Pascalia"],
+    "efeito": "Manifesta projéteis de luz que ignoram matéria física e reagem apenas contra a essência do Vazio.",
+    "bonus": "2d8 de Dano (exclusivo contra demônios); Rolagem de Rúnicos define dificuldade de Esquiva/Defesa",
+    "nome": "Flechas de Luz",
+    "descricao": "Utilizando a luz pura de Genia e a trajetória retilínea de Pascalia, o Arcanista cria projéteis ofuscantes. Ao atravessarem um ser mundano, são inofensivos, mas ao tocarem a carne de um demônio, provocam uma reação de aniquilação mística."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Pascalia"],
+    "efeito": "Abre microfendas espaciais para verter essência ígnea em ângulos imprevisíveis sobre o campo.",
+    "bonus": "1d6 de Dano em 1d8 alvos aleatórios; Rolagem de Rúnicos define dificuldade de Esquiva/Defesa",
+    "nome": "Chuva de Fogos",
+    "descricao": "O Arcanista faz com que a essência de Genia caia do céu através da geometria de Pascalia. É uma técnica de supressão excelente, saturando a área enquanto o céu parece derreter sobre as cabeças dos inimigos."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Reetear"],
+    "efeito": "Converte calor em corrente elétrica de alta voltagem que ignora proteções físicas.",
+    "bonus": "1d6 de Dano (ignora Escudos e Armaduras não arcanas); Rolagem de Rúnicos com buff de +5 para dificuldade de Esquiva",
+    "nome": "Descarga Súbita",
+    "descricao": "Esta matriz funciona como um transformador arcano. Devido à sua natureza vibracional, a descarga atravessa metais e couros como se fossem ar, encontrando resistência apenas em barreiras de pura Arcana."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Reetear"],
+    "efeito": "Satura a atmosfera com estática para disparar múltiplos arcos voltaicos em alvos próximos.",
+    "bonus": "Atinge 1d8 inimigos; 1d4 de Dano (ignora armaduras); Rolagem de Rúnicos com buff de +5 para dificuldade de Esquiva",
+    "nome": "Tempestade",
+    "descricao": "O Arcanista cria um campo de estática que explode em fios de eletricidade. Estes buscam os condutores biológicos mais próximos, castigando vários inimigos simultaneamente e fritando seus sistemas nervosos."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Reetear"],
+    "efeito": "Libera um flash de intensidade solar via toque para sobrecarregar os sentidos do alvo.",
+    "bonus": "Inflige o status Cegueira; Rolagem de Rúnicos define a Dificuldade para o Teste de Resistência do alvo",
+    "nome": "Brilho Cegante",
+    "descricao": "Ao concentrar energia térmica e vibração luminosa na palma da mão, o Arcanista desfere um toque que queima temporariamente as retinas. É uma técnica de combate próximo para desarmar e neutralizar ameaças."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Genia", "Reetear"],
+    "efeito": "Lança uma esfera de plasma de trajetória sônica que condensa calor e pressão.",
+    "bonus": "Causa 1d8 de Dano; Rolagem de Rúnicos define dificuldade de Esquiva (em Críticos, ganha buff de +10)",
+    "nome": "Estrela Cadente",
+    "descricao": "O Arcanista molda uma esfera de plasma rodopiante que deixa um rastro de ozônio no ar. Em condições normais causa queimadura e choque, mas em sintonização perfeita, a precisão torna a evasão inútil."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Arunalt"],
+    "efeito": "Comanda videiras e raízes que brotam do solo para prender o alvo.",
+    "bonus": "Tenta infligir o status Imobilizado; Rolagem de Rúnicos define a Dificuldade para o Teste de Resistência Física",
+    "nome": "Surto de Primavera",
+    "descricao": "Esta runa atua como um catalisador metabólico que expandir a água dentro das células vegetais, forçando um crescimento acelerado. A vegetação é reforçada por uma estrutura gélida, tornando-se rígida como aço para impedir fugas."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Arunalt"],
+    "efeito": "Filtra o sangue e o espírito para expulsar patógenos e restaurar a mente.",
+    "bonus": "Cura qualquer Doença e o status Cansado; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Bálsamo do Rio",
+    "descricao": "Uma matriz de purificação profunda que evoca a pureza das nascentes de Khonum. Utiliza a vitalidade de Arunalt para expulsar patógenos e a clareza de Degila para restaurar a mente, sendo eficaz contra enfermidades naturais ou sobrenaturais."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Arunalt"],
+    "efeito": "Projeta uma aura que sela feridas e reconstrói massa muscular e fôlego.",
+    "bonus": "Alvo recupera HP igual ao resultado da Rolagem de Rúnicos",
+    "nome": "Essência Renovada",
+    "descricao": "Este padrão representa o ápice da cura intermediária. A pureza gélida de Degila impede inflamações enquanto a força natural de Arunalt reconstrói o vigor do aliado, devolvendo a capacidade de luta plena."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Arunalt"],
+    "efeito": "Manifesta uma corrente física translúcida de dureza excepcional para prender ou ancorar objetos.",
+    "bonus": "Duração de 1 dia; Resistência à destruição igual ao valor da Rolagem de Rúnicos inicial (golpe único)",
+    "nome": "Corrente Arcana",
+    "descricao": "O Arcanista condensa a umidade do ar e a fibra da natureza em um elo físico frio e resistente. A corrente permanece estável por um ciclo solar e exige um golpe que supere sua integridade mística para ser rompida."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Saltrat"],
+    "efeito": "Projeta uma barreira que impõe inércia mágica e desativa runas na área.",
+    "bonus": "Duração de 5 turnos; exige teste resistido contra a Rolagem de Rúnicos do conjurador para ativar/manter runas",
+    "nome": "Cúpula de Krystia",
+    "descricao": "Esta matriz exige a ancoragem de três ou mais runas para delimitar um espaço de jurisdição arcana absoluta. Ao ser ativada, ela impede que a energia flua para formar novos glifos, tornando runas ativas dormentes dentro do perímetro."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Saltrat"],
+    "efeito": "Estabiliza as flutuações da mente para forçar a honestidade absoluta.",
+    "bonus": "Obriga o alvo a falar a verdade; Teste de Mentalidade contra a Rolagem de Rúnicos para resistir",
+    "nome": "Juramento de Gelo",
+    "descricao": "Este glifo atua sobre o centro da vontade do alvo. Sob este efeito, o indivíduo sente uma dor aguda e um 'congelamento' das cordas vocais ao tentar proferir qualquer falsidade ou omissão deliberada, tornando a sinceridade uma necessidade fisiológica."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Saltrat"],
+    "efeito": "Isola a mente de influências externas, medos ou ataques mentais invasores.",
+    "bonus": "Substitui testes de Mentalidade do alvo pelo valor da Rolagem de Rúnicos (usa-se o maior valor)",
+    "nome": "Proteção Mental",
+    "descricao": "O Arcanista projeta uma barreira de estase psíquica que funciona como um isolante térmico para a alma. O alvo passa a ser sustentado pela mestria rúnica do conjurador, criando um baluarte de lógica contra manipulações ou debuffs psicológicos."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Saltrat"],
+    "efeito": "Extrai e armazena um fragmento de consciência com todos os detalhes sensoriais.",
+    "bonus": "Tempo armazenado em minutos igual à Rolagem de Rúnicos; requer gasto de Arcana para gravar/acessar",
+    "nome": "Memórias Cristalizadas",
+    "descricao": "Esta runa permite congelar um momento no tempo dentro de uma matriz estável. A memória mantém visão, som e sentimentos com perfeição cristalina, sendo usada para preservar depoimentos ou transmitir planos complexos sem risco de esquecimento."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Pascalia"],
+    "efeito": "Utiliza dobras espaciais para condensar umidade e materializar água pura de dimensões adjacentes.",
+    "bonus": "Volume equivalente a um barril de água potável; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Fonte Glacial",
+    "descricao": "Esta runa extrai umidade através do resfriamento de Degila e da manipulação de Pascalia. É uma ferramenta de sobrevivência vital em ambientes áridos, garantindo água livre de contaminantes para consumo ou uso alquímico."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Pascalia"],
+    "efeito": "Dispara um projétil de gelo de densidade extrema em trajetória retilínea perfeita.",
+    "bonus": "1d6 de Dano (Acertos Críticos causam 1 acúmulo de Sangramento); Rolagem de Rúnicos define dificuldade de Esquiva",
+    "nome": "Estilhaço Congelado",
+    "descricao": "O Arcanista condensa a umidade atmosférica em um ponto infinitesimal, moldando um projétil comparável ao diamante. A ponta é tão fina que rompe vasos sanguíneos profundos, deixando uma ferida que o frio impede de coagular."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Pascalia"],
+    "efeito": "Colapsa o espaço ao redor do alvo para forçar uma queda térmica catastrófica e estase física.",
+    "bonus": "Tenta aplicar o status Congelado; Rolagem de Rúnicos define a Dificuldade do teste de resistência do alvo",
+    "nome": "Congelamento",
+    "descricao": "Uma nevasca concentrada surge instantaneamente, envolvendo o inimigo em camadas de gelo rúnico. Se a vontade do alvo não for forte o suficiente, ele se torna uma estátua viva, presa em um momento de frio absoluto."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Pascalia"],
+    "efeito": "Cria uma película espacial reflexiva que pode devolver runas projetadas contra o conjurador.",
+    "bonus": "Duelo de Rúnicos contra o atacante: Vitória reflete a runa; Derrota causa recebimento total do efeito sem defesa",
+    "nome": "Espelho Arcano",
+    "descricao": "Uma das matrizes defensivas mais técnicas da arte rúnica. Atua como um prisma que dobra o espaço. Se a precisão geométrica do defensor for superior, a magia volta ao dono; caso contrário, o espelho se estilhaça contra o próprio conjurador."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Reetear"],
+    "efeito": "Projeta uma linha de frio absoluto que ignora densidade física e atinge o sistema nervoso.",
+    "bonus": "1d4 de Dano (ignora armaduras); Acertos Críticos aplicam status Congelado; Rolagem de Rúnicos define dificuldade de Esquiva",
+    "nome": "Raio Congelante",
+    "descricao": "O Arcanista condensa a umidade do ar e a projeta através do plano Etéreo. O raio atravessa placas de metal e escudos como se fossem fumaça, buscando a interrupção súbita do movimento através de um choque térmico subatômico."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Reetear"],
+    "efeito": "Anula a propagação de ondas sonoras em uma área delimitada, criando um vácuo acústico.",
+    "bonus": "Duração de 5 turnos; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Silêncio Absoluto",
+    "descricao": "Ao ancorar três ou mais runas, o Arcanista cria um campo onde o som deixa de existir. É ideal para infiltrações letais ou para impedir que inimigos utilizem magias que dependam de componentes verbais ou sonoros."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Reetear"],
+    "efeito": "Exala uma aura de névoa super-resfriada que distorce a luz e dificulta ataques próximos.",
+    "bonus": "+4 em Esquiva contra projéteis; -3 nos testes de dano de inimigos corpo a corpo; Rolagem de Rúnicos define dificuldade de Resistência",
+    "nome": "Manto da Névoa Criogênica",
+    "descricao": "Uma aura densa se agarra ao corpo do Arcanista, criando uma silhueta borrada que confunde a mira. Para quem se aproxima, o frio penetra nos músculos e juntas das armas, tornando os movimentos pesados e imprecisos."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Degila", "Reetear"],
+    "efeito": "Converte superfícies sólidas em condutores vibratórios para espionagem auditiva.",
+    "bonus": "Distância máxima em metros igual à Rolagem de Rúnicos",
+    "nome": "Ressonância de Cristal",
+    "descricao": "Ao tocar uma superfície, o Arcanista a 'congela' em um estado de recepção extrema. O material converte vibrações distantes em áudio cristalino, permitindo ouvir através de montanhas ou detectar batimentos cardíacos de inimigos escondidos."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Saltrat"],
+    "efeito": "Sobrepõe a vontade do conjurador à consciência de animais para torná-los extensões de seus membros.",
+    "bonus": "Alvo deve realizar teste de Carisma contra a Rolagem de Rúnicos do Arcanista",
+    "nome": "Laço de Caça",
+    "descricao": "Esta inscrição estabelece uma ponte entre a mente do Arcanista e o instinto animal. A essência de Arunalt garante que a criatura reconheça o conjurador como líder, permitindo que execute ordens complexas que desafiam o treinamento convencional."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Saltrat"],
+    "efeito": "Abre um canal de fluxo vital para transferir a própria vida do conjurador para um aliado.",
+    "bonus": "Transfere HP do Arcanista para o alvo (valor igual ao dobro do resultado da Rolagem de Rúnicos)",
+    "nome": "Doação de Essência",
+    "descricao": "Uma das matrizes mais nobres da arte rúnica. O espírito do Arcanista atua como doador, transmutando sua estabilidade física em cura pura. O aliado é salvo enquanto o Arcanista assume o peso do cansaço e da dor."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Saltrat"],
+    "efeito": "Atua como solvente para reverter a calcificação da carne em mineral.",
+    "bonus": "Cura o status Petrificado; Requer toque e gasto de 6 de Arcana (sem rolagem)",
+    "nome": "Cura Petrificado",
+    "descricao": "Utiliza a vitalidade pulsante de Arunalt para forçar as células a recuperarem a maleabilidade orgânica. Ao tocar a estátua, a Arcana infiltra-se pelos poros da pedra, revertendo o processo de dentro para fora em um fluxo de vida."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Saltrat"],
+    "efeito": "Invoca uma fumaça atraída por assinaturas energéticas corrompidas para localizar fontes de poder maligno.",
+    "bonus": "Detecta e aponta a direção da origem de uma maldição; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Rastrear Maldição",
+    "descricao": "O Arcanista invoca uma fumaça verde-esmeralda que ignora ventos mundanos e busca selos sombrios. Ao detectar o mal, ela condensa-se em uma seta luminosa que aponta para a fonte, seja um objeto, runa oculta ou conjurador."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Pascalia"],
+    "efeito": "Condensa matéria mineral instantaneamente para absorver o impacto de um ataque.",
+    "bonus": "Concede 1d10 de Armadura; Funciona apenas se a Rolagem de Rúnicos superar o ataque inimigo",
+    "nome": "Barreira de Pedra",
+    "descricao": "Esta inscrição atua como um reflexo defensivo que utiliza Pascalia para comprimir sedimentos e rochas em um escudo de densidade extraordinária. A eficácia depende da sincronia do Arcanista em calcular o vetor do ataque e manifestar a barreira no momento exato."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Pascalia"],
+    "efeito": "Altera a densidade e a superfície da matéria orgânica para mimetizar outra aparência física.",
+    "bonus": "Duração de 24 horas; Rolagem de Rúnicos define a dificuldade do teste de Arcanum para observadores",
+    "nome": "Casca da Forma",
+    "descricao": "Uma aplicação sofisticada de transmutação que altera o espaço ocupado pelo corpo e a casca externa. O Arcanista pode transformar um indivíduo em uma pessoa de outra aparência ou raça de forma tátil e profunda, mantendo a estrutura estável por um dia inteiro."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Pascalia"],
+    "efeito": "Dispara uma pedra pequena através de uma microfenda espacial com alta força cinética.",
+    "bonus": "Causa 1d6 de Dano; Acertos Críticos aplicam os status Derrubado e Atordoado",
+    "nome": "Lançamento de Pedra",
+    "descricao": "O Arcanista utiliza uma compressão súbita de Pascalia para acelerar o projétil. Apesar do tamanho reduzido da pedra, a velocidade conferida torna o impacto doloroso e preciso, sendo capaz de desequilibrar o inimigo pelo trauma físico."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Arunalt", "Pascalia"],
+    "efeito": "Reorganiza moléculas minerais para abrir passagens em superfícies sólidas sem causar desabamentos.",
+    "bonus": "Abre buraco de 2m x 2m x 2m; Tempo de conclusão de 1 hora; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Geomorfismo",
+    "descricao": "Uma ferramenta de engenharia rúnica que faz a parede 'fluir' para fora do espaço tridimensional original. É um processo silencioso de realocação molecular, ideal para infiltrações em fortalezas ou criação de passagens em minas."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Saltrat"],
+    "efeito": "Satura o ambiente com projeções caóticas que desestabilizam o equilíbrio psíquico de quem as toca.",
+    "bonus": "Teste de Mentalidade contra Rolagem de Rúnicos; Falha gera status por 1d4: 1 (Confusão), 2 (Aflição), 3 (Desolado) ou 4 (Alucinação)",
+    "nome": "Câmera da Loucura",
+    "descricao": "Esta inscrição satura o plano Etéreo com fragmentos mentais distorcidos. Uma névoa pálida preenche a área, mergulhando aliados e inimigos em um vórtice de instabilidade emocional e visões aterrorizantes do impossível."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Saltrat"],
+    "efeito": "Sintoniza a velocidade vibratória para permitir que o alvo sinta correntes do futuro imediato.",
+    "bonus": "Duração de 3 turnos; Alvo substitui testes de Destreza por Inteligência; Custo de 6 de Arcana (sem rolagem)",
+    "nome": "Visão do Vento",
+    "descricao": "Ao unir a vibração de Reetear à clareza de Saltrat, o tempo parece desacelerar. Cada movimento do oponente é anunciado por um 'eco' etéreo, permitindo desviar de golpes e tomar decisões com precisão premonitória."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Saltrat"],
+    "efeito": "Estabelece um túnel vibratório direto entre dois fluxos de consciência para troca de pensamentos e imagens.",
+    "bonus": "Comunicação por pensamento; Custo de 6 de Arcana por runa na ativação (sem rolagem)",
+    "nome": "Telepatia",
+    "descricao": "Esta matriz consiste em um par de runas gêmeas que rompem a barreira do silêncio. Indivíduos compartilham pensamentos e emoções instantaneamente, sendo a ferramenta definitiva para coordenação estratégica e espionagem silenciosa."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Saltrat"],
+    "efeito": "Reconfigura os centros de reconhecimento social para inverter a percepção de aliados e inimigos.",
+    "bonus": "Requer toque; Rolagem de Rúnicos define a dificuldade do teste de Mentalidade do alvo",
+    "nome": "Ilusão do Amigo",
+    "descricao": "Uma forma insidiosa de manipulação que altera a percepção de lealdade através de uma descarga etérea. Rostos aliados passam a carregar a aura de inimigos, enquanto adversários reais parecem envoltos em confiança e amizade profunda."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Pascalia"],
+    "efeito": "Cria uma zona de vácuo rúnico que fragmenta a estrutura de magias inimigas.",
+    "bonus": "Concede 1d10 de Armadura (apenas contra Dano Arcano); Funciona se a Rolagem de Rúnicos superar o ataque inimigo",
+    "nome": "Barreira de Vácuo",
+    "descricao": "Esta inscrição de defesa avançada utiliza Pascalia para comprimir o ar etéreo ao extremo. Quando um feitiço colide com a barreira, a vibração de Reetear fragmenta a magia hostil, dissipando sua energia antes que atinja o alvo."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Pascalia"],
+    "efeito": "Estabelece um canal de telecinese para mover objetos à distância como se fossem extensões das mãos.",
+    "bonus": "Movimentação de objetos de peso moderado; Distância máxima em metros igual à Rolagem de Rúnicos",
+    "nome": "Mão Invisível",
+    "descricao": "Utiliza um par de runas para criar um canal estável através de dobras espaciais. A vibração etérea permite que o conjurador sinta o peso e a textura do objeto, movendo-o com fluidez, desde que o Arcanista possua força física para erguê-lo."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Pascalia"],
+    "efeito": "Projeta uma onda de choque invisível que preenche o ambiente e ataca o equilíbrio do alvo.",
+    "bonus": "Causa 1d6 de Dano; Acertos Críticos aplicam status Atordoado; Alvo realiza teste de Resistência contra Rolagem de Rúnicos (Esquiva impossível)",
+    "nome": "Ondas Sonoras",
+    "descricao": "Ao colapsar o espaço e vibrar o éter em frequências agudas, o Arcanista gera uma onda que envolve o corpo do alvo. A frequência pode desestabilizar os canais auditivos e o labirinto, causando dor profunda e desorientação."
+  },
+  {
+    "tier": "Intermediário",
+    "elementos": ["Reetear", "Pascalia"],
+    "efeito": "Cria um vórtice de pressão espacial com ventos erráticos para controle de área.",
+    "bonus": "Área de 3m; Duração de 5 turnos; Teste de resistência contra Rolagem de Rúnicos a cada turno para não ser Derrubado",
+    "nome": "Tornado",
+    "descricao": "O Arcanista gera um vórtice de pressão constante onde o ar é chicoteado em alta velocidade. Correntes invisíveis puxam e empurram qualquer um que tente atravessar o perímetro, sendo ideal para manter inimigos à distância."
+  }
+]

@@ -1,9 +1,9 @@
 """
-Busca uma receita de alquimia pelo efeito no banco de dados MongoDB.
+"""Busca uma receita de alquimia pelo nome no banco de dados MongoDB.
 
 Uso:
     python buscar_alquimia.py
-    (o nome do efeito será solicitado interativamente)
+    (o nome da receita será solicitado interativamente)
     Digite 'listar' para ver todas as receitas cadastradas.
 """
 
@@ -28,26 +28,26 @@ def remover_acentos(texto):
     return ''.join(c for c in nfkd if not unicodedata.combining(c))
 
 
-def buscar_alquimia(efeito):
+def buscar_alquimia(nome):
     db = conectar()
     colecao = db[COLLECTION]
 
-    efeito_normalizado = remover_acentos(efeito).lower()
+    nome_normalizado = remover_acentos(nome).lower()
 
     for receita in colecao.find():
-        valor = remover_acentos(receita.get("efeito", "")).lower()
-        if efeito_normalizado == valor:
+        valor = remover_acentos(receita.get("nome", "")).lower()
+        if nome_normalizado == valor:
             receita.pop("_id", None)
             print(json.dumps(receita, indent=2, ensure_ascii=False))
             return
 
-    print(f"Nenhuma receita encontrada com o efeito '{efeito}'.")
+    print(f"Nenhuma receita encontrada com o nome '{nome}'.")
 
 
 def listar_alquimia():
     db = conectar()
     colecao = db[COLLECTION]
-    itens = list(colecao.find({}, {"efeito": 1}).sort("efeito", 1))
+    itens = list(colecao.find({}, {"nome": 1}).sort("nome", 1))
 
     if not itens:
         print("Nenhuma receita de alquimia cadastrada.")
@@ -55,7 +55,7 @@ def listar_alquimia():
 
     print("\nReceitas de alquimia cadastradas:\n")
     for i, item in enumerate(itens, start=1):
-        print(f"  [{i}] {item['efeito']}")
+        print(f"  [{i}] {item['nome']}")
 
     print()
     escolha = input("Digite o número do item para ver detalhes (ou Enter para sair): ").strip()
@@ -77,10 +77,10 @@ def listar_alquimia():
 
 
 if __name__ == "__main__":
-    entrada = input("Digite o efeito da receita (ou 'listar'): ").strip()
+    entrada = input("Digite o nome da receita (ou 'listar'): ").strip()
 
     if not entrada:
-        print("Nenhum efeito informado.")
+        print("Nenhum nome informado.")
         sys.exit(1)
 
     if entrada.lower() == "listar":
