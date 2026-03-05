@@ -17,6 +17,14 @@ MONGO_URI = "mongodb://localhost:27017"
 DATABASE = "rpg"
 COLLECTION = "armas"
 
+DIFICULDADE_CONSTRUCAO = {
+    "Comum": 10,
+    "Incomum": 12,
+    "Raro": 15,
+    "Épico": 17,
+    "Lendário": 20,
+}
+
 
 def conectar():
     client = MongoClient(MONGO_URI)
@@ -26,6 +34,14 @@ def conectar():
 def remover_acentos(texto):
     nfkd = unicodedata.normalize('NFKD', texto)
     return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
+
+def _exibir_dificuldade():
+    """Exibe a tabela de dificuldade de construção por raridade do material."""
+    print("\n  Dificuldade de Construção (por raridade do material):")
+    for rar, dif in DIFICULDADE_CONSTRUCAO.items():
+        print(f"    {rar:<12} Dificuldade: {dif}")
+    print()
 
 
 def buscar_arma(nome):
@@ -39,6 +55,7 @@ def buscar_arma(nome):
         if nome_normalizado == valor:
             arma.pop("_id", None)
             print(json.dumps(arma, indent=2, ensure_ascii=False))
+            _exibir_dificuldade()
             return
 
     print(f"Nenhuma arma encontrada com o nome '{nome}'.")
@@ -74,6 +91,7 @@ def listar_armas():
     resultado = colecao.find_one({"_id": itens[indice]["_id"]})
     resultado.pop("_id", None)
     print(json.dumps(resultado, indent=2, ensure_ascii=False))
+    _exibir_dificuldade()
 
 
 if __name__ == "__main__":

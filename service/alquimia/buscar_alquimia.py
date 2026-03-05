@@ -17,6 +17,14 @@ MONGO_URI = "mongodb://localhost:27017"
 DATABASE = "rpg"
 COLLECTION = "alquimia"
 
+DIFICULDADE_CONSTRUCAO = {
+    "Comum": 10,
+    "Incomum": 12,
+    "Raro": 15,
+    "Épico": 17,
+    "Lendário": 20,
+}
+
 
 def conectar():
     client = MongoClient(MONGO_URI)
@@ -26,6 +34,25 @@ def conectar():
 def remover_acentos(texto):
     nfkd = unicodedata.normalize('NFKD', texto)
     return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
+
+def _exibir_dificuldade(receita):
+    """Exibe a dificuldade de construção por tipo de ingrediente."""
+    tipos = [
+        ("vegetal", "Vegetal"),
+        ("animal", "Animal"),
+        ("mineral", "Mineral"),
+        ("demoníaco", "Demoníaco"),
+    ]
+    print("\n  Dificuldade de Construção:")
+    for chave, label in tipos:
+        rar = receita.get(f"{chave}_rar", "-")
+        if rar != "-":
+            dif = DIFICULDADE_CONSTRUCAO.get(rar, "?")
+            print(f"    {label:<12} {rar} — Dificuldade: {dif}")
+        else:
+            print(f"    {label:<12} Não disponível")
+    print()
 
 
 def buscar_alquimia(nome):
@@ -39,6 +66,7 @@ def buscar_alquimia(nome):
         if nome_normalizado == valor:
             receita.pop("_id", None)
             print(json.dumps(receita, indent=2, ensure_ascii=False))
+            _exibir_dificuldade(receita)
             return
 
     print(f"Nenhuma receita encontrada com o nome '{nome}'.")
@@ -74,6 +102,7 @@ def listar_alquimia():
     resultado = colecao.find_one({"_id": itens[indice]["_id"]})
     resultado.pop("_id", None)
     print(json.dumps(resultado, indent=2, ensure_ascii=False))
+    _exibir_dificuldade(resultado)
 
 
 if __name__ == "__main__":

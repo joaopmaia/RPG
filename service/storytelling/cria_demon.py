@@ -70,12 +70,22 @@ TABELA_LOOT = {
     5: "Carapaça",
     6: "Dente",
     7: "Coração",
-    8: "Chifres",
+    8: "Chifre",
     9: "Composto Alquímico",
     10: "Todos",
 }
 
-MATERIAIS_FISICOS = ["Garra", "Dente", "Couro", "Osso", "Carapaça", "Coração", "Chifres"]
+MATERIAIS_FISICOS = ["Garra", "Dente", "Couro", "Osso", "Carapaça", "Coração", "Chifre"]
+
+DIFICULDADE_EXTRACAO = {
+    "Comum": 10,
+    "Incomum": 12,
+    "Raro": 15,
+    "Épico": 17,
+    "Lendário": 20,
+}
+
+DIFICULDADE_CONSTRUCAO = DIFICULDADE_EXTRACAO  # mesma tabela
 
 # ═══════════════════════════════════════════════════
 #  Ataques por Elemento e Tier
@@ -246,6 +256,55 @@ def calcular_hp(tier, atributos):
 #  Geração de Loot
 # ═══════════════════════════════════════════════════
 
+def _escolher_elixir_demon(db):
+    """Escolhe um elixir aleatório que exista para demônios (demoníaco_rar != '-')."""
+    candidatos = [e for e in db["alquimia"].find() if e.get("demoníaco_rar", "-") != "-"]
+    if not candidatos:
+        return None
+    return random.choice(candidatos)
+
+
+SUFIXO_TIER = {
+    "inferior": "Inferior",
+    "normal": "",
+    "superior": "Superior",
+}
+
+
+def _buscar_material_demon(db, nome_parte, tier):
+    """Busca um material demoníaco no banco filtrando pela parte e pelo tier."""
+    sufixo = SUFIXO_TIER[tier]
+    if sufixo:
+        # Ex: "Garra de Demônio Inferior"
+        nome_esperado = f"{nome_parte} de Demônio {sufixo}".lower()
+    else:
+        # Ex: "Garra de Demônio" (sem sufixo, mas não deve conter Inferior/Superior)
+        nome_esperado = f"{nome_parte} de Demônio".lower()
+
+    for m in db["materiais"].find({"tipo": "demon"}):
+        mat_nome = m.get("material", "").lower()
+        if mat_nome == nome_esperado:
+            raridade = m.get("raridade", "Comum")
+            return {
+                "nome": m.get("material", nome_parte),
+                "dificuldade": DIFICULDADE_EXTRACAO.get(raridade, 10),
+                "raridade": raridade,
+            }
+
+    # Fallback: busca parcial pelo nome da parte
+    nome_lower = nome_parte.lower()
+    candidatos = [m for m in db["materiais"].find({"tipo": "demon"}) if nome_lower in m.get("material", "").lower()]
+    if candidatos:
+        mat = random.choice(candidatos)
+        raridade = mat.get("raridade", "Comum")
+        return {
+            "nome": mat.get("material", nome_parte),
+            "dificuldade": DIFICULDADE_EXTRACAO.get(raridade, 10),
+            "raridade": raridade,
+        }
+    return {"nome": nome_parte, "dificuldade": None}
+
+
 def gerar_loot(tier, db):
     """Gera loot (restos demoníacos) com base no tier, sem repetições."""
     cat = CATEGORIAS[tier]
@@ -263,30 +322,40 @@ def gerar_loot(tier, db):
         if item == "Todos":
             for mat in MATERIAIS_FISICOS:
                 if mat not in obtidos:
-                    loot.append(mat)
+                    loot.append(_buscar_material_demon(db, mat, tier))
                     obtidos.add(mat)
             if "Composto Alquímico" not in obtidos:
-                elixires = list(db["alquimia"].find())
-                if elixires:
-                    elixir = random.choice(elixires)
-                    loot.append(f"Composto Alquímico — {elixir.get('nome', '?')}: {elixir.get('efeito', '?')}")
+                elixir = _escolher_elixir_demon(db)
+                if elixir:
+                    raridade = elixir.get("demoníaco_rar", "Comum")
+                    dif = DIFICULDADE_EXTRACAO.get(raridade, 10)
+                    loot.append({
+                        "nome": f"Composto Alquímico — {elixir.get('nome', '?')}: {elixir.get('efeito', '?')}",
+                        "dificuldade": dif,
+                        "raridade": raridade,
+                    })
                     obtidos.add("Composto Alquímico")
             break
 
         if item == "Composto Alquímico":
             if item in obtidos:
                 continue
-            elixires = list(db["alquimia"].find())
-            if elixires:
-                elixir = random.choice(elixires)
-                loot.append(f"Composto Alquímico — {elixir.get('nome', '?')}: {elixir.get('efeito', '?')}")
+            elixir = _escolher_elixir_demon(db)
+            if elixir:
+                raridade = elixir.get("demoníaco_rar", "Comum")
+                dif = DIFICULDADE_EXTRACAO.get(raridade, 10)
+                loot.append({
+                    "nome": f"Composto Alquímico — {elixir.get('nome', '?')}: {elixir.get('efeito', '?')}",
+                    "dificuldade": dif,
+                    "raridade": raridade,
+                })
             else:
-                loot.append("Composto Alquímico (nenhum elixir cadastrado)")
+                loot.append({"nome": "Composto Alquímico (nenhum elixir disponível)", "dificuldade": None})
             obtidos.add(item)
         else:
             if item in obtidos:
                 continue
-            loot.append(item)
+            loot.append(_buscar_material_demon(db, item, tier))
             obtidos.add(item)
 
     return loot
@@ -369,7 +438,17 @@ def exibir_demon(demon):
     print("──────────────────────────────────────────────────────")
     print(f"  LOOT — Restos Demoníacos ({cat['loot_rolls']} rolagens):")
     for i, item in enumerate(demon["loot"], 1):
-        print(f"    {i}. {item}")
+        dif_ext = item.get("dificuldade")
+        raridade = item.get("raridade", "")
+        dif_con = DIFICULDADE_CONSTRUCAO.get(raridade) if raridade else None
+        if dif_ext is not None:
+            linha = f"    {i}. {item['nome']} ({raridade})"
+            linha += f" — Extração: {dif_ext}"
+            if dif_con is not None:
+                linha += f" | Construção: {dif_con}"
+            print(linha)
+        else:
+            print(f"    {i}. {item['nome']}")
 
     print()
     print("══════════════════════════════════════════════════════")

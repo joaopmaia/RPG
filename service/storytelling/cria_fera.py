@@ -58,6 +58,16 @@ CATEGORIAS = {
 
 LIMITE_ATRIBUTO = 8
 
+DIFICULDADE_EXTRACAO = {
+    "Comum": 10,
+    "Incomum": 12,
+    "Raro": 15,
+    "Épico": 17,
+    "Lendário": 20,
+}
+
+DIFICULDADE_CONSTRUCAO = DIFICULDADE_EXTRACAO  # mesma tabela
+
 # ═══════════════════════════════════════════════════
 #  Efeitos de Ataque (1d4)
 # ═══════════════════════════════════════════════════
@@ -255,13 +265,15 @@ def gerar_loot(tier, db):
                 if nome in obtidos:
                     continue
                 obtidos.add(nome)
+                raridade = mat.get("raridade", "Comum")
                 loot.append({
                     "tipo": "Material",
                     "nome": nome,
                     "rank": mat.get("rank", "?"),
-                    "raridade": mat.get("raridade", "?"),
+                    "raridade": raridade,
                     "efeito": mat.get("efeito", ""),
                     "origem": mat.get("tipo", "?"),
+                    "dificuldade": DIFICULDADE_EXTRACAO.get(raridade, 10),
                 })
         else:
             rank_para_raridade = {
@@ -272,22 +284,24 @@ def gerar_loot(tier, db):
 
             candidatos = []
             for elixir in db["alquimia"].find():
-                if elixir.get("animal_rar") == raridade:
+                if elixir.get("animal_rar", "-") != "-" and elixir.get("animal_rar") == raridade:
                     candidatos.append(elixir)
 
             if not candidatos:
-                candidatos = list(db["alquimia"].find())
+                candidatos = [e for e in db["alquimia"].find() if e.get("animal_rar", "-") != "-"]
             if candidatos:
                 elixir = random.choice(candidatos)
                 nome = elixir.get("nome", "?")
                 if nome in obtidos:
                     continue
                 obtidos.add(nome)
+                rar_elixir = elixir.get("animal_rar", "Comum")
                 loot.append({
                     "tipo": "Elixir",
                     "nome": nome,
-                    "raridade": raridade,
+                    "raridade": rar_elixir,
                     "efeito": elixir.get("efeito", "?"),
+                    "dificuldade": DIFICULDADE_EXTRACAO.get(rar_elixir, 10),
                 })
 
     return loot
@@ -345,12 +359,17 @@ def exibir_fera(fera):
     if not fera["loot"]:
         print("    Nenhum material encontrado.")
     for i, item in enumerate(fera["loot"], 1):
+        dif_ext = item.get("dificuldade", "?")
+        raridade = item.get("raridade", "")
+        dif_con = DIFICULDADE_CONSTRUCAO.get(raridade, "?")
         if item["tipo"] == "Material":
-            print(f"    {i}. [{item['rank']}] {item['nome']} ({item['origem']}, {item['raridade']})")
+            print(f"    {i}. [{item['rank']}] {item['nome']} ({item['origem']}, {raridade})")
+            print(f"       Extração: {dif_ext} | Construção: {dif_con}")
             if item.get("efeito"):
                 print(f"       Efeito: {item['efeito']}")
         else:
-            print(f"    {i}. [Elixir] {item['nome']} ({item['raridade']})")
+            print(f"    {i}. [Elixir] {item['nome']} ({raridade})")
+            print(f"       Extração: {dif_ext} | Construção: {dif_con}")
             print(f"       Efeito: {item['efeito']}")
 
     print()
