@@ -200,12 +200,12 @@ def gerar_atributos(nivel, tipo_npc, raca):
 
 def calcular_hp(nivel, atributos):
     """HP = (Nível x Força x 5) + (Nível x Vitalidade x 10).
-    Para Nível 1, usa apenas a soma dos bônus."""
+    Para Nível 1: 10 + 1d10 + Força + Vitalidade."""
     forca = atributos.get("Força", 1)
     vitalidade = atributos.get("Vitalidade", 1)
 
     if nivel == 1:
-        return forca + vitalidade
+        return 10 + rolar(10) + forca + vitalidade
 
     return (nivel * forca * 5) + (nivel * vitalidade * 10)
 
@@ -326,8 +326,6 @@ def gerar_elixires(db, nivel):
         campo_rar = f"{tipo_mat}_rar"
 
         candidatos = [e for e in elixires_db if e.get(campo_rar) == raridade]
-        if not candidatos:
-            candidatos = [e for e in elixires_db if e.get(campo_rar, "-") != "-"]
         if not candidatos:
             continue
 
