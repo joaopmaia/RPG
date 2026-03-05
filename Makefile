@@ -1,4 +1,4 @@
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa converter-planilha calcula-preco cria-estabelecimento cria-npc
+.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc
 
 VENV = .venv
 PYTHON = $(VENV)/bin/python3
@@ -98,6 +98,9 @@ salvar-runa: ## Salva runas a partir dos JSONs em resources/runas/
 
 buscar-runa: ## Busca runas por tier e elemento (interativo)
 	$(PYTHON) service/runas/buscar_runa.py
+
+busca-elemento: ## Busca runas por combinação de elementos (1 a 3)
+	$(PYTHON) service/runas/busca_elemento.py
 
 converter-planilha: ## Converte uma planilha xlsx de docs/ em JSONs em resources/
 	$(PYTHON) service/utils/planilha_para_json.py
