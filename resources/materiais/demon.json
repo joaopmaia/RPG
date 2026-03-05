@@ -208,35 +208,5 @@
     "durabilidade": "50",
     "efeito": "Causa todos os status (Crítico)",
     "tipo": "demon"
-  },
-  {
-    "rank": null,
-    "material": null,
-    "bonus": null,
-    "peso": null,
-    "raridade": null,
-    "durabilidade": null,
-    "efeito": null,
-    "tipo": "demon"
-  },
-  {
-    "rank": null,
-    "material": null,
-    "bonus": null,
-    "peso": null,
-    "raridade": null,
-    "durabilidade": null,
-    "efeito": null,
-    "tipo": "demon"
-  },
-  {
-    "rank": null,
-    "material": null,
-    "bonus": null,
-    "peso": null,
-    "raridade": null,
-    "durabilidade": null,
-    "efeito": null,
-    "tipo": "demon"
   }
 ]
