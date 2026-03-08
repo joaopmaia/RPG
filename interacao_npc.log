@@ -1,0 +1,166 @@
+NPC Legolas recebeu dano: 3
+NPC Legolas rolou esquiva: 8
+Descrição adicionada ao NPC Thargrim: É dono de taverna 
+NPC Thargrim recebeu dano: 20
+Descrição adicionada ao NPC Krok: MAtou o rei
+NPC Krok recebeu dano: 55
+NPC Krok rolou esquiva: 21
+NPC Krok rolou prontidão: 24
+NPC Krok rolou esquiva: 25
+NPC Krok rolou esquiva: 36
+NPC Krok rolou esquiva: 25
+NPC Krok rolou esquiva: 20
+NPC Krok rolou esquiva: 23
+NPC Krok rolou esquiva: 20
+NPC Krok rolou esquiva: 25
+NPC Krok rolou esquiva: 10
+NPC Krok rolou esquiva: 21
+NPC Krok rolou esquiva: 22
+NPC Krok rolou esquiva: 21
+NPC Krok aparou dano: 23
+Descrição adicionada ao NPC Krok: qualquer coisa 
+NPC Haldor recebeu dano: 55
+NPC Haldor recebeu dano: 10
+NPC Haldor rolou esquiva: 11
+Observação adicionada ao NPC Haldor: Lutador
+Observação adicionada ao NPC Haldor: Matou um soldado
+NPC Thargrim rolou esquiva: 15
+NPC Thargrim rolou prontidão: 2
+NPC Thargrim rolou prontidão: 12
+NPC Thargrim rolou prontidão: 15
+NPC Thargrim rolou prontidão: 13
+NPC Thargrim rolou prontidão: 6
+NPC Thargrim rolou prontidão: -1
+NPC Thargrim rolou prontidão: 8
+NPC Thargrim rolou esquiva: 11
+NPC Thargrim rolou esquiva: 8
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Thargrim atacou: 0
+NPC Krok atacou: 0
+NPC Haldor atacou: 0
+NPC Haldor atacou: 0
+NPC Haldor atacou: 9
+NPC Haldor atacou: {'total': 10}
+NPC Haldor atacou: {'total': 25}
+NPC Haldor atacou: {'total': 12}
+NPC Haldor atacou: {'total': 15}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 0}
+NPC Haldor atacou: {'total': 17}
+NPC Haldor atacou: {'total': 14, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 12, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 10, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 9, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 12, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 11, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 9, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 12, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 12, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 12, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 8, 'arma': 'Mosquete'}
+NPC Haldor atacou: {'total': 14, 'arma': 'Mosquete'}
+NPC Ivorwen atacou: {'total': 23, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 24, 'arma': 'Machado'}
+Observação adicionada ao NPC Ivorwen: Morto de fome
+NPC Ivorwen recebeu dano: 55
+NPC Ivorwen rolou esquiva: 22
+NPC Ivorwen rolou prontidão: 22
+NPC Ivorwen usou arcana: 15
+NPC Ivorwen defendeu dano: 20
+NPC Ivorwen defendeu dano: 55
+NPC Haldor defendeu dano: 10
+NPC Ivorwen defendeu dano: 10
+NPC Ivorwen defendeu dano: 40
+NPC Ivorwen defendeu dano: 55
+NPC Ivorwen defendeu dano: 100
+NPC Ivorwen defendeu dano: 30
+NPC Ivorwen defendeu dano: 50
+NPC Ivorwen defendeu dano: 40
+NPC Ivorwen aparou dano: 10
+NPC Ivorwen aparou dano: 10
+NPC Ivorwen aparou dano: 200
+NPC Ivorwen aparou dano: 10
+NPC Ivorwen recuperou HP: 20
+NPC Ivorwen recuperou HP: 40
+NPC Ivorwen recuperou HP: 40
+NPC Ivorwen recuperou HP: 100
+NPC Ivorwen atacou: {'total': 22, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 21, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 20, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 18, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 21, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 23, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 24, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 22, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 22, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 23, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 19, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 25, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 20, 'arma': 'Machado'}
+NPC Ivorwen rolou: {'total': 24, 'atributo': 'Inteligência'}
+NPC Ivorwen rolou esquiva: 24
+NPC Ivorwen rolou esquiva: 17
+NPC Ivorwen rolou prontidão: 23
+NPC Ivorwen rolou prontidão: 22
+NPC Ivorwen atacou: {'total': 19, 'arma': 'Machado'}
+NPC Ivorwen atacou: {'total': 21, 'arma': 'Machado'}
+NPC Ivorwen rolou: {'total': 26, 'atributo': 'Inteligência'}
+NPC Ivorwen rolou: {'total': 18, 'atributo': 'Vitalidade'}
+NPC Ivorwen recuperou arcana: 20
+NPC Ivorwen recebeu dano: 30
+NPC Ivorwen usou arcana: 10
+NPC Ivorwen usou arcana
+NPC Ivorwen usou arcana
+NPC Haldor recebeu dano: 10
+NPC Haldor recebeu dano: 3
+NPC Thargrim recebeu dano: 90
+NPC Krok recebeu dano: 550
+NPC Ivorwen recebeu dano: 500
+NPC Zrumm rolou esquiva: 17
+NPC Zrumm rolou prontidão: 16
+NPC Zrumm rolou esquiva: 11
+NPC Zrumm atacou: {'total': 17, 'arma': 'Machado de Batalha'}
+NPC Zrumm usou arcana
+NPC Kruk recebeu dano: 10
+NPC Kruk defendeu dano: 45
+NPC Kruk defendeu dano: 10
+NPC Kruk defendeu dano: 45
+NPC Kruk defendeu dano: 40
+NPC Kruk defendeu dano: 5
+NPC Kruk recebeu dano: 20
+NPC Kruk recebeu dano: 20
+NPC Kruk recebeu dano: 50
+NPC Kruk recebeu dano: 30
+NPC Kruk recebeu dano: 50
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 10
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 30
+NPC Zug recebeu dano: 30
+NPC Zug defendeu dano: 30
+NPC Zug defendeu dano: 300
+NPC Zug aparou dano: 10
+NPC Zug aparou dano: 30
+NPC Zug aparou dano: 20
+NPC Zug aparou dano: 30
+NPC Zug aparou dano: 100
+NPC Zug aparou dano: 30
+NPC Zug recuperou HP: 50
+NPC Zug recuperou HP: 50
+NPC Zug defendeu dano: 9
+NPC Zug recebeu dano: 20
+NPC Zug recebeu dano: 60

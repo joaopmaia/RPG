@@ -251,16 +251,30 @@ def gerar_equipamentos(db, nivel):
         # Respeitar limites
         if cat == "armadura" and qtd_armaduras >= 1:
             continue
-        if cat == "escudo" and qtd_escudos >= 2:
+        if cat == "escudo" and qtd_escudos >= 1:
             continue
-        if cat == "arma" and qtd_armas >= 3:
+        if cat == "arma" and qtd_armas >= 2:
             continue
 
         material = random.choice(materiais)
         mat_bonus = parse_numero(material.get("bonus"))
         mat_durabilidade = parse_numero(material.get("durabilidade"))
 
+        peso = ""
+
+        if material.get("peso") == "Pesado":
+            peso_item = item.get("peso", "0")
+            if peso_item.lower() == "muito leve":
+                peso = "Leve"
+            elif peso_item.lower() == "leve":
+                peso = "Médio"
+            elif peso_item.lower() == "médio":
+                peso = "Pesado"
+            else: peso = "Muito Pesado, não carregável"
+        else: peso = item.get("peso", "?")
+
         durabilidade = float(item.get("durabilidade", 0)) + mat_durabilidade
+        preco = calcular_preco_equipamento(item, material)
 
         entrada = {
             "nome": item.get("nome", "?"),
@@ -268,10 +282,12 @@ def gerar_equipamentos(db, nivel):
             "material": material.get("material", "?"),
             "tipo_material": material.get("tipo", "?"),
             "raridade": raridade,
-            "peso": item.get("peso", "?"),
+            "peso": peso,
             "peso_material": material.get("peso", "?"),
             "durabilidade": durabilidade,
             "efeito_material": material.get("efeito", ""),
+            "preco": preco,
+            "rank": material.get("rank", ""),
         }
 
         # Dano ou Defesa
@@ -338,6 +354,7 @@ def gerar_elixires(db, nivel):
             "material": tipo_mat,
             "raridade": elixir.get(campo_rar, "?"),
             "potencia": elixir.get(campo_pot, "?"),
+            "descricao": elixir.get("descrição", ""),
         })
 
     return elixires
@@ -389,6 +406,24 @@ def gerar_tesouro(nivel):
     """Gera ouro: (1d10 x 10) x Nível."""
     return rolar(10) * 10 * nivel
 
+MULTIPLICADOR_MATERIAL = {
+    "Comum": 1,
+    "Incomum": 5,
+    "Raro": 15,
+    "Épico": 50,
+    "Lendário": 100,
+}
+
+def calcular_preco_equipamento(item, material):
+    """Calcula preço: preco_base * mult_material"""
+    preco_base = float(item.get("preco", 0))
+
+    raridade = material.get("raridade", "Comum")
+    mult_material = MULTIPLICADOR_MATERIAL.get(raridade, 1)
+
+    preco_final = preco_base  * mult_material 
+    return round(preco_final, 2)
+
 
 # ═══════════════════════════════════════════════════
 #  Exibição do NPC
@@ -417,26 +452,7 @@ def exibir_npc(npc):
         racial = " (+1 racial)" if BONUS_RACIAL.get(npc['raca']) == attr else ""
         print(f"    {attr:<14} {valor}{marca}{racial}")
 
-    # Equipamentos
-    print("──────────────────────────────────────────────────────")
-    print(f"  EQUIPAMENTOS ({len(npc['equipamentos'])}):")
-    if not npc['equipamentos']:
-        print("    Nenhum")
-    for i, eq in enumerate(npc['equipamentos'], 1):
-        print(f"\n    {i}. {eq['nome']} ({eq['tipo']})")
-        if eq.get("dano"):
-            print(f"       Dano:     {eq['dano']}")
-        if eq.get("defesa") is not None:
-            defesa = eq['defesa']
-            if isinstance(defesa, float):
-                print(f"       Defesa:   {defesa:.1f}")
-            else:
-                print(f"       Defesa:   {defesa}")
-        print(f"       Material: {eq['material']} ({eq['tipo_material']}) | {eq['raridade']}")
-        if eq.get('efeito_material'):
-            print(f"       Efeito:   {eq['efeito_material']}")
-        print(f"       Peso:     {eq['peso']} (material: {eq.get('peso_material', '?')})")
-        print(f"       Durabil.: {eq['durabilidade']:.0f}")
+    exibir_equipamentos(npc)
 
     # Elixires
     print("──────────────────────────────────────────────────────")
@@ -464,7 +480,29 @@ def exibir_npc(npc):
     print()
     print("══════════════════════════════════════════════════════")
 
-
+def exibir_equipamentos(npc):
+    # Equipamentos
+    print("──────────────────────────────────────────────────────")
+    print(f"  EQUIPAMENTOS ({len(npc['equipamentos'])}):")
+    if not npc['equipamentos']:
+        print("    Nenhum")
+    for i, eq in enumerate(npc['equipamentos'], 1):
+        print(f"\n    {i}. {eq['nome']} ({eq['tipo']})")
+        if eq.get("dano"):
+            print(f"       Dano:     {eq['dano']}")
+        if eq.get("defesa") is not None:
+            defesa = eq['defesa']
+            if isinstance(defesa, float):
+                print(f"       Defesa:   {defesa:.1f}")
+            else:
+                print(f"       Defesa:   {defesa}")
+        print(f"       Material: {eq['material']} ({eq['tipo_material']}) | {eq['raridade']}")
+        if eq.get('efeito_material'):
+            print(f"       Efeito:   {eq['efeito_material']}")
+        print(f"       Peso:     {eq['peso']} (material: {eq.get('peso_material', '?')})")
+        print(f"       Durabil.: {eq['durabilidade']:.0f}")
+        print(f"       Preço:    {eq['preco']} moedas ({formatar_moedas(eq['preco'])})")
+        print(f"       Rank:     {eq.get('rank', '?')}")
 # ═══════════════════════════════════════════════════
 #  Execução principal
 # ═══════════════════════════════════════════════════
@@ -535,6 +573,26 @@ def main():
 
     exibir_npc(npc)
 
+    # Chama pergunta_natureza e armazena resposta
+    from service.storytelling.utils.cria_npc_utils import pergunta_natureza, criar_registros_npc
+    natureza = pergunta_natureza()
+
+    # Cria registros nas tabelas
+    criar_registros_npc(
+        db,
+        nome,
+        atributos,
+        raca,
+        tipo,
+        nivel,
+        hp,
+        pericia,
+        equipamentos,
+        elixires,
+        runa,
+        tesouro,
+        natureza
+    )
 
 if __name__ == "__main__":
     main()

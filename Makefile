@@ -1,5 +1,43 @@
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera
+# ──────────────────────────────────────────────
+# Busca Elixires NPC
+# ──────────────────────────────────────────────
+busca-elixires-npc:
+	$(PYTHON) service/storytelling/busca_elixires_npc.py
 
+# ──────────────────────────────────────────────
+# Busca All Elixires
+# ──────────────────────────────────────────────
+busca-all-elixires:
+	$(PYTHON) service/storytelling/busca_all_elixires.py
+# ──────────────────────────────────────────────
+# Busca All Equips
+# ──────────────────────────────────────────────
+busca-all-equips:
+	$(PYTHON) service/storytelling/busca_all_equips.py
+# ──────────────────────────────────────────────
+# Busca NPC Full
+# ──────────────────────────────────────────────
+busca-npc-full:
+	$(PYTHON) service/storytelling/busca_npc_full.py
+.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc
+# ──────────────────────────────────────────────
+# Interagindo com NPC
+# ──────────────────────────────────────────────
+
+interagindo-com-npc:
+	$(PYTHON) service/storytelling/interagindo_com_npc.py
+# ──────────────────────────────────────────────
+# Busca NPC
+# ──────────────────────────────────────────────
+
+busca-npc:
+	$(PYTHON) service/storytelling/busca_npc.py
+
+# ──────────────────────────────────────────────
+# Busca Equipamento NPC
+# ──────────────────────────────────────────────
+busca-equipamento-npc:
+	$(PYTHON) service/storytelling/busca_equipamento_npc.py
 VENV = .venv
 PYTHON = $(VENV)/bin/python3
 
