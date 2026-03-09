@@ -544,12 +544,13 @@ def converter_para_npc_banco(fera):
         "pericia": cat["pericia"],
         "armadura": cat["armadura_natural"],
         "runas": lista_runas, 
-        "observacoes": [f"Tier: {fera['tier']}", f"Especializações: {', '.join(fera['especializados'])}"],
+        "observacoes": [nome_final],
         "ataques": [f"Ataque Físico (1d{cat['dado_fisico']})"],
         "loot": lista_loot_strings,
         "dano": f"1d{cat['dado_fisico']}",
         "ataque_especial": ataque_especial_str,
         "efeito_ataque_critico": critico_rolado,
+        "tipo": tipo_animal,
     }
 
     return fera_npc

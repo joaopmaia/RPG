@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, sys.path[0] + "/../..")
 
 from pymongo import MongoClient
-from service.utils.constantes import ATRIBUTOS
+from service.utils.constantes import ATRIBUTOS, DEMON_NAMES
 
 MONGO_URI = "mongodb://localhost:27017"
 DATABASE = "rpg"
@@ -453,6 +453,73 @@ def exibir_demon(demon):
     print()
     print("══════════════════════════════════════════════════════")
 
+# ═══════════════════════════════════════════════════
+#  BD e Salvamento
+# ═══════════════════════════════════════════════════
+def deseja_salvar_demon():
+    """Retorna True se o usuário quiser salvar, False caso contrário."""
+    while True:
+        res = input("\nDeseja salvar este demônio no banco de dados? (s, sim, 1 / n, não, 2): ").strip().lower()
+        if res in ['s', 'sim', '1']:
+            return True
+        if res in ['n', 'não', 'nao', '2']:
+            return False
+        print("[!] Entrada inválida! Use 's' para sim ou 'n' para não.")
+
+import random
+
+def converter_demon_para_npc_banco(demon):
+    """Transforma o dicionário do demônio gerado no formato do banco de dados."""
+    cat = CATEGORIAS[demon["tier"]]
+    attrs = demon["atributos"]
+    
+    # 1. Definição do Nome
+    # Como demônios geralmente são referenciados pelo título, 
+    # pedimos um nome ou geramos um baseado no elemento.
+    nome_input = input(f"Dê um nome a este {cat['nome']} (Deixe vazio para usar nome aleatório): ").strip()
+    nome_final = nome_input if nome_input else random.choice(DEMON_NAMES)
+
+    # 2. Processamento de Ataques (Físico + Elementais)
+    lista_ataques = [f"Ataque Físico (1d{cat['dado_fisico']})"]
+    for atk in demon["ataques"]:
+        lista_ataques.append(f"{atk['nome']}: {atk['desc']}")
+
+    # 3. Processamento de Loot
+    lista_loot = []
+    for item in demon["loot"]:
+        info = f"{item['nome']} ({item.get('raridade', 'Comum')})"
+        if item.get("dificuldade"):
+            info += f" | Ext: {item['dificuldade']}"
+        lista_loot.append(info)
+
+
+    # 5. Montagem do Objeto Final
+    # Nota: 'arcana_total' e 'arcana_atual' foram adicionados para manter compatibilidade com animais arcanos
+    demon_npc = {
+        "nome": nome_final,
+        "forca": attrs.get("Força", 0),
+        "vitalidade": attrs.get("Vitalidade", 0),
+        "destreza": attrs.get("Destreza", 0),
+        "inteligencia": attrs.get("Inteligência", 0),
+        "espirito": attrs.get("Espírito", 0),
+        "carisma": attrs.get("Carisma", 0),
+        "percepcao": attrs.get("Percepção", 0),
+        "nível": demon["tier"], 
+        "hp_total": demon["hp"],
+        "hp_atual": demon["hp"],
+        "pericia": cat["pericia"],
+        "armadura": cat["armadura_natural"],
+        "runas": [f"Essência de {demon['elemento']}"], # Elemento como runa base
+        "observacoes": [nome_final],
+        "ataques": lista_ataques,
+        "loot": lista_loot,
+        "dano": f"1d{cat['dado_fisico']}",
+        "tipo": demon['elemento'],
+    }
+
+    print(f"\n[✅] Demônio '{nome_final}' formatado para o banco com sucesso!")
+    return demon_npc
+
 
 # ═══════════════════════════════════════════════════
 #  Execução principal
@@ -499,7 +566,24 @@ def main():
         "loot": loot,
     }
 
+    print(demon)
+
     exibir_demon(demon)
+    # ... código anterior ...
+    exibir_demon(demon)
+
+    if deseja_salvar_demon():
+        # Converte para o formato do banco
+        demon_npc = converter_demon_para_npc_banco(demon)
+        
+        # Salva no MongoDB
+        try:
+            db.demon_NPC.insert_one(demon_npc) # Usando a mesma coleção fera_NPC ou db.demon_NPC
+            print("[💎] Demônio salvo com sucesso no banco de dados!")
+        except Exception as e:
+            print(f"[❌] Erro ao salvar no banco: {e}")
+    else:
+        print("[─] Operação finalizada. O demônio não foi salvo.")
 
 
 if __name__ == "__main__":

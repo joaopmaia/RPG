@@ -33,8 +33,23 @@ busca-all-feras:
 busca-feras:
 	$(PYTHON) service/storytelling/busca_fera_npc.py
 
+deleta-fera:
+	$(PYTHON) service/storytelling/deleta_fera.py
+
+busca-all-demons:
+	$(PYTHON) service/storytelling/busca_all_demons.py
+
+busca-demons:
+	$(PYTHON) service/storytelling/busca_demon.py
+
+deleta-demon:
+	$(PYTHON) service/storytelling/deleta_demon.py
+
 interagindo-com-npc:
 	$(PYTHON) service/storytelling/interagindo_com_npc.py
+
+monster-interaction:
+	$(PYTHON) service/storytelling/interagir_monstro.py
 # ──────────────────────────────────────────────
 # Busca NPC
 # ──────────────────────────────────────────────
