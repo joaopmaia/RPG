@@ -71,6 +71,7 @@ def menu_interativo(colecao, monstro):
         print("  4. Adicionar Observação")
         print("  5. Mostrar Ficha")
         print("  6. Mostrar Loot")
+        print("  7. Alterar Nome")
         print("  0. Voltar ao Menu Inicial")
         
         op = input("\nEscolha uma ação: ").strip()
@@ -132,6 +133,12 @@ def menu_interativo(colecao, monstro):
             print(f"\n[💰] LOOT DE {m['nome']}:")
             for item in m.get("loot", []):
                 print(f"    - {item}")
+
+        elif op == '7':
+            novo_nome = input("Digite o novo nome: ").strip()
+            if novo_nome:
+                db[colecao].update_one({"_id": mid}, {"$set": {"nome": novo_nome}})
+                print(f"\n[✏️] Nome alterado para: {novo_nome}")
 
         elif op == '0':
             break

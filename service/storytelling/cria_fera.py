@@ -480,17 +480,21 @@ def converter_para_npc_banco(fera):
     """Transforma o dicionário da fera gerada no formato compatível com o banco de dados."""
     cat = CATEGORIAS[fera["tier"]]
     tipo_animal = fera.get("tipo", "Terrestre")
-    
-    # 2. Atribuição Automática de Nome
-    if "nome" in fera and fera["nome"]: # Verifica se existe e não é vazio
-        nome_final = fera["nome"]
+
+    nome_input = input(f"Dê um nome a este {cat['nome']} (Deixe vazio para usar nome aleatório): ").strip()
+    if nome_input:
+        print(f"Nome personalizado definido: {nome_input}")
+        nome_final = nome_input
     else:
-        listas_nomes = {
-            "Terrestre": ANIMAIS_COMUNS,
-            "Aquático": ANIMAIS_AQUATICOS_COMUNS,
-            "Voador": ANIMAIS_VOADORES_COMUNS
-        }
-        nome_final = random.choice(listas_nomes[tipo_animal])
+        if "nome" in fera and fera["nome"]: # Verifica se existe e não é vazio
+            nome_final = fera["nome"]
+        else:
+            listas_nomes = {
+                "Terrestre": ANIMAIS_COMUNS,
+                "Aquático": ANIMAIS_AQUATICOS_COMUNS,
+                "Voador": ANIMAIS_VOADORES_COMUNS
+            }
+            nome_final = random.choice(listas_nomes[tipo_animal])
 
     # 3. Processamento de Loot
     lista_loot_strings = []
