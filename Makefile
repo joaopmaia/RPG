@@ -24,6 +24,15 @@ busca-npc-full:
 # Interagindo com NPC
 # ──────────────────────────────────────────────
 
+# ──────────────────────────────────────────────
+# Busca All Feras
+# ──────────────────────────────────────────────
+busca-all-feras:
+	$(PYTHON) service/storytelling/busca_all_feras.py
+
+busca-feras:
+	$(PYTHON) service/storytelling/busca_fera_npc.py
+
 interagindo-com-npc:
 	$(PYTHON) service/storytelling/interagindo_com_npc.py
 # ──────────────────────────────────────────────

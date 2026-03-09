@@ -11,7 +11,19 @@ import sys
 sys.path.insert(0, sys.path[0] + "/../..")
 
 from pymongo import MongoClient
-from service.utils.constantes import ATRIBUTOS
+from service.utils.constantes import (
+    ATRIBUTOS,
+    ANIMAIS_COMUNS,
+    ANIMAIS_AQUATICOS_COMUNS,
+    ANIMAIS_VOADORES_COMUNS,
+    ANIMAIS_TERRESTRES_GRANDES,
+    ANIMAIS_AQUATICOS_GRANDES,
+    ANIMAIS_VOADORES_GRANDES,
+    ARCANOS_TERRESTRES,
+    ARCANOS_AQUATICOS,
+    ARCANOS_VOADORES,
+    ANIMAIS_ARCANOS_HABILIDADES
+)
 
 MONGO_URI = "mongodb://localhost:27017"
 DATABASE = "rpg"
@@ -179,20 +191,82 @@ def prompt_opcao(mensagem, opcoes):
 #  Geração de Atributos
 # ═══════════════════════════════════════════════════
 
+def selecionar_nome_animal(tier, tipo):
+    """
+    Exibe uma lista de nomes baseada no tier e tipo, permitindo escolha manual ou aleatória.
+    Retorna a string do nome selecionado.
+    """
+    # Mapeamento de dicionário para evitar múltiplos if/elifs encadeados
+    mapa_listas = {
+        "comum": {
+            "Terrestre": ANIMAIS_COMUNS,
+            "Aquático": ANIMAIS_AQUATICOS_COMUNS,
+            "Voador": ANIMAIS_VOADORES_COMUNS
+        },
+        "grande": {
+            "Terrestre": ANIMAIS_TERRESTRES_GRANDES,
+            "Aquático": ANIMAIS_AQUATICOS_GRANDES,
+            "Voador": ANIMAIS_VOADORES_GRANDES
+        },
+        "arcano": {
+            "Terrestre": ARCANOS_TERRESTRES,
+            "Aquático": ARCANOS_AQUATICOS,
+            "Voador": ARCANOS_VOADORES
+        }
+    }
+
+    # Busca a lista correta. Se não existir, retorna nome genérico.
+    lista_nomes = mapa_listas.get(tier, {}).get(tipo)
+    
+    if not lista_nomes:
+        return "Animal Desconhecido"
+
+    print(f"\n--- Seleção de Nome ({tier.capitalize()} - {tipo}) ---")
+    print("0. [Gerar Nome Aleatório]")
+    for i, nome in enumerate(lista_nomes, 1):
+        print(f"{i}. {nome}")
+
+    while True:
+        escolha = input(f"\nEscolha o nome (0 para aleatório, 1-{len(lista_nomes)}): ").strip()
+        
+        if escolha == "0":
+            nome_escolhido = random.choice(lista_nomes)
+            print(f"Nome aleatório gerado: {nome_escolhido}")
+            return nome_escolhido
+        
+        try:
+            idx = int(escolha) - 1
+            if 0 <= idx < len(lista_nomes):
+                return lista_nomes[idx]
+            else:
+                print(f"Número fora do intervalo! Escolha entre 0 e {len(lista_nomes)}.")
+        except ValueError:
+            print("Entrada inválida! Digite apenas o número correspondente.")
+
 def gerar_atributos(tier):
     """Gera os 7 atributos do animal com base na categoria."""
     cat = CATEGORIAS[tier]
-    base = cat["atributo_base"]
     qtd_espec = cat["qtd_especializados"]
-    lados, dado_base = cat["dado_especializado"]
 
-    atributos = {a: base for a in ATRIBUTOS}
+    # Define ranges for base attribute
+    if tier == "comum":
+        base_range = (1, 3)
+    elif tier == "grande":
+        base_range = (4, 6)
+    elif tier == "arcano":
+        base_range = (6, 8)
+    else:
+        base_range = (1, 1)
+
+    # Sorteia um valor para cada atributo
+    atributos = {a: random.randint(*base_range) for a in ATRIBUTOS}
 
     especializados = random.sample(ATRIBUTOS, qtd_espec)
 
+    # Specialized attribute bonus (0, 1, or 2)
     for attr in especializados:
-        valor = rolar(lados) + dado_base
-        atributos[attr] = min(valor, LIMITE_ATRIBUTO)
+        bonus = random.randint(0, 2)
+        atributos[attr] = min(atributos[attr] + bonus, LIMITE_ATRIBUTO)
 
     return atributos, especializados
 
@@ -218,6 +292,10 @@ def gerar_essencia():
     roll = rolar(6)
     elemento = ELEMENTOS[roll]
     return ESSENCIAS[elemento]
+
+def habilidade_arcana(nome):
+    """Busca a habilidade especial de um animal arcano pelo nome."""
+    return ANIMAIS_ARCANOS_HABILIDADES.get(nome, ("", ""))
 
 
 # ═══════════════════════════════════════════════════
@@ -319,6 +397,7 @@ def exibir_fera(fera):
     print("══════════════════════════════════════════════════════")
     print("                FERA GERADA")
     print("══════════════════════════════════════════════════════")
+    print(f"  Nome:             {fera['nome']}")
     print(f"  Categoria:        {cat['nome']}")
     print(f"  HP:               {fera['hp']}")
     print(f"  Armadura Natural: {cat['armadura_natural']} (Redução de Dano)")
@@ -339,6 +418,9 @@ def exibir_fera(fera):
     print("  ATAQUES:")
     print()
     print(f"  Ataque Físico: 1d{cat['dado_fisico']} de dano")
+    # Habilidade especial arcana
+    if fera.get("habilidade_especial"):
+        print(f"  Habilidade Especial: {fera['habilidade_especial']}")
     print()
     print("  Efeitos de Ataque (1d4 em acerto bem-sucedido):")
     for num, efeito in EFEITOS_ATAQUE.items():
@@ -375,7 +457,102 @@ def exibir_fera(fera):
     print()
     print("══════════════════════════════════════════════════════")
 
+# ═══════════════════════════════════════════════════
+#  Banco de Dados e Salvamento
+# ═══════════════════════════════════════════════════
 
+
+def deseja_salvar_animal():
+    """Retorna True se o usuário quiser salvar, False caso contrário."""
+    while True:
+        res = input("\nDeseja salvar o animal no banco de dados? (s, sim, 1 / n, não, 2): ").strip().lower()
+        if res in ['s', 'sim', '1']:
+            return True
+        if res in ['n', 'não', 'nao', '2']:
+            return False
+        print("Entrada inválida! Use 's' para sim ou 'n' para não.")
+
+import random
+
+import random
+
+def converter_para_npc_banco(fera):
+    """Transforma o dicionário da fera gerada no formato compatível com o banco de dados."""
+    cat = CATEGORIAS[fera["tier"]]
+    tipo_animal = fera.get("tipo", "Terrestre")
+    
+    # 2. Atribuição Automática de Nome
+    if "nome" in fera and fera["nome"]: # Verifica se existe e não é vazio
+        nome_final = fera["nome"]
+    else:
+        listas_nomes = {
+            "Terrestre": ANIMAIS_COMUNS,
+            "Aquático": ANIMAIS_AQUATICOS_COMUNS,
+            "Voador": ANIMAIS_VOADORES_COMUNS
+        }
+        nome_final = random.choice(listas_nomes[tipo_animal])
+
+    # 3. Processamento de Loot
+    lista_loot_strings = []
+    for item in fera["loot"]:
+        info = f"[{item['tipo']}] {item['nome']} - {item['raridade']}"
+        if item.get("efeito") and item["efeito"] != "Nenhum":
+            info += f" (Efeito: {item['efeito']})"
+        lista_loot_strings.append(info)
+
+    # 4. Processamento de Ataque Especial (Correção do ValueError)
+    ataque_especial_str = ""
+    habil = fera.get("habilidade_especial")
+    
+    # Verifica se é uma tupla/lista com 2 elementos antes de desempacotar
+    if isinstance(habil, (tuple, list)) and len(habil) == 2:
+        nome_habil, desc_habil = habil
+        ataque_especial_str = f"{nome_habil}: {desc_habil}"
+    elif isinstance(habil, str) and habil: # Se for só uma string não vazia
+        ataque_especial_str = habil
+
+    # 5. Rolagem de Crítico
+    EFEITOS_ATAQUE = {1: "Sangramento", 2: "Derrubar", 3: "Atordoado", 4: "Envenenado"}
+    critico_rolado = EFEITOS_ATAQUE[random.randint(1, 4)]
+
+    # 6. Montagem do Objeto do Banco
+    attrs = fera["atributos"]
+    
+    # Tratativa para o campo 'runas' ser sempre uma lista de strings
+    essencia = fera.get("essencia")
+    if essencia:
+        # Se essencia for um dict, extrai o nome, se for string, usa ela mesma
+        txt_runa = f"{essencia['nome']}: {essencia['habilidade']}" if isinstance(essencia, dict) else str(essencia)
+        lista_runas = [txt_runa]
+    else:
+        lista_runas = []
+    
+    fera_npc = {
+        "nome": nome_final,
+        "forca": attrs.get("Força", 0),
+        "vitalidade": attrs.get("Vitalidade", 0),
+        "destreza": attrs.get("Destreza", 0),
+        "inteligencia": attrs.get("Inteligência", 0),
+        "espirito": attrs.get("Espírito", 0),
+        "carisma": attrs.get("Carisma", 0),
+        "percepcao": attrs.get("Percepção", 0),
+        "nível": fera.get("tier", "comum"), 
+        "hp_total": fera["hp"],
+        "hp_atual": fera["hp"],
+        "arcana_total": (attrs.get("Espírito", 0) * 10) if fera["tier"] == "arcano" else 0,
+        "arcana_atual": (attrs.get("Espírito", 0) * 10) if fera["tier"] == "arcano" else 0,
+        "pericia": cat["pericia"],
+        "armadura": cat["armadura_natural"],
+        "runas": lista_runas, 
+        "observacoes": [f"Tier: {fera['tier']}", f"Especializações: {', '.join(fera['especializados'])}"],
+        "ataques": [f"Ataque Físico (1d{cat['dado_fisico']})"],
+        "loot": lista_loot_strings,
+        "dano": f"1d{cat['dado_fisico']}",
+        "ataque_especial": ataque_especial_str,
+        "efeito_ataque_critico": critico_rolado,
+    }
+
+    return fera_npc
 # ═══════════════════════════════════════════════════
 #  Execução principal
 # ═══════════════════════════════════════════════════
@@ -393,12 +570,20 @@ def main():
     ]
     tiers = ["comum", "grande", "arcano"]
 
+
     idx_tier = prompt_opcao("Selecione o porte do animal: ", opcoes_tier)
     tier = tiers[idx_tier]
 
     cat = CATEGORIAS[tier]
     print(f"\n→ {cat['nome']}")
 
+    idx_tipo = prompt_opcao("Selecione o tipo de animal: ", ["Terrestre", "Aquático", "Voador"])
+    tipo = ["Terrestre", "Aquático", "Voador"][idx_tipo]
+
+    # Seleciona nome aleatório conforme categoria e tipo
+    nome_aleatorio = selecionar_nome_animal(tier, tipo)
+
+    
     # Gerar atributos
     atributos, especializados = gerar_atributos(tier)
 
@@ -407,6 +592,9 @@ def main():
 
     # Essência arcana (apenas para arcano)
     essencia = gerar_essencia() if tier == "arcano" else None
+
+    # Habilidade especial arcana
+    habilidade_especial = habilidade_arcana(nome_aleatorio) if tier == "arcano" else ""
 
     # Gerar loot
     loot = gerar_loot(tier, db)
@@ -418,9 +606,28 @@ def main():
         "hp": hp,
         "essencia": essencia,
         "loot": loot,
+        "nome": nome_aleatorio,
+        "habilidade_especial": habilidade_especial,
+        "tipo": tipo,
     }
 
+    print(f"\n{fera}")
+
     exibir_fera(fera)
+
+    # Prompt para salvar animal
+    if deseja_salvar_animal():
+        fera_NPC = converter_para_npc_banco(fera)
+        print(fera_NPC)
+        try:
+            from service.storytelling.utils.salva_npc import salva_fera_npc
+            salva_fera_npc(db, fera_NPC)
+            print("Fera NPC salva com sucesso na tabela 'fera_NPC'.")
+        except Exception as e:
+            print(f"Erro ao salvar no banco: {e}")
+    
+    
+        
 
 
 if __name__ == "__main__":
