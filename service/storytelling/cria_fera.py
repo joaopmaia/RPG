@@ -555,6 +555,7 @@ def converter_para_npc_banco(fera):
         "ataque_especial": ataque_especial_str,
         "efeito_ataque_critico": critico_rolado,
         "tipo": tipo_animal,
+        "raça": fera["nome"],
     }
 
     return fera_npc

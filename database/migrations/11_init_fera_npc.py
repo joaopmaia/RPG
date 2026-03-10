@@ -27,6 +27,7 @@ def up(db):
         "ataque_especial": "",
         "efeito_ataque_critico": "",
         "tipo": "",
+        "raça": "",
     }
     # Insere um exemplo vazio (opcional)
     # db.fera_NPC.insert_one(fera_npc_example)

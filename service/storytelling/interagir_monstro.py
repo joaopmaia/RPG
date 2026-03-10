@@ -40,7 +40,7 @@ def selecionar_alvo():
 
     print(f"\n--- Selecione o Alvo ({colecao}) ---")
     for i, m in enumerate(monstros, 1):
-        print(f"  {i}. {m['nome']} (HP: {m['hp_atual']}/{m['hp_total']}, Tipo: {m.get('tipo', '???')}, Tier: {m.get('nível', '???')})")
+        print(f"  {i}. {m['raça']} (HP: {m['hp_atual']}/{m['hp_total']}, Tipo: {m.get('tipo', '???')}, Tier: {m.get('nível', '???')}, nome: {m.get('nome', '???')})")
 
         
     
@@ -63,7 +63,7 @@ def menu_interativo(colecao, monstro):
         m = db[colecao].find_one({"_id": mid})
         
         print(f"\n" + "─"*54)
-        print(f" INTERAGINDO COM: {m['nome']} | HP: {m['hp_atual']}/{m['hp_total']}")
+        print(f" INTERAGINDO COM: {m['nome']} ({m['raça']}) | HP: {m['hp_atual']}/{m['hp_total']}")
         print("─"*54)
         print("  1. Dar Dano")
         print("  2. Curar")
@@ -135,10 +135,17 @@ def menu_interativo(colecao, monstro):
                 print(f"    - {item}")
 
         elif op == '7':
-            novo_nome = input("Digite o novo nome: ").strip()
-            if novo_nome:
+            # Pegamos o nome atual para comparação e validação
+            nome_atual = m.get("nome", "")
+            print(f"Nome atual: {nome_atual}")
+            novo_nome = input("Digite o novo nome (ou Enter para manter): ").strip()
+            if novo_nome and novo_nome != nome_atual:
                 db[colecao].update_one({"_id": mid}, {"$set": {"nome": novo_nome}})
-                print(f"\n[✏️] Nome alterado para: {novo_nome}")
+                print(f"\n[✏️] Sucesso! Nome alterado para: {novo_nome}")
+            elif novo_nome == nome_atual:
+                print("\n[ℹ️] O nome digitado é igual ao atual. Nenhuma alteração feita.")
+            else:
+                print(f"\n[ℹ️] Alteração cancelada. O monstro continua se chamando: {nome_atual}")
 
         elif op == '0':
             break

@@ -22,6 +22,8 @@ def up(db):
         "ataques": [],      # lista de string
         "loot": [],         # lista de string
         "dano": "",
+        "tipo": "",
+        "raça": "",
     }
     # Insere um exemplo vazio (opcional)
     # db.demon_NPC.insert_one(demon_npc_example)

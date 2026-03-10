@@ -477,7 +477,8 @@ def converter_demon_para_npc_banco(demon):
     # Como demônios geralmente são referenciados pelo título, 
     # pedimos um nome ou geramos um baseado no elemento.
     nome_input = input(f"Dê um nome a este {cat['nome']} (Deixe vazio para usar nome aleatório): ").strip()
-    nome_final = nome_input if nome_input else random.choice(DEMON_NAMES)
+    nome_aleatorio = random.choice(DEMON_NAMES)
+    nome_final = nome_input if nome_input else nome_aleatorio
 
     # 2. Processamento de Ataques (Físico + Elementais)
     lista_ataques = [f"Ataque Físico (1d{cat['dado_fisico']})"]
@@ -515,6 +516,7 @@ def converter_demon_para_npc_banco(demon):
         "loot": lista_loot,
         "dano": f"1d{cat['dado_fisico']}",
         "tipo": demon['elemento'],
+        "raça": nome_aleatorio,
     }
 
     print(f"\n[✅] Demônio '{nome_final}' formatado para o banco com sucesso!")
