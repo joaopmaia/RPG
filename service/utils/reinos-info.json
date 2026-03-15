@@ -1,0 +1,524 @@
+[
+  {
+    "nome": "Rushoko",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Valtherian", "Drakulon", "Aethelgard", "Sildorien", "Balthazaris", "Krugeron", "Vandemar", "Tyrellius", "Morvayne", "Zalthier", 
+      "Grymwald", "Haldemir", "Ravenkroft", "Sterlingard", "Vulturen", "Orenthal", "Xandros", "Belmontis", "Kastellian", "Thorgard", 
+      "Astrallon", "Dumontier", "Sovereignis", "Walthari", "Zarkon"
+    ],
+    "sobrenomes_comuns": [
+      "Luthos", "Varek", "Jandar", "Kaelen", "Dorn", "Malthas", "Rarek", "Tandis", "Garek", "Bols", 
+      "Vand", "Loran", "Koris", "Marek", "Suth", "Tarn", "Vels", "Jand", "Dorkas", "Mels", 
+      "Kandor", "Vulth", "Zand", "Luth", "Garth", "Tels", "Morth", "Jels", "Vandis", "Kels", 
+      "Zark", "Lork", "Gant", "Vort", "Jant", "Dels", "Kalth", "Vors", "Zult", "Lant", 
+      "Gors", "Velt", "Jork", "Dand", "Kort", "Vant", "Zels", "Lund", "Gund", "Vorn"
+    ],
+    "moedas": "1000",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Galte",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Eberwald", "Galtier", "Vanguardis", "Halsburg", "Ritteron", "Zandrov", "Meldorian", "Kestrell", "Valeron", "Daltos", 
+      "Sunderlan", "Borgis", "Haldron", "Vustav", "Zoltan", "Morthos", "Galthen", "Vandis", "Krast", "Olthen", 
+      "Zalthor", "Maldritch", "Hestos", "Galthari", "Vult"
+    ],
+    "sobrenomes_comuns": [
+      "Balt", "Galt", "Dalt", "Malt", "Zalt", "Halt", "Kalt", "Valth", "Lalt", "Salth", 
+      "Belis", "Gelis", "Delis", "Melis", "Zelis", "Helis", "Kelis", "Velis", "Lelis", "Selis", 
+      "Boran", "Goran", "Doran", "Moran", "Zoran", "Horan", "Koran", "Voran", "Loran", "Soran", 
+      "Bust", "Gust", "Dust", "Must", "Zust", "Hust", "Kust", "Vust", "Lust", "Sust", 
+      "Berton", "Gerton", "Derton", "Merton", "Zerton", "Herton", "Kerton", "Verton", "Lerton", "Serton"
+    ],
+    "moedas": "500",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sharusahk, sylmari_arcaico, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Suyeki",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Suyekis", "Yandaris", "Zultharis", "Malkior", "Vandrell", "Kestros", "Olyndos", "Zarkos", "Morthalis", "Gundar", 
+      "Valthor", "Zulth", "Krandor", "Maldos", "Hestron", "Gundis", "Valtoris", "Zandis", "Krost", "Oltis", 
+      "Zalt", "Malos", "Hestis", "Galth", "Vultis"
+    ],
+    "sobrenomes_comuns": [
+      "Yek", "Suk", "Zuk", "Muk", "Vuk", "Kuk", "Luk", "Guk", "Huk", "Duk", 
+      "Yand", "Sand", "Zand", "Mand", "Vand", "Kand", "Land", "Gand", "Hand", "Dand", 
+      "Yoris", "Soris", "Zoris", "Moris", "Voris", "Koris", "Loris", "Goris", "Horis", "Doris", 
+      "Yult", "Sult", "Zult", "Mult", "Vult", "Kult", "Lult", "Gult", "Hult", "Dult", 
+      "Yark", "Sark", "Zark", "Mark", "Vark", "Kark", "Lark", "Gark", "Hark", "Dark"
+    ],
+    "moedas": "600",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Deruth",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Deruthian", "Vandrakis", "Malthorn", "Zultheron", "Krastov", "Belvane", "Xandur", "Galthus", "Vulten", "Drakis",
+      "Orenth", "Zalther", "Maldur", "Hestian", "Gundor", "Vorkas", "Sunder", "Krandis", "Olthe", "Yulth",
+      "Balthar", "Keldor", "Vasten", "Dormund", "Zorath"
+    ],
+    "sobrenomes_comuns": [
+      "Derk", "Merv", "Sols", "Vand", "Krom", "Aeth", "Borg", "Hald", "Zult", "Mort",
+      "Kras", "Belv", "Xan", "Galt", "Vult", "Drak", "Oren", "Zalt", "Mald", "Hest",
+      "Gun", "Vork", "Sund", "Kran", "Olth", "Daran", "Merin", "Solin", "Vanin", "Kron",
+      "Auran", "Borin", "Halin", "Zulin", "Morin", "Krin", "Belin", "Xanin", "Galin", "Vulin",
+      "Drin", "Orin", "Zalin", "Malin", "Hesin", "Gurin", "Vorin", "Sunin", "Kranin", "Olin"
+    ],
+    "moedas": "200",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Lhals",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Lhalsier", "Vultryn", "Kestron", "Zandaris", "Morkov", "Halsburg", "Valtheron", "Daltos", "Sunderlan", "Borgis",
+      "Haldron", "Vustav", "Zoltan", "Morthos", "Galthen", "Vandis", "Krast", "Olthen", "Zalthor", "Maldritch",
+      "Hestos", "Galthari", "Vultar", "Krynn", "Zorthas"
+    ],
+    "sobrenomes_comuns": [
+      "Lhal", "Vult", "Kes", "Zan", "Mor", "Hals", "Val", "Dal", "Sun", "Bor",
+      "Hal", "Vus", "Zol", "Mor", "Gal", "Van", "Kra", "Olt", "Zal", "Mal",
+      "Hes", "Gal", "Vut", "Kryn", "Zor", "Lhalsen", "Vulten", "Kesen", "Zanen", "Moren",
+      "Halsen", "Valen", "Dalen", "Sunen", "Boren", "Halen", "Vusen", "Zolen", "Moren", "Galen",
+      "Vanen", "Kraen", "Olten", "Zalen", "Malen", "Hesen", "Galen", "Vuten", "Krynen", "Zoren"
+    ],
+    "moedas": "100",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, sharusahk, drovenar_arcaico, kronagar, gorvash, draconico"
+  },
+  {
+    "nome": "Fangi",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Fangoris", "Yandrell", "Zulthos", "Malkior", "Kestros", "Olyndos", "Zarkos", "Morthalis", "Gundar", "Valthor",
+      "Zulth", "Krandor", "Maldos", "Hestron", "Gundis", "Valtoris", "Zandis", "Krost", "Oltis", "Zaltar",
+      "Malos", "Hestis", "Galthun", "Vultis", "Drakon"
+    ],
+    "sobrenomes_comuns": [
+      "Fan", "Yan", "Zul", "Mal", "Kes", "Oly", "Zar", "Mor", "Gun", "Val",
+      "Zul", "Kra", "Mad", "Hes", "Gun", "Vat", "Zan", "Kro", "Olt", "Zal",
+      "Mal", "Hes", "Gal", "Vut", "Dra", "Fanis", "Yanis", "Zulis", "Malis", "Kesis",
+      "Olyis", "Zaris", "Moris", "Gunis", "Valis", "Zulis", "Krais", "Madis", "Hesis", "Gunis",
+      "Vatis", "Zanis", "Krois", "Oltis", "Zalis", "Malis", "Hesis", "Galis", "Vutis", "Drais"
+    ],
+    "moedas": "1000",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, sharusahk, drovenar_arcaico, gorvash, draconico, kronagar"
+  },
+  {
+    "nome": "Sekung",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Sekungari", "Vantros", "Keldorn", "Zulmet", "Morn", "Kandris", "Vostos", "Xalther", "Guldar", "Vandis",
+      "Drakonir", "Oltros", "Zantur", "Maldis", "Hestro", "Gundis", "Vorn", "Sundaris", "Krandos", "Oltheos",
+      "Zorthan", "Maldur", "Hestos", "Galthor", "Vulten"
+    ],
+    "sobrenomes_comuns": [
+      "Sek", "Van", "Kel", "Zul", "Mor", "Kan", "Vos", "Xal", "Gul", "Vand",
+      "Dra", "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra", "Olt",
+      "Zor", "Mal", "Hes", "Gal", "Vut", "Seken", "Vanen", "Kelen", "Zulen", "Moren",
+      "Kanen", "Vosen", "Xalen", "Gulen", "Vanden", "Draen", "Olten", "Zanen", "Malen", "Hesen",
+      "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen", "Vuten"
+    ],
+    "moedas": "1000",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, sharusahk, drovenar_arcaico, gorvash, draconico, kronagar"
+  },
+  {
+    "nome": "Fuchoi",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Fuchorian", "Zultharis", "Malkioris", "Vantrell", "Kestros", "Olyndos", "Zarkos", "Morthalis", "Gundar", "Valthor",
+      "Zulth", "Krandor", "Maldos", "Hestron", "Gundis", "Valtoris", "Zandis", "Krost", "Oltis", "Zalt",
+      "Malos", "Hestis", "Galthari", "Vultis", "Drakon"
+    ],
+    "sobrenomes_comuns": [
+      "Fuch", "Zul", "Mal", "Van", "Kes", "Oly", "Zar", "Mor", "Gun", "Val",
+      "Zul", "Kra", "Mad", "Hes", "Gun", "Vat", "Zan", "Kro", "Olt", "Zal",
+      "Mal", "Hes", "Gal", "Vut", "Dra", "Fuchis", "Zulis", "Malis", "Vanis", "Kesis",
+      "Olyis", "Zaris", "Moris", "Gunis", "Valis", "Zulis", "Krais", "Madis", "Hesis", "Gunis",
+      "Vatis", "Zanis", "Krois", "Oltis", "Zalis", "Malis", "Hesis", "Galis", "Vutis", "Drais"
+    ],
+    "moedas": "100",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, gorvash, drovenar_arcaico, sharusahk, kronagar, draconico"
+  },
+  {
+    "nome": "Lalmuthros",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Lalmuthrian", "Vultryn", "Kestronis", "Zandaris", "Morkov", "Halsburg", "Valtheron", "Daltos", "Sunderlan", "Borgis",
+      "Haldron", "Vustav", "Zoltan", "Morthos", "Galthen", "Vandis", "Krast", "Olthen", "Zalthor", "Maldritch",
+      "Hestos", "Galthari", "Vultar", "Krynnis", "Zorthas"
+    ],
+    "sobrenomes_comuns": [
+      "Lal", "Mut", "Ros", "Vut", "Kes", "Zan", "Mor", "Hal", "Val", "Dal",
+      "Sun", "Bor", "Hal", "Vus", "Zol", "Mor", "Gal", "Van", "Kra", "Olt",
+      "Zal", "Mal", "Hes", "Gal", "Vut", "Lalen", "Muten", "Rosen", "Vuten", "Kesen",
+      "Zanen", "Moren", "Halen", "Valen", "Dalen", "Sunen", "Boren", "Halen", "Vusen", "Zolen",
+      "Moren", "Galen", "Vanen", "Kraen", "Olten", "Zalen", "Malen", "Hesen", "Galen", "Vuten"
+    ],
+    "moedas": "100",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, gorvash, drovenar_arcaico, sharusahk, kronagar, draconico"
+  },
+  {
+    "nome": "Khasil",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Khasilian", "Oriannos", "Vandrakis", "Malthorn", "Zultheron", "Krastov", "Belvane", "Xandur", "Galthus", "Vulten",
+      "Drakis", "Orenth", "Zalther", "Maldur", "Hestian", "Gundor", "Vorkas", "Sunder", "Krandis", "Olthe",
+      "Yulth", "Balthar", "Keldor", "Vasten", "Dormund"
+    ],
+    "sobrenomes_comuns": [
+      "Khas", "Sil", "Ori", "Van", "Mal", "Zul", "Kras", "Bel", "Xan", "Gal",
+      "Vut", "Dra", "Ore", "Zal", "Mad", "Hes", "Gun", "Vor", "Sun", "Kra",
+      "Olt", "Yut", "Bal", "Kel", "Vas", "Khasen", "Silen", "Orien", "Vanen", "Malen",
+      "Zulen", "Krasen", "Belen", "Xanen", "Galen", "Vuten", "Draen", "Oren", "Zalen", "Malen",
+      "Hesen", "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Yuten", "Balen", "Kelen", "Vasen"
+    ],
+    "moedas": "100",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, gorvash, sharusahk, kronagar, draconico"
+  },
+  {
+    "nome": "Likan",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Likanis", "Vantros", "Keldorn", "Zulmet", "Morn", "Kandris", "Vostos", "Xalther", "Guldar", "Vandis",
+      "Drakonir", "Oltros", "Zantur", "Maldis", "Hestro", "Gundis", "Vorn", "Sundaris", "Krandos", "Oltheos",
+      "Zorthan", "Maldur", "Hestos", "Galthor", "Vulten"
+    ],
+    "sobrenomes_comuns": [
+      "Lik", "Kan", "Van", "Kel", "Zul", "Mor", "Kan", "Vos", "Xal", "Gul",
+      "Van", "Dra", "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra",
+      "Olt", "Zor", "Mal", "Hes", "Gal", "Liken", "Kanen", "Vanen", "Kelen", "Zulen",
+      "Moren", "Kanen", "Vosen", "Xalen", "Gulen", "Vanen", "Draen", "Olten", "Zanen", "Malen",
+      "Hesen", "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen"
+    ],
+    "moedas": "300",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, sharusahk, kronagar, gorvash, draconico"
+  },
+  {
+    "nome": "Jawyn",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Jawyntar", "Valthros", "Keldoran", "Zulmetis", "Mornas", "Kandros", "Vostis", "Xaltheron", "Guldre", "Vandor",
+      "Drakon", "Oltrian", "Zantari", "Maldis", "Hestron", "Gundar", "Vorn", "Sundari", "Krandos", "Olthe",
+      "Zorthe", "Malden", "Hestis", "Galthu", "Vultar"
+    ],
+    "sobrenomes_comuns": [
+      "Jaw", "Wyn", "Van", "Kel", "Zul", "Mor", "Kan", "Vos", "Xal", "Gul",
+      "Van", "Dra", "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra",
+      "Olt", "Zor", "Mal", "Hes", "Gal", "Jawen", "Wynen", "Vanen", "Kelen", "Zulen",
+      "Moren", "Kanen", "Vosen", "Xalen", "Gulen", "Vanen", "Draen", "Olten", "Zanen", "Malen",
+      "Hesen", "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen"
+    ],
+    "moedas": "50",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, draconico, kronagar, sharusahk, gorvash"
+  },
+  {
+    "nome": "Thayta",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Thaytanis", "Vantros", "Keldorn", "Zulmet", "Morn", "Kandris", "Vostos", "Xalther", "Guldar", "Vandis",
+      "Drakonir", "Oltros", "Zantur", "Maldis", "Hestro", "Gundis", "Vorn", "Sundaris", "Krandos", "Oltheos",
+      "Zorthan", "Maldur", "Hestos", "Galthor", "Vulten"
+    ],
+    "sobrenomes_comuns": [
+      "Tha", "Yta", "Van", "Kel", "Zul", "Mor", "Kan", "Vos", "Xal", "Gul",
+      "Van", "Dra", "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra",
+      "Olt", "Zor", "Mal", "Hes", "Gal", "Thaen", "Ytaen", "Vanen", "Kelen", "Zulen",
+      "Moren", "Kanen", "Vosen", "Xalen", "Gulen", "Vanen", "Draen", "Olten", "Zanen", "Malen",
+      "Hesen", "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen"
+    ],
+    "moedas": "800",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Fasu",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Fasurian", "Zultharis", "Malkioris", "Vantrell", "Kestros", "Olyndos", "Zarkos", "Morthalis", "Gundar", "Valthor",
+      "Zulth", "Krandor", "Maldos", "Hestron", "Gundis", "Valtoris", "Zandis", "Krost", "Oltis", "Zalt",
+      "Malos", "Hestis", "Galthari", "Vultis", "Drakon"
+    ],
+    "sobrenomes_comuns": [
+      "Fas", "Su", "Zul", "Mal", "Van", "Kes", "Oly", "Zar", "Mor", "Gun", "Val",
+      "Zul", "Kra", "Mad", "Hes", "Gun", "Vat", "Zan", "Kro", "Olt", "Zal",
+      "Mal", "Hes", "Gal", "Vut", "Dra", "Fasen", "Suen", "Zulen", "Malen", "Vanen",
+      "Kesen", "Olyen", "Zaren", "Moren", "Gunen", "Valen", "Zulen", "Kraen", "Maden", "Hesen",
+      "Gunen", "Vaten", "Zanen", "Kroen", "Olten", "Zalen", "Malen", "Hesen", "Galen", "Vuten"
+    ],
+    "moedas": "30",
+    "idiomas": "comum, vaelthor_arcaico, drovenar_arcaico, sylmari_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Tahid",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Tahidian", "Vultryn", "Kestronis", "Zandaris", "Morkov", "Halsburg", "Valtheron", "Daltos", "Sunderlan", "Borgis",
+      "Haldron", "Vustav", "Zoltan", "Morthos", "Galthen", "Vandis", "Krast", "Olthen", "Zalthor", "Maldritch",
+      "Hestos", "Galthari", "Vultar", "Krynnis", "Zorthas"
+    ],
+    "sobrenomes_comuns": [
+      "Tah", "Id", "Vut", "Kes", "Zan", "Mor", "Hal", "Val", "Dal", "Sun",
+      "Bor", "Hal", "Vus", "Zol", "Mor", "Gal", "Van", "Kra", "Olt", "Zal",
+      "Mal", "Hes", "Gal", "Vut", "Zor", "Tahen", "Iden", "Vuten", "Kesen", "Zanen",
+      "Moren", "Halen", "Valen", "Dalen", "Sunen", "Boren", "Halen", "Vusen", "Zolen", "Moren",
+      "Galen", "Vanen", "Kraen", "Olten", "Zalen", "Malen", "Hesen", "Galen", "Vuten", "Zoren"
+    ],
+    "moedas": "700",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Tsaicalam",
+    "raça": "Vaelthor",
+    "sobrenomes_nobres": [
+      "Tsaicalaris", "Oriannos", "Vandrakis", "Malthorn", "Zultheron", "Krastov", "Belvane", "Xandur", "Galthus", "Vulten",
+      "Drakis", "Orenth", "Zalther", "Maldur", "Hestian", "Gundor", "Vorkas", "Sunder", "Krandis", "Olthe",
+      "Yulth", "Balthar", "Keldor", "Vasten", "Dormund"
+    ],
+    "sobrenomes_comuns": [
+      "Tsai", "Cal", "Am", "Ori", "Van", "Mal", "Zul", "Kras", "Bel", "Xan",
+      "Gal", "Vut", "Dra", "Ore", "Zal", "Mad", "Hes", "Gun", "Vor", "Sunder",
+      "Kra", "Olt", "Yut", "Bal", "Kel", "Tsaien", "Calen", "Amen", "Orien", "Vanen",
+      "Malen", "Zulen", "Krasen", "Belen", "Xanen", "Galen", "Vuten", "Draen", "Oren", "Zalen",
+      "Malen", "Hesen", "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Yuten", "Balen", "Kelen"
+    ],
+    "moedas": "10",
+    "idiomas": "comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, sharusahk, gorvash, kronagar, draconico"
+  },
+  {
+    "nome": "Naltra",
+    "raça": "Drovenar",
+    "sobrenomes_nobres": [
+      "Thrundar", "Kromm", "Zulgad", "Varnak", "Grombath", "Morthrum", "Brakur", "Durgan", "Kuldar", "Thrunn",
+      "Zarkur", "Malgad", "Hestor", "Gundrum", "Vultar", "Drakan", "Oltor", "Zalkar", "Maldur", "Hesgar",
+      "Gunnar", "Vornur", "Sundar", "Krandur", "Olthar"
+    ],
+    "sobrenomes_comuns": [
+      "Thrun", "Krom", "Zul", "Var", "Grom", "Mor", "Brak", "Dur", "Kul", "Thru",
+      "Zar", "Mal", "Hes", "Gun", "Vut", "Dra", "Olt", "Zal", "Mad", "Hes",
+      "Gun", "Vor", "Sun", "Kra", "Olt", "Thruner", "Kromer", "Zuler", "Varer", "Gromer",
+      "Morer", "Braker", "Durer", "Kuler", "Thruer", "Zarer", "Maler", "Heser", "Guner", "Vuter",
+      "Draer", "Olter", "Zaler", "Mader", "Heser", "Guler", "Vuter", "Suner", "Kraer", "Olter"
+    ],
+    "moedas": "400",
+    "idiomas": "comum, drovenar_arcaico, vaelthor_arcaico, sylmari_arcaico, kronagar, sharusahk, gorvash, draconico"
+  },
+  {
+    "nome": "Nehui",
+    "raça": "Drovenar",
+    "sobrenomes_nobres": [
+      "Nehuigard", "Krommthir", "Zulgathis", "Varnakur", "Grombathur", "Morthrumis", "Brakurthor", "Durganyr", "Kuldaros", "Thrunnis",
+      "Zarkurn", "Malgadun", "Hestoros", "Gundrumis", "Vultaros", "Drakanis", "Oltoros", "Zalkaris", "Maldurus", "Hesgaron",
+      "Gunnaros", "Vornuris", "Sundaros", "Kranduris", "Oltharios"
+    ],
+    "sobrenomes_comuns": [
+      "Neh", "Hui", "Krom", "Zul", "Var", "Grom", "Mor", "Brak", "Dur", "Kul",
+      "Thru", "Zar", "Mal", "Hes", "Gun", "Vut", "Dra", "Olt", "Zal", "Mad",
+      "Hes", "Gun", "Vor", "Sun", "Kra", "Neher", "Huier", "Kromer", "Zuler", "Varer",
+      "Gromer", "Morer", "Braker", "Durer", "Kuler", "Thruer", "Zarer", "Maler", "Heser", "Guner",
+      "Vuter", "Draer", "Olter", "Zaler", "Mader", "Heser", "Guler", "Vuter", "Suner", "Kraer"
+    ],
+    "moedas": "70",
+    "idiomas": "comum,drovenar_arcaico, vaelthor_arcaico, sylmari_arcaico, kronagar, sharusahk,gorvash, draconico"
+  },
+  {
+    "nome": "Loloche",
+    "raça": "Drovenar",
+    "sobrenomes_nobres": [
+      "Lolochian", "Thrundros", "Krommgard", "Zulgat", "Varnak", "Grombath", "Morthrum", "Brakur", "Durgan", "Kuldar",
+      "Thrunn", "Zarkur", "Malgad", "Hestor", "Gundrum", "Vultar", "Drakan", "Oltor", "Zalkar", "Maldur",
+      "Hesgar", "Gunnar", "Vornur", "Sundar", "Krandur", "Olthar"
+    ],
+    "sobrenomes_comuns": [
+      "Lol", "Oche", "Thrun", "Krom", "Zul", "Var", "Grom", "Mor", "Brak", "Dur",
+      "Kul", "Thru", "Zar", "Mal", "Hes", "Gun", "Vut", "Dra", "Olt", "Zal",
+      "Mad", "Hes", "Gun", "Vor", "Sun", "Kra", "Lolen", "Ochen", "Thrunen", "Kromen",
+      "Zulen", "Varen", "Gromen", "Moren", "Braken", "Duren", "Kulen", "Thruen", "Zaren", "Malen",
+      "Hesen", "Gunen", "Vuten", "Draen", "Olten", "Zalen", "Maden", "Hesen", "Gulen", "Vuten"
+    ],
+    "moedas": "5",
+    "idiomas": "comum, drovenar_arcaico, vaelthor_arcaico, sylmari_arcaico, kronagar, sharusahk,gorvash, draconico"
+  },
+  {
+    "nome": "Karningul",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Karningulys", "Saeldoris", "Thalandros", "Melianis", "Luthienor", "Galadris", "Earendyl", "Vanyaris", "Sindarinor", "Ossiriand",
+      "Beleriandis", "Nargothron", "Gondolinor", "Telerin", "Aulendil", "Curunir", "Olurin", "Valarion", "Maiaron", "Eldamar",
+      "Tirionor", "Alqualon", "Formenos", "Mandosir", "Lorienor"
+    ],
+    "sobrenomes_comuns": [
+      "Kar", "Nin", "Gul", "Sael", "Thal", "Mel", "Luth", "Gal", "Ear", "Van",
+      "Sin", "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu", "Val",
+      "Mai", "Eld", "Tir", "Alq", "For", "Man", "Lor", "Karis", "Ninis", "Gulis",
+      "Saelis", "Thalis", "Melis", "Luthis", "Galis", "Earis", "Vanis", "Sinis", "Ossis", "Belis",
+      "Naris", "Gonis", "Telis", "Aulis", "Curis", "Oluis", "Valis", "Maiis", "Eldis", "Tiris"
+    ],
+    "moedas": "400",
+    "idiomas": "comum, sylmari_arcaico,vaelthor_arcaico,drovenar_arcaico, sharusahk,gorvash, draconico, kronagar "
+  },
+  {
+    "nome": "Meruem",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Meruemis", "Thalandril", "Saeldoron", "Melianor", "Luthienis", "Galadris", "Earendylis", "Vanyarion", "Sindarin", "Ossirion",
+      "Beleriand", "Nargothris", "Gondolion", "Telerion", "Aulendris", "Curunir", "Olurinor", "Valarion", "Maiaron", "Eldamaris",
+      "Tirion", "Alqualon", "Formenoris", "Mandosion", "Lorien"
+    ],
+    "sobrenomes_comuns": [
+      "Mer", "Uem", "Thal", "Sael", "Mel", "Lut", "Gal", "Ear", "Van", "Sin",
+      "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu", "Val", "Mai",
+      "Eld", "Tir", "Alq", "For", "Man", "Lor", "Meren", "Uemen", "Thalen", "Saelen",
+      "Melen", "Luten", "Galen", "Earen", "Vanen", "Sinen", "Ossen", "Belen", "Naren", "Gonen",
+      "Telen", "Aulen", "Curen", "Oluen", "Valen", "Maien", "Elden", "Tiren", "Alqen", "Foren"
+    ],
+    "moedas": "500",
+    "idiomas": "comum, sylmari_arcaico,vaelthor_arcaico,drovenar_arcaico, sharusahk,gorvash, draconico, kronagar "
+  },
+  {
+    "nome": "Valarien",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Valarienis", "Saeldor", "Thalandros", "Melian", "Luthien", "Galad", "Earend", "Vanyar", "Sindar", "Ossir",
+      "Beler", "Nargoth", "Gondol", "Teler", "Aulend", "Curun", "Olur", "Valar", "Maia", "Eldam",
+      "Tirio", "Alqua", "Forme", "Mando", "Lorie"
+    ],
+    "sobrenomes_comuns": [
+      "Val", "Ari", "En", "Sae", "Tha", "Mel", "Lut", "Gal", "Ear", "Van",
+      "Sin", "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu", "Val",
+      "Mai", "Eld", "Tir", "Alq", "For", "Valis", "Aris", "Enis", "Saeis", "Thais",
+      "Melis", "Lutis", "Galis", "Earis", "Vanis", "Sinis", "Ossis", "Belis", "Naris", "Gonis",
+      "Telis", "Aulis", "Curis", "Oluis", "Valis", "Maiis", "Eldis", "Tiris", "Alqis", "Foris"
+    ],
+    "moedas": "1000",
+    "idiomas": "comum, sylmari_arcaico,vaelthor_arcaico,drovenar_arcaico, sharusahk,gorvash, draconico, kronagar "
+  },
+  {
+    "nome": "Delendir",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Delendiris", "Saeldoron", "Thalandril", "Melianis", "Luthienor", "Galadris", "Earendyl", "Vanyarion", "Sindarin", "Ossirion",
+      "Beleriand", "Nargothris", "Gondolion", "Telerion", "Aulendris", "Curunir", "Olurinor", "Valarion", "Maiaron", "Eldamaris",
+      "Tirion", "Alqualon", "Formenoris", "Mandosion", "Lorien"
+    ],
+    "sobrenomes_comuns": [
+      "Del", "En", "Dir", "Sae", "Tha", "Mel", "Lut", "Gal", "Ear", "Van",
+      "Sin", "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu", "Val",
+      "Mai", "Eld", "Tir", "Alq", "For", "Delen", "Enen", "Diren", "Saeen", "Thaen",
+      "Melen", "Luten", "Galen", "Earen", "Vanen", "Sinen", "Ossen", "Belen", "Naren", "Gonen",
+      "Telen", "Aulen", "Curen", "Oluen", "Valen", "Maien", "Elden", "Tiren", "Alqen", "Foren"
+    ],
+    "moedas": "100",
+    "idiomas": "comum, sylmari_arcaico, vaelthor_arcaico, drovenar_arcaico, sharusahk, gorvash, draconico, kronagar"
+  },
+  {
+    "nome": "Argas",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Argasiris", "Saeldor", "Thalandros", "Melian", "Luthien", "Galad", "Earend", "Vanyar", "Sindar", "Ossir",
+      "Beler", "Nargoth", "Gondol", "Teler", "Aulend", "Curun", "Olur", "Valar", "Maia", "Eldam",
+      "Tirio", "Alqua", "Forme", "Mando", "Lorie"
+    ],
+    "sobrenomes_comuns": [
+      "Ar", "Gas", "Sae", "Tha", "Mel", "Lut", "Gal", "Ear", "Van", "Sin",
+      "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu", "Val", "Mai",
+      "Eld", "Tir", "Alq", "For", "Man", "Aris", "Gasis", "Saeis", "Thais", "Melis",
+      "Lutis", "Galis", "Earis", "Vanis", "Sinis", "Ossis", "Belis", "Naris", "Gonis", "Telis",
+      "Aulis", "Curis", "Oluis", "Valis", "Maiis", "Eldis", "Tiris", "Alqis", "Foris", "Manis"
+    ],
+    "moedas": "200",
+    "idiomas": "comum, sylmari_arcaico, vaelthor_arcaico, drovenar_arcaico, sharusahk, gorvash, draconico, kronagar"
+  },
+  {
+    "nome": "Shientara",
+    "raça": "Sylmari",
+    "sobrenomes_nobres": [
+      "Shientaris", "Saeldoron", "Thalandril", "Melianor", "Luthienis", "Galadris", "Earendylis", "Vanyarion", "Sindarin", "Ossirion",
+      "Beleriand", "Nargothris", "Gondolion", "Telerion", "Aulendris", "Curunir", "Olurinor", "Valarion", "Maiaron", "Eldamaris",
+      "Tirion", "Alqualon", "Formenoris", "Mandosion", "Lorien"
+    ],
+    "sobrenomes_comuns": [
+      "Shi", "En", "Ta", "Ra", "Sae", "Tha", "Mel", "Lut", "Gal", "Ear",
+      "Van", "Sin", "Oss", "Bel", "Nar", "Gon", "Tel", "Aul", "Cur", "Olu",
+      "Val", "Mai", "Eld", "Tir", "Alq", "Shien", "Enta", "Rael", "Thal", "Mel",
+      "Lut", "Gal", "Ear", "Van", "Sin", "Oss", "Bel", "Nar", "Gon", "Tel",
+      "Aul", "Cur", "Olu", "Val", "Mai", "Eld", "Tir", "Alq", "For", "Man"
+    ],
+    "moedas": "200",
+    "idiomas": "comum, sylmari_arcaico, vaelthor_arcaico, drovenar_arcaico, sharusahk, gorvash, draconico, kronagar"
+  },
+  {
+    "nome": "Capital Sharusahk",
+    "raça": "Sharusahk",
+    "sobrenomes_nobres": [
+      "Sharusahkor", "Zulthelis", "Malkarian", "Vostreid", "Xaltheron", "Kandros", "Guldre", "Vandor", "Drakon", "Oltrian",
+      "Zantari", "Maldis", "Hestron", "Gundar", "Vorn", "Sundari", "Krandos", "Olthe", "Zorthe", "Malden",
+      "Hestis", "Galthu", "Vultar", "Krynn", "Balthar"
+    ],
+    "sobrenomes_comuns": [
+      "Sha", "Ru", "Sahk", "Zul", "Mal", "Vos", "Xal", "Kan", "Gul", "Van",
+      "Dra", "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra", "Olt",
+      "Zor", "Mal", "Hes", "Gal", "Vut", "Shaen", "Ruen", "Sahken", "Zulen", "Malen",
+      "Vosen", "Xalen", "Kanen", "Gulen", "Vanen", "Draen", "Olten", "Zanen", "Malen", "Hesen",
+      "Gunen", "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen", "Vuten"
+    ],
+    "moedas": "2000",
+    "idiomas": "sharusahk, comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, kronagar, gorvash, draconico"
+  },
+  {
+    "nome": "Volith",
+    "raça": "Sharusahk",
+    "sobrenomes_nobres": [
+      "Volithian", "Zulthelis", "Malkar", "Vostros", "Xalther", "Kandris", "Guldar", "Vandis", "Drakonir", "Oltros",
+      "Zantur", "Maldis", "Hestro", "Gundis", "Vorn", "Sundaris", "Krandos", "Oltheos", "Zorthan", "Maldur",
+      "Hestos", "Galthor", "Vulten", "Krynnis", "Zorthas"
+    ],
+    "sobrenomes_comuns": [
+      "Vol", "Ith", "Zul", "Mal", "Vos", "Xal", "Kan", "Gul", "Van", "Dra",
+      "Olt", "Zan", "Mal", "Hes", "Gun", "Vor", "Sun", "Kra", "Olt", "Zor",
+      "Mal", "Hes", "Gal", "Vut", "Dra", "Volen", "Ithen", "Zulen", "Malen", "Vosen",
+      "Xalen", "Kanen", "Gulen", "Vanen", "Draen", "Olten", "Zanen", "Malen", "Hesen", "Gunen",
+      "Voren", "Sunen", "Kraen", "Olten", "Zoren", "Malen", "Hesen", "Galen", "Vuten", "Draen"
+    ],
+    "moedas": "1000",
+    "idiomas": "sharusahk, comum, vaelthor_arcaico, sylmari_arcaico, drovenar_arcaico, kronagar, gorvash, draconico"
+  },
+  {
+    "nome": "Oriente – Terras vulcânicas",
+    "raça": "Gorvash",
+    "sobrenomes_nobres": [
+      "Gorvashthor", "Krommgath", "Zulthrak", "Varnagur", "Grombathur", "Morthrumis", "Brakurthor", "Durganyr", "Kuldaros", "Thrunnis",
+      "Zarkurn", "Malgadun", "Hestoros", "Gundrumis", "Vultaros", "Drakanis", "Oltoros", "Zalkaris", "Maldurus", "Hesgaron",
+      "Gunnaros", "Vornuris", "Sundaros", "Kranduris", "Oltharios"
+    ],
+    "sobrenomes_comuns": [
+      "Gor", "Vash", "Krom", "Zul", "Var", "Grom", "Mor", "Brak", "Dur", "Kul",
+      "Thru", "Zar", "Mal", "Hes", "Gun", "Vut", "Dra", "Olt", "Zal", "Mad",
+      "Hes", "Gun", "Vor", "Sun", "Kra", "Goren", "Vashen", "Kromen", "Zulen", "Varen",
+      "Gromen", "Moren", "Braken", "Duren", "Kulen", "Thruen", "Zaren", "Malen", "Hesen", "Gunen",
+      "Vuten", "Draen", "Olten", "Zalen", "Maden", "Hesen", "Gulen", "Vuten", "Sunen", "Kraen"
+    ],
+    "moedas": "0",
+    "idiomas": "gorvash, kronagar, draconico, comum, drovenar_arcaico, vaelthor_arcaico, sylmari_arcaico, sharusahk"
+  },
+  {
+    "nome": "Ocidente – Terras de todas raças",
+    "raça": "Gorvash",
+    "sobrenomes_nobres": [
+      "Vaeltharian", "Sylmaris", "Drovenark", "Sharusahk", "Gorvashon", "Thrundar", "Kromm", "Zulgad", "Varnak", "Grombath",
+      "Morthrum", "Brakur", "Durgan", "Kuldar", "Thrunn", "Zarkur", "Malgad", "Hestor", "Gundrum", "Vultar",
+      "Drakan", "Oltor", "Zalkar", "Maldur", "Hesgar"
+    ],
+    "sobrenomes_comuns": [
+      "Vael", "Syl", "Drov", "Sha", "Gor", "Thru", "Krom", "Zul", "Var", "Grom",
+      "Mor", "Brak", "Dur", "Kul", "Thru", "Zar", "Mal", "Hes", "Gun", "Vut",
+      "Dra", "Olt", "Zal", "Mad", "Hes", "Vaelen", "Sylen", "Droven", "Shaen", "Goren",
+      "Thruen", "Kromen", "Zulen", "Varen", "Gromen", "Moren", "Braken", "Duren", "Kulen", "Thruen",
+      "Zaren", "Malen", "Hesen", "Gunen", "Vuten", "Draen", "Olten", "Zalen", "Maden", "Hesen"
+    ],
+    "moedas": "0",
+    "idiomas": "gorvash, kronagar, draconico, comum, drovenar_arcaico, vaelthor_arcaico, sylmari_arcaico, sharusahk"
+  }
+]

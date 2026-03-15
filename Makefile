@@ -19,7 +19,7 @@ busca-all-equips:
 # ──────────────────────────────────────────────
 busca-npc-full:
 	$(PYTHON) service/storytelling/busca_npc_full.py
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc
+.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc gerar-npc-custom visualizador-npc front front-run
 # ──────────────────────────────────────────────
 # Interagindo com NPC
 # ──────────────────────────────────────────────
@@ -98,6 +98,11 @@ db-migrate: ## Executa as migrations Python
 	$(PYTHON) database/migrations/04_init_reinos.py
 	$(PYTHON) database/migrations/05_init_materiais.py
 	$(PYTHON) database/migrations/06_init_runas.py
+	$(PYTHON) database/migrations/07_init_npc.py
+	$(PYTHON) database/migrations/08_init_equipamentos_npc.py
+	$(PYTHON) database/migrations/09_init_elixir_npc.py
+	$(PYTHON) database/migrations/10_init_demon_npc.py
+	$(PYTHON) database/migrations/11_init_fera_npc.py
 
 start: db-up db-migrate ## Inicia o MongoDB e executa as migrations
 
@@ -185,3 +190,29 @@ cria-demon: ## Gera um demônio aleatório com atributos, ataques e loot
 
 cria-fera: ## Gera uma fera aleatória com atributos, ataques e loot
 	$(PYTHON) service/storytelling/cria_fera.py
+
+# ──────────────────────────────────────────────
+# Storytelling — Menu custom (NPC)
+# ──────────────────────────────────────────────
+
+gerar-npc-custom: ## Menu interativo: gerar NPC customizado e salvar na coleção NPC
+	$(PYTHON) -m service.storytelling.custom.gerar_npc_custom
+
+visualizador-npc: ## Menu interativo: listar e visualizar NPCs (ficha, equipamentos, runas, elixires)
+	$(PYTHON) -m service.storytelling.custom.visualizador_npc_custom
+
+# ──────────────────────────────────────────────
+# Front (interface web local)
+# ──────────────────────────────────────────────
+
+front-setup: ## Instala dependências do front (Python backend no venv do projeto + npm frontend)
+	$(VENV)/bin/pip install -r front/requirements.txt
+	cd front/frontend && npm install
+
+front-backend: ## Sobe a API do front em http://127.0.0.1:5000
+	$(PYTHON) front/run_backend.py
+
+front-frontend: ## Sobe o frontend React em http://localhost:5173
+	cd front/frontend && npm run dev
+
+front-run: front-backend ## Alias: sobe apenas o backend (rode front-frontend em outro terminal)

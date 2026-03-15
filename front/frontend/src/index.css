@@ -1,0 +1,186 @@
+:root {
+  --parchment: #e8dcb8;
+  --parchment-dark: #c4b896;
+  --ink: #2c2416;
+  --ink-light: #4a3f2f;
+  --wood: #5c4033;
+  --wood-light: #7d5a4a;
+  --gold: #b8860b;
+  --gold-light: #daa520;
+  --blood: #8b0000;
+  --forest: #2d4a2d;
+  --bg-page: #1a1510;
+  --border-frame: #3d2e22;
+  --font-title: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+  --font-head: 'Cinzel', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--gold-light);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  color: var(--parchment);
+}
+
+input, select, textarea, button {
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+button {
+  cursor: pointer;
+  background: var(--wood);
+  color: var(--parchment);
+  border: 1px solid var(--wood-light);
+  padding: 0.4rem 0.8rem;
+  border-radius: 2px;
+}
+
+button:hover {
+  background: var(--wood-light);
+}
+
+button.primary {
+  background: var(--forest);
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+input, select, textarea {
+  background: rgba(232, 220, 184, 0.08);
+  border: 1px solid var(--parchment-dark);
+  color: var(--parchment);
+  padding: 0.35rem 0.5rem;
+  border-radius: 2px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--parchment-dark);
+  opacity: 0.8;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-frame);
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(196, 184, 150, 0.2);
+}
+
+th {
+  font-family: var(--font-head);
+  background: rgba(92, 64, 51, 0.5);
+  color: var(--gold);
+}
+
+tr:hover td {
+  background: rgba(232, 220, 184, 0.05);
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(61, 46, 34, 0.6) 0%, rgba(26, 21, 16, 0.9) 100%);
+  border: 1px solid var(--border-frame);
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.35rem;
+  color: var(--gold-light);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  background: rgba(184, 134, 11, 0.2);
+  color: var(--gold-light);
+  border: 1px solid rgba(184, 134, 11, 0.4);
+}
+
+.form-row {
+  margin-bottom: 0.75rem;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--parchment-dark);
+  font-size: 0.9rem;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-row textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.filters input,
+.filters select {
+  min-width: 140px;
+}
+
+.error-msg {
+  color: #c66;
+  font-size: 0.9rem;
+}
+
+.success-msg {
+  color: #6a8;
+  font-size: 0.9rem;
+}
