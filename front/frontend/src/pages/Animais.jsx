@@ -40,7 +40,7 @@ export default function Animais() {
           <option value="grande">Grande</option>
           <option value="arcano">Arcano</option>
         </select>
-        <Link to="/animais/criar"><button type="button" className="primary">Criar animal</button></Link>
+        <Link to="/animais/criar"><button type="button" className="primary">Gerar animal</button></Link>
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -68,7 +68,6 @@ export default function Animais() {
                   <td>
                     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                       <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/ficha`)}>Ficha</button>
-                      <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/editar`)}>Editar</button>
                       <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/interagir`)}>Interagir</button>
                       <button type="button" className="link-like" style={{ color: 'var(--parchment-dark)' }} onClick={() => del(row._id)}>Excluir</button>
                     </div>

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './Layout'
-import { useAuth } from './context/AuthContext'
+import { useAuth } from './context/useAuth'
 import Dashboard from './pages/Dashboard'
 import Equipamentos from './pages/Equipamentos'
 import Armas from './pages/Armas'

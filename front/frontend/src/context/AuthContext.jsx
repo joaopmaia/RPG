@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from 'react'
 import { getAuthMe, loginAuth, logoutAuth } from '../api'
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -32,17 +32,4 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   )
-}
-
-const defaultAuth = {
-  user: null,
-  loading: false,
-  login: async () => {},
-  logout: () => {},
-  isAdmin: () => false,
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  return ctx || defaultAuth
 }

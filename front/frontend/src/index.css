@@ -223,6 +223,10 @@ tr:hover td {
   font-size: 0.9rem;
 }
 
+.autocomplete-item:hover {
+  background: var(--bg-card-hover);
+}
+
 .success-msg {
   color: #6a8;
   font-size: 0.9rem;

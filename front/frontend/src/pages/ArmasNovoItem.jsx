@@ -222,7 +222,7 @@ export default function ArmasNovoItem() {
                         key={r._id}
                         style={{
                           display: 'flex',
-                          alignItems: 'flex-start',
+                          alignItems: 'center',
                           gap: '0.5rem',
                           padding: '0.5rem',
                           marginBottom: '0.25rem',
@@ -236,13 +236,12 @@ export default function ArmasNovoItem() {
                           type="checkbox"
                           checked={checked}
                           onChange={() => toggleRunaNoEquipamento(r._id)}
-                          style={{ marginTop: '0.25rem', flexShrink: 0 }}
+                          style={{ flexShrink: 0 }}
                         />
-                        <div style={{ minWidth: 0, flex: 1 }}>
-                          <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{r.nome}</span>
-                          <span className="badge" style={{ marginLeft: '0.25rem' }}>{r.tier}</span>
-                          {r.efeito && <div style={{ fontSize: '0.85rem', marginTop: '0.2rem' }}><strong>Efeito:</strong> {r.efeito}</div>}
-                          {r.descricao && <div style={{ fontSize: '0.8rem', color: 'var(--parchment-dark)', marginTop: '0.1rem' }}>{r.descricao}</div>}
+                        <div style={{ minWidth: 0, flex: 1, textAlign: 'center' }}>
+                          <div style={{ fontWeight: 600 }}>{r.nome} <span className="badge" style={{ marginLeft: '0.25rem' }}>{r.tier}</span></div>
+                          {r.efeito && <div style={{ fontSize: '0.85rem', marginTop: '0.2rem', wordBreak: 'break-word' }}>{r.efeito}</div>}
+                          {r.descricao && <div style={{ fontSize: '0.8rem', color: 'var(--parchment-dark)', marginTop: '0.1rem', wordBreak: 'break-word' }}>{r.descricao}</div>}
                         </div>
                       </label>
                     )

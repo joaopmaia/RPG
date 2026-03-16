@@ -215,8 +215,18 @@ front-setup: ## Instala dependências do front (Python backend no venv do projet
 	$(VENV)/bin/pip install -r front/requirements.txt
 	cd front/frontend && npm install
 
-front-backend: ## Sobe a API do front em http://127.0.0.1:5000
+front-backend: ## Sobe a API do front em http://127.0.0.1:5000 (requer MongoDB em localhost:27017)
+	@echo "[front-backend] Garantindo que a porta 5000 esteja livre..."
+	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
+	@echo "[front-backend] Se a API retornar 500 com 'Connection refused', suba o MongoDB: make db-up-run (ou make front-backend-with-db)"
 	cd front/backend && $(CURDIR)/$(VENV)/bin/python3 app.py
+
+front-backend-with-db: ## Sobe o MongoDB e em seguida o backend (um comando só; use após make stop)
+	@echo "[front-backend-with-db] Subindo MongoDB..."
+	@$(MAKE) db-up-run 2>/dev/null || $(MAKE) db-up
+	@echo "[front-backend-with-db] Aguardando MongoDB em localhost:27017..."
+	@sleep 3
+	@$(MAKE) front-backend
 
 front-frontend: ## Sobe o frontend React em http://localhost:5173
 	cd front/frontend && npm run dev
@@ -238,9 +248,9 @@ run: ## Sobe tudo em background; terminal não trava. Use 'make stop' para encer
 	@echo "[run] Iniciando backend (porta 5000)..."
 	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
 	@sleep 1
-	@cd front/backend && nohup $(CURDIR)/$(VENV)/bin/python3 app.py >> $(CURDIR)/.front-backend.log 2>&1 & echo $$! > $(CURDIR)/.front-backend.pid
-	@echo "[run] Backend em background (PID $$(cat $(CURDIR)/.front-backend.pid)). Log: .front-backend.log"
-	@sleep 2
+	@cd front/backend && RUN_IN_BACKGROUND=1 nohup $(CURDIR)/$(VENV)/bin/python3 app.py >> $(CURDIR)/.front-backend.log 2>&1 & echo $$! > $(CURDIR)/.front-backend.pid
+	@echo "[run] Backend em background (PID $$(cat $(CURDIR)/.front-backend.pid)). Aguardando API responder..."
+	@i=0; while [ $$i -lt 20 ]; do code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/api/npcs 2>/dev/null); [ "$$code" = "200" ] && echo "[run] Backend OK (porta 5000)." && break; i=$$((i+1)); sleep 1; done
 	@echo "[run] Iniciando frontend (porta 5173)..."
 	@-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
 	@sleep 1

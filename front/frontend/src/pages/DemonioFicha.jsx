@@ -7,6 +7,7 @@ export default function DemonioFicha() {
   const [doc, setDoc] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [ataquesOpen, setAtaquesOpen] = useState(true)
 
   useEffect(() => {
     get('demonios', id)
@@ -53,12 +54,25 @@ export default function DemonioFicha() {
         )}
         {(doc.ataques && doc.ataques.length > 0) && (
           <>
-            <h3 style={{ marginTop: '1rem' }}>Ataques</h3>
-            <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-              {doc.ataques.map((a, i) => (
-                <li key={i} style={{ marginBottom: '0.25rem' }}>{typeof a === 'string' ? a : `${a.nome}: ${a.desc || ''}`}</li>
-              ))}
-            </ul>
+            <h3 style={{ marginTop: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => setAtaquesOpen((o) => !o)}>
+              {ataquesOpen ? '▼' : '▶'} Ataques
+            </h3>
+            {ataquesOpen && (
+              <ul style={{ margin: 0, paddingLeft: '1.25rem', listStyle: 'none' }}>
+                {doc.ataques.map((a, i) => (
+                  <li key={i} style={{ marginBottom: '0.75rem', padding: '0.5rem', background: 'var(--bg-card-hover)', borderRadius: 6 }}>
+                    {typeof a === 'string' ? (
+                      <span>{a}</span>
+                    ) : (
+                      <>
+                        <strong>{a.nome ?? '—'}</strong>
+                        {a.desc != null && a.desc !== '' && <div style={{ fontSize: '0.9rem', marginTop: '0.25rem', color: 'var(--parchment-dark)' }}>{a.desc}</div>}
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </>
         )}
         {(doc.loot && doc.loot.length > 0) && (

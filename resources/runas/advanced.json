@@ -49,7 +49,7 @@
   },
   {
     "tier": "Superior",
-    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "elementos": ["Degila", "Pascalia", "Reetear"],
     "efeito": "Sobrecarrega os canais de energia do alvo para forçar o corpo e a mente além dos limites biológicos.",
     "bonus": "Bônus de +1d4 em um Atributo à escolha",
     "nome": "Ascensão de Atributo",
@@ -57,7 +57,7 @@
   },
   {
     "tier": "Superior",
-    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "elementos": ["Degila", "Pascalia", "Reetear"],
     "efeito": "Projeta uma frequência dissonante que interfere na conexão entre a vontade e as capacidades físicas do alvo.",
     "bonus": "Penalidade de -1d4 em um Atributo à escolha",
     "nome": "Declínio de Atributo",
@@ -65,7 +65,7 @@
   },
   {
     "tier": "Superior",
-    "elementos": ["Degila", "Reetear", "Saltrat"],
+    "elementos": ["Degila", "Pascalia", "Reetear"],
     "efeito": "Identifica fontes de Arcana inata e as drena violentamente para recarregar as próprias reservas ou de objetos.",
     "bonus": "Drena Arcana de inimigos ou seres arcanos para converter em combustível puro",
     "nome": "Sifão de Éter",

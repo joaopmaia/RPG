@@ -50,7 +50,12 @@ def _is_local_origin(origin):
     o = (origin or "").strip().lower()
     return o.startswith("http://127.0.0.1") or o.startswith("http://localhost") or o.startswith("http://192.168.") or o.startswith("http://10.") or o.startswith("http://172.16.") or o.startswith("http://172.17.") or o.startswith("http://172.18.") or o.startswith("http://172.19.") or o.startswith("http://172.2") or o.startswith("http://172.30.") or o.startswith("http://172.31.")
 
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"], "allow_headers": ["Content-Type", "Authorization"], "supports_credentials": True}})
+CORS(app, resources={r"/api/*": {
+    "origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
+    "allow_headers": ["Content-Type", "Authorization"],
+    "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "supports_credentials": True,
+}})
 
 def _is_private_ip(ip):
     if not ip:
@@ -83,7 +88,22 @@ def _cors_credentials(response):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     return response
+
+
+@app.errorhandler(Exception)
+def _handle_error(exc):
+    """Garante que qualquer exceção não tratada retorne JSON e não derrube o worker."""
+    if hasattr(exc, "code") and exc.code is not None and 400 <= exc.code < 600:
+        return jsonify({"error": str(exc)}), exc.code
+    return jsonify({"error": str(exc)}), 500
+
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    """Resposta rápida sem acessar o banco; útil para verificar se o backend está no ar."""
+    return jsonify({"ok": True})
 
 
 def serialize(doc):
@@ -716,17 +736,22 @@ def list_runas():
     q = _build_query(["nome", "efeito"], {
         "tier": request.args.get("tier"),
     })
+    # elemento pode vir 1 ou mais vezes: ?elemento=Genia ou ?elemento=Genia&elemento=Degila
     elementos = request.args.getlist("elemento")
     if elementos:
-        # Normalizar: runas cujo array "elementos" contém todos os selecionados (1, 2 ou 3)
         elementos_norm = [e.strip() for e in elementos if e and str(e).strip()]
         if elementos_norm:
-            q["elementos"] = {"$all": elementos_norm}
+            # Runas cujo array "elementos" contém todos os selecionados (match case-insensitive)
+            # Para array de strings, $regex no campo matching qualquer elemento
+            and_elems = []
+            for e in elementos_norm:
+                and_elems.append({"elementos": {"$regex": r"^%s$" % re.escape(e), "$options": "i"}})
+            if and_elems:
+                q["$and"] = q.get("$and", []) + and_elems
     try:
         items = _list_collection("runas", q)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    # Ordenar por tier (Básico → Intermediário → Superior) e depois por nome
     tier_order = {"Básico": 0, "Intermediário": 1, "Superior": 2}
     items.sort(key=lambda x: (tier_order.get(x.get("tier") or "", 99), (x.get("nome") or "")))
     return jsonify(items)
@@ -898,6 +923,27 @@ def get_demonio(id):
     return jsonify(serialize(doc))
 
 
+@app.route("/api/demonios/gerar", methods=["POST"])
+def gerar_demonio():
+    """Gera um demônio semi-aleatório (tier + nome opcional + elemento opcional) e salva em demon_NPC."""
+    data = request.get_json() or {}
+    tier = (data.get("tier") or "normal").strip().lower()
+    if tier not in ("inferior", "normal", "superior"):
+        tier = "normal"
+    nome = (data.get("nome") or "").strip() or None
+    elemento = (data.get("elemento") or "").strip() or None
+    if elemento and elemento not in ("Genia", "Degila", "Reetear", "Arunalt", "Saltrat", "Pascalia"):
+        elemento = None
+    try:
+        from gerar_demon import gerar_demon_npc
+        db = get_db()
+        doc = gerar_demon_npc(tier, db, nome=nome, elemento=elemento)
+        rid = _create("demon_NPC", doc)
+        return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 @app.route("/api/demonios", methods=["POST"])
 def create_demonio():
     data = request.get_json() or {}
@@ -943,6 +989,27 @@ def get_animal(id):
     if not doc:
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(serialize(doc))
+
+
+@app.route("/api/animais/gerar", methods=["POST"])
+def gerar_animal():
+    """Gera um animal semi-aleatório (tier + tipo + nome opcional) e salva em fera_NPC."""
+    data = request.get_json() or {}
+    tier = (data.get("tier") or "comum").strip().lower()
+    if tier not in ("comum", "grande", "arcano"):
+        tier = "comum"
+    tipo = (data.get("tipo") or "Terrestre").strip()
+    if tipo not in ("Terrestre", "Aquático", "Voador"):
+        tipo = "Terrestre"
+    nome = (data.get("nome") or "").strip() or None
+    try:
+        from gerar_fera import gerar_fera_npc
+        db = get_db()
+        doc = gerar_fera_npc(tier, tipo, db, nome=nome)
+        rid = _create("fera_NPC", doc)
+        return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route("/api/animais", methods=["POST"])
@@ -1319,5 +1386,7 @@ if __name__ == "__main__":
         run_seed_if_needed()
     except Exception as e:
         print(f"[Seed] Aviso: {e}")
-    # 0.0.0.0 = escuta em todas as interfaces (acessível na rede local); acesso restrito a IPs privados em _restrict_to_local_network
-app.run(host="0.0.0.0", port=5000, debug=True)
+    # Em background (nohup) o reloader do Flask costuma derrubar o processo; desativa-se com RUN_IN_BACKGROUND=1
+    use_reloader = os.environ.get("RUN_IN_BACKGROUND", "").strip() != "1"
+    # 0.0.0.0 = escuta em todas as interfaces (acessível na rede local); acesso restrito a IPs privados
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=use_reloader)

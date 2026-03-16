@@ -1,5 +1,10 @@
-const API_BASE = 'http://127.0.0.1:5000/api';
-export const API_ORIGIN = 'http://127.0.0.1:5000';
+// Em desenvolvimento o front roda na porta 5173 e o backend na 5000 — a API deve apontar sempre para a 5000.
+// Use VITE_API_URL no .env (ex.: VITE_API_URL=http://192.168.x.x:5000) só se acessar o front de outro dispositivo.
+const API_ORIGIN = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL)
+  ? String(import.meta.env.VITE_API_URL).replace(/\/$/, '')
+  : 'http://127.0.0.1:5000';
+const API_BASE = `${API_ORIGIN}/api`;
+export { API_ORIGIN };
 
 const DEFAULT_OPTS = { credentials: 'include' };
 
@@ -21,15 +26,28 @@ function buildQuery(params) {
   return qs ? `?${qs}` : '';
 }
 
+async function parseErrorResponse(res) {
+  const text = await res.text();
+  try {
+    const j = JSON.parse(text);
+    return j.error || j.message || text || res.statusText;
+  } catch {
+    return text || res.statusText;
+  }
+}
+
 async function apiFetch(url, options = {}) {
   const opts = { ...DEFAULT_OPTS, ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) } };
   try {
     const res = await fetch(url, opts);
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const msg = await parseErrorResponse(res);
+      throw new Error(msg);
+    }
     return res.status === 204 ? null : res.json();
   } catch (e) {
     if (e.name === 'TypeError' && (e.message === 'Failed to fetch' || e.message.includes('fetch'))) {
-      throw new Error('Não foi possível conectar ao servidor. Inicie o backend em outro terminal: make front-backend');
+      throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando (make front-backend ou make run) e se o MongoDB está ativo.');
     }
     throw e;
   }
@@ -59,14 +77,30 @@ export async function update(collection, id, data) {
   });
 }
 
+export async function gerarDemonio(data) {
+  return apiFetch(`${API_BASE}/demonios/gerar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function gerarAnimal(data) {
+  return apiFetch(`${API_BASE}/animais/gerar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function remove(collection, id) {
   const res = await fetch(`${API_BASE}/${collection}/${id}`, { method: 'DELETE', ...DEFAULT_OPTS, headers: { 'Content-Type': 'application/json' } }).catch((e) => {
     if (e.name === 'TypeError' && (e.message === 'Failed to fetch' || e.message.includes('fetch'))) {
-      throw new Error('Não foi possível conectar ao servidor. Inicie o backend em outro terminal: make front-backend');
+      throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando (make front-backend ou make run) e se o MongoDB está ativo.');
     }
     throw e;
   });
-  if (!res.ok && res.status !== 204) throw new Error(await res.text());
+  if (!res.ok && res.status !== 204) throw new Error(await parseErrorResponse(res));
 }
 
 export async function getNpcCompleto(id) {
@@ -152,7 +186,7 @@ export async function gerarNpc(data) {
     return res.json();
   } catch (e) {
     if (e.name === 'TypeError' && (e.message === 'Failed to fetch' || e.message.includes('fetch'))) {
-      throw new Error('Não foi possível conectar ao servidor. Inicie o backend em outro terminal: make front-backend');
+      throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando (make front-backend ou make run) e se o MongoDB está ativo.');
     }
     throw e;
   }
@@ -189,7 +223,7 @@ export async function gerarEstabelecimento(data) {
     return res.json();
   } catch (e) {
     if (e.name === 'TypeError' && (e.message === 'Failed to fetch' || e.message.includes('fetch'))) {
-      throw new Error('Não foi possível conectar ao servidor. Inicie o backend em outro terminal: make front-backend');
+      throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando (make front-backend ou make run) e se o MongoDB está ativo.');
     }
     throw e;
   }
