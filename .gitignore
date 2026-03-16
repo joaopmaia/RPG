@@ -4,3 +4,16 @@ database/data/
 # Ambiente virtual Python
 .venv/
 __pycache__/
+
+# Credenciais locais (não versionar)
+.env
+front/backend/.env
+
+# Uploads de imagens (NPC, etc.)
+front/backend/uploads/
+
+# make run: backend e frontend em background
+.front-backend.pid
+.front-backend.log
+.front-frontend.pid
+.front-frontend.log

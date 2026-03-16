@@ -16,7 +16,7 @@ export default function EquipamentosNPC() {
     setLoading(true)
     setError(null)
     list(COLLECTION, { personagem_dono: dono || undefined, tipo: tipo || undefined })
-      .then(setItems)
+      .then((data) => setItems(Array.isArray(data) ? data : []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
@@ -45,7 +45,7 @@ export default function EquipamentosNPC() {
   }
 
   const del = (id) => {
-    if (confirm('Remover este equipamento?')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    if (confirm('Remover este equipamento? Esta ação não pode ser desfeita.')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
   }
 
   return (

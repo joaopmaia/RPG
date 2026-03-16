@@ -708,5 +708,73 @@ def main():
     print("\n  Até logo.\n")
 
 
+def criar_npc_por_escolhas(
+    db,
+    reinos_lista: List[Dict],
+    raca: str,
+    reino_nome: str,
+    linhagem: str,
+    tipo_npc: str,
+    classe: str,
+    natureza: str,
+    nivel: int,
+) -> Optional[Dict]:
+    """
+    Cria e salva um NPC a partir das escolhas (para uso pela API).
+    Retorna o documento do NPC salvo (com _id) ou None se reino não for encontrado.
+    """
+    reinos_raca = _reinos_por_raca(reinos_lista, raca)
+    reino_info = next((r for r in reinos_raca if r.get("nome") == reino_nome), None)
+    if not reino_info:
+        return None
+    sobrenomes = reino_info.get("sobrenomes_nobres", []) if linhagem == "nobre" else reino_info.get("sobrenomes_comuns", [])
+    sobrenome = random.choice(sobrenomes) if sobrenomes else ""
+    nome_gerado = random.choice(NOMES_POR_RACA.get(raca, ["Desconhecido"]))
+    nome_completo = f"{nome_gerado} {sobrenome}".strip()
+    atributos = gerar_atributos(nivel, tipo_npc, raca)
+    hp_total = calcular_hp(nivel, atributos)
+    arcana_total = random.randint(0, 4) * nivel
+    pericia = min(ATRIBUTO_PERICIA_MAX, random.randint(1, 3) + nivel)
+    equipamentos = gerar_equipamentos_por_rank(db, nivel)
+    elixires = gerar_elixires_custom(db, classe, nivel)
+    runas = gerar_runas_custom(classe, nivel)
+    observacoes = [f"Este personagem é oriundo de {reino_info['nome']}."]
+    base_moedas = int(reino_info.get("moedas", "0") or 0)
+    tesouro_nivel = rolar(10) * 10 * nivel
+    moedas = str(base_moedas + tesouro_nivel)
+    salvar_npc_completo(
+        db,
+        nome_completo,
+        atributos,
+        raca,
+        tipo_npc,
+        classe,
+        nivel,
+        hp_total,
+        arcana_total,
+        pericia,
+        equipamentos,
+        elixires,
+        runas,
+        natureza,
+        observacoes,
+        moedas,
+    )
+    # Buscar o NPC recém-inserido (por nome)
+    from bson import ObjectId
+    doc = db["NPC"].find_one({"nome": nome_completo})
+    return serialize_doc(doc) if doc else {"nome": nome_completo}
+
+
+def serialize_doc(doc):
+    """Converte ObjectId para string para JSON."""
+    if doc is None:
+        return None
+    out = dict(doc)
+    if "_id" in out:
+        out["_id"] = str(out["_id"])
+    return out
+
+
 if __name__ == "__main__":
     main()

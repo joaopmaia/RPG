@@ -1,17 +1,89 @@
 """
 API REST local para o projeto RPG.
-Expõe CRUD para: armas, armaduras, alquimia, reinos, materiais, runas, NPC, equipamentos_NPC, elixir_NPC.
+Expõe CRUD para: armas, armaduras, alquimia, reinos, materiais, runas, NPC, equipamentos_NPC, elixir_NPC, imagens.
+Autenticação: login (JWT em cookie, 24h), logout invalida no DB. Acesso apenas rede local.
 """
+import hashlib
 import json
+import os
 import re
+import sys
+from datetime import datetime, timedelta
 from bson import ObjectId
-from flask import Flask, request, jsonify
+from bson.errors import InvalidId
+from flask import Flask, request, jsonify, send_file, make_response
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+
+# Carregar .env do diretório do backend (não versionado; ver .env.example)
+try:
+    from dotenv import load_dotenv
+    _env_path = os.path.join(os.path.dirname(__file__), ".env")
+    load_dotenv(_env_path)
+except ImportError:
+    pass
 
 from db import get_db
 
+# Raiz do repositório (front/backend/../..)
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+# Pasta de histórias dos reinos (front/historias)
+HISTORIAS_DIR = os.path.join(os.path.dirname(__file__), "..", "historias")
+# Pasta de mapas por reino (front/historias/mapas) — imagens com nome do reino
+MAPAS_DIR = os.path.join(HISTORIAS_DIR, "mapas")
+# Pasta para upload de imagens (NPC, etc.)
+UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+REINOS_INFO_PATH = os.path.join(PROJECT_ROOT, "service", "utils", "reinos-info.json")
+
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"])
+app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "khonum-cronicas-secret-local")
+COOKIE_NAME = "khonum_token"
+TOKEN_MAX_AGE = 24 * 3600  # 24h em segundos
+
+def _is_local_origin(origin):
+    if not origin:
+        return True
+    o = (origin or "").strip().lower()
+    return o.startswith("http://127.0.0.1") or o.startswith("http://localhost") or o.startswith("http://192.168.") or o.startswith("http://10.") or o.startswith("http://172.16.") or o.startswith("http://172.17.") or o.startswith("http://172.18.") or o.startswith("http://172.19.") or o.startswith("http://172.2") or o.startswith("http://172.30.") or o.startswith("http://172.31.")
+
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"], "allow_headers": ["Content-Type", "Authorization"], "supports_credentials": True}})
+
+def _is_private_ip(ip):
+    if not ip:
+        return False
+    if ip in ("127.0.0.1", "localhost", "::1"):
+        return True
+    parts = ip.split(".")
+    if len(parts) == 4:
+        try:
+            a, b = int(parts[0]), int(parts[1])
+            if a == 10:
+                return True
+            if a == 172 and 16 <= b <= 31:
+                return True
+            if a == 192 and b == 168:
+                return True
+        except ValueError:
+            pass
+    return False
+
+@app.before_request
+def _restrict_to_local_network():
+    if request.remote_addr and not _is_private_ip(request.remote_addr):
+        return jsonify({"error": "Acesso permitido apenas na rede local"}), 403
+
+@app.after_request
+def _cors_credentials(response):
+    origin = request.origin
+    if origin and _is_local_origin(origin):
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 
 def serialize(doc):
@@ -66,20 +138,22 @@ def _update(collection_name, id_str, data):
     if "_id" in data:
         del data["_id"]
     try:
-        result = col.update_one({"_id": ObjectId(id_str)}, {"$set": data})
-        return result.modified_count > 0
-    except Exception:
+        oid = ObjectId(id_str)
+    except (InvalidId, TypeError):
         return False
+    result = col.update_one({"_id": oid}, {"$set": data})
+    return result.matched_count > 0
 
 
 def _delete(collection_name, id_str):
     db = get_db()
     col = db[collection_name]
     try:
-        result = col.delete_one({"_id": ObjectId(id_str)})
-        return result.deleted_count > 0
-    except Exception:
+        oid = ObjectId(id_str)
+    except (InvalidId, TypeError):
         return False
+    result = col.delete_one({"_id": oid})
+    return result.deleted_count > 0
 
 
 def _build_query(text_search_fields, exact_filters):
@@ -94,11 +168,129 @@ def _build_query(text_search_fields, exact_filters):
     return q
 
 
+# ─── Auth (usuários, JWT) ───────────────────────────────────────────────────
+
+def _ensure_admin_user():
+    """Cria o usuário admin se não existir nenhum; usuário e senha vêm de ADMIN_USER e ADMIN_PASSWORD no .env."""
+    admin_user = (os.environ.get("ADMIN_USER") or "").strip()
+    admin_password = os.environ.get("ADMIN_PASSWORD") or ""
+    if not admin_user or not admin_password:
+        return
+    db = get_db()
+    col = db["usuarios"]
+    if col.count_documents({"perfil": "admin"}) > 0:
+        return
+    senha_hash = generate_password_hash(admin_password, method="pbkdf2:sha256")
+    try:
+        col.insert_one({
+            "usuario": admin_user,
+            "senha_hash": senha_hash,
+            "perfil": "admin",
+        })
+        print("[Auth] Usuário admin criado a partir do .env.")
+    except Exception:
+        pass
+
+
+def _token_hash(token_str):
+    return hashlib.sha256(token_str.encode()).hexdigest()
+
+
+def _get_token_from_request():
+    token = request.cookies.get(COOKIE_NAME)
+    if token:
+        return token
+    auth = request.headers.get("Authorization")
+    if auth and auth.startswith("Bearer "):
+        return auth[7:].strip()
+    return None
+
+
+def _decode_token():
+    """Extrai e valida o JWT (cookie ou header). Verifica se o token segue válido no DB. Retorna payload ou None."""
+    token = _get_token_from_request()
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+    except jwt.InvalidTokenError:
+        return None
+    usuario = payload.get("usuario")
+    if not usuario:
+        return None
+    db = get_db()
+    col = db["usuarios"]
+    doc = col.find_one({"usuario": usuario})
+    if not doc:
+        return None
+    current_hash = doc.get("current_token_hash")
+    if current_hash and current_hash != _token_hash(token):
+        return None
+    return payload
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def auth_login():
+    """Login: { usuario, senha } -> cookie (24h) + JSON com user. Atualiza current_token_hash no DB."""
+    _ensure_admin_user()
+    data = request.get_json() or {}
+    usuario = (data.get("usuario") or "").strip()
+    senha = data.get("senha") or ""
+    if not usuario or not senha:
+        return jsonify({"error": "Usuário e senha obrigatórios"}), 400
+    db = get_db()
+    col = db["usuarios"]
+    doc = col.find_one({"usuario": usuario})
+    if not doc or not check_password_hash(doc.get("senha_hash", ""), senha):
+        return jsonify({"error": "Usuário ou senha inválidos"}), 401
+    payload = {"usuario": doc["usuario"], "perfil": doc.get("perfil", "user"), "exp": datetime.utcnow() + timedelta(hours=24)}
+    token = jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
+    if isinstance(token, bytes):
+        token = token.decode("utf-8")
+    token_hash_val = _token_hash(token)
+    try:
+        col.update_one({"_id": doc["_id"]}, {"$set": {"current_token_hash": token_hash_val}})
+    except Exception:
+        pass
+    resp = make_response(jsonify({"user": {"usuario": doc["usuario"], "perfil": doc.get("perfil", "user")}}))
+    resp.set_cookie(
+        COOKIE_NAME,
+        token,
+        max_age=TOKEN_MAX_AGE,
+        httponly=True,
+        samesite="Lax",
+        path="/",
+    )
+    return resp
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def auth_logout():
+    """Remove o cookie e invalida o token no DB (current_token_hash)."""
+    payload = _decode_token()
+    if payload and payload.get("usuario"):
+        db = get_db()
+        db["usuarios"].update_one({"usuario": payload["usuario"]}, {"$unset": {"current_token_hash": 1}})
+    resp = make_response(jsonify({"ok": True}))
+    resp.set_cookie(COOKIE_NAME, "", max_age=0, path="/", httponly=True, samesite="Lax")
+    return resp
+
+
+@app.route("/api/auth/me", methods=["GET"])
+def auth_me():
+    """Retorna o usuário atual a partir do token (cookie ou header). 401 se não autenticado."""
+    _ensure_admin_user()
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    return jsonify({"usuario": payload["usuario"], "perfil": payload["perfil"]})
+
+
 # ─── Armas ──────────────────────────────────────────────────────────────────
 
 @app.route("/api/armas", methods=["GET"])
 def list_armas():
-    q = _build_query(["nome", "tipo"], {"tipo": request.args.get("tipo")})
+    q = _build_query(["nome", "tipo"], {"tipo": request.args.get("tipo"), "peso": request.args.get("peso")})
     return jsonify(_list_collection("armas", q))
 
 
@@ -139,7 +331,7 @@ def delete_arma(id):
 
 @app.route("/api/armaduras", methods=["GET"])
 def list_armaduras():
-    q = _build_query(["nome", "tipo"], {"tipo": request.args.get("tipo")})
+    q = _build_query(["nome", "tipo"], {"tipo": request.args.get("tipo"), "peso": request.args.get("peso")})
     return jsonify(_list_collection("armaduras", q))
 
 
@@ -176,7 +368,149 @@ def delete_armadura(id):
     return jsonify({"error": "Não encontrado"}), 404
 
 
+MULTIPLICADOR_MATERIAL = {"Comum": 1, "Incomum": 5, "Raro": 15, "Épico": 50, "Lendário": 100}
+MULTIPLICADOR_RUNA = {"Básico": 5, "Intermediário": 20, "Superior": 50}
+DIFICULDADE_RARIDADE = {"Comum": 10, "Incomum": 12, "Raro": 15, "Épico": 17, "Lendário": 20}
+CAMPO_REINO_EQUIP = {"melee": "armas", "ranged": "armas", "arcane": "runicos", "Armadura": "armaduras", "Escudo": "escudos"}
+
+
+@app.route("/api/equipamento-previa", methods=["POST"])
+def equipamento_previa():
+    """Retorna estatísticas e preço de um equipamento (arma ou armadura) com material e reino."""
+    data = request.get_json() or {}
+    db = get_db()
+    tipo_eq = (data.get("tipo") or "arma").strip().lower()
+    reino_id = data.get("reino_id")
+    reino = None
+    if reino_id:
+        reino = _get_by_id("reinos", reino_id)
+    if not reino:
+        reino = {"nome": "", "armas": "0", "armaduras": "0", "escudos": "0", "runicos": "0"}
+
+    if tipo_eq == "arma":
+        item = _get_by_id("armas", data.get("item_id"))
+        if not item:
+            return jsonify({"error": "Arma não encontrada"}), 404
+        campo_reino = CAMPO_REINO_EQUIP.get(item.get("tipo", "melee"), "armas")
+    else:
+        item = _get_by_id("armaduras", data.get("item_id"))
+        if not item:
+            return jsonify({"error": "Armadura não encontrada"}), 404
+        campo_reino = CAMPO_REINO_EQUIP.get(item.get("tipo", "Armadura"), "armaduras")
+
+    material = _get_by_id("materiais", data.get("material_id"))
+    if not material:
+        return jsonify({"error": "Material não encontrado"}), 404
+
+    preco_base = float(item.get("preco", 0) or 0)
+    mod_reino = float(reino.get(campo_reino, "0") or 0)
+    raridade = material.get("raridade", "Comum")
+    mult_mat = MULTIPLICADOR_MATERIAL.get(raridade, 1)
+    mult_runa = 1
+    runa_ids = data.get("runa_ids") or []
+    if runa_ids:
+        for rid in runa_ids:
+            runa_doc = _get_by_id("runas", rid)
+            if runa_doc and runa_doc.get("tier"):
+                mult_runa *= MULTIPLICADOR_RUNA.get(runa_doc["tier"], 1)
+    preco = round(preco_base * (1 + mod_reino) * mult_mat * mult_runa, 2)
+
+    def parse_num(v):
+        if v is None:
+            return 0.0
+        s = str(v).strip().lstrip("+")
+        try:
+            return float(s)
+        except (ValueError, TypeError):
+            return 0.0
+
+    mat_bonus = parse_num(material.get("bonus"))
+    mat_durab = parse_num(material.get("durabilidade"))
+    durabilidade = float(item.get("durabilidade", 0) or 0) + mat_durab
+    peso = item.get("peso", "?")
+    if material.get("peso") == "Pesado":
+        pi = (item.get("peso") or "").lower()
+        if pi == "muito leve":
+            peso = "Leve"
+        elif pi == "leve":
+            peso = "Médio"
+        elif pi == "médio":
+            peso = "Pesado"
+        else:
+            peso = "Muito Pesado"
+
+    dificuldade = DIFICULDADE_RARIDADE.get(raridade, 10)
+    out = {
+        "nome": item.get("nome", "?"),
+        "tipo": item.get("tipo", "?"),
+        "material": material.get("material", "?"),
+        "raridade": raridade,
+        "peso": peso,
+        "durabilidade": durabilidade,
+        "preco": preco,
+        "reino_nome": reino.get("nome", ""),
+        "dificuldade_criacao": dificuldade,
+        "dificuldade_extracao_material": dificuldade,
+    }
+    if runa_ids:
+        runas_info = []
+        for rid in runa_ids:
+            r = _get_by_id("runas", rid)
+            if r:
+                runas_info.append({"nome": r.get("nome"), "tier": r.get("tier"), "efeito": r.get("efeito")})
+        out["runas"] = runas_info
+    if item.get("dano") is not None:
+        out["dano"] = f"{item['dano']} +{int(mat_bonus)}" if mat_bonus >= 0 else f"{item['dano']} {int(mat_bonus)}"
+    if item.get("defesa") is not None:
+        try:
+            out["defesa"] = float(item["defesa"]) + mat_bonus
+        except (ValueError, TypeError):
+            out["defesa"] = f"{item['defesa']} +{int(mat_bonus)}" if mat_bonus >= 0 else f"{item['defesa']} {int(mat_bonus)}"
+    return jsonify(out)
+
+
 # ─── Alquimia ────────────────────────────────────────────────────────────────
+
+CUSTO_BASE_ELIXIR = {"Comum": 20, "Incomum": 100, "Raro": 500, "Épico": 2500, "Lendário": 10000}
+
+
+@app.route("/api/elixir-previa", methods=["POST"])
+def elixir_previa():
+    """Retorna prévia de preço de um elixir com tipo de matéria-prima e reino."""
+    data = request.get_json() or {}
+    db = get_db()
+    elixir = _get_by_id("alquimia", data.get("elixir_id"))
+    if not elixir:
+        return jsonify({"error": "Elixir não encontrado"}), 404
+    tipo_mat = (data.get("tipo_material") or "vegetal").strip().lower()
+    if tipo_mat not in ("vegetal", "animal", "mineral", "demoníaco"):
+        tipo_mat = "vegetal"
+    reino = None
+    if data.get("reino_id"):
+        reino = _get_by_id("reinos", data.get("reino_id"))
+    if not reino:
+        reino = {"nome": "", "alquimia": "0"}
+    mod_reino = float(reino.get("alquimia", "0") or 0)
+    campo_rar = f"{tipo_mat}_rar"
+    campo_pot = f"{tipo_mat}_pot"
+    raridade = elixir.get(campo_rar, "Comum")
+    potencia = elixir.get(campo_pot, "")
+    custo_base = CUSTO_BASE_ELIXIR.get(raridade, 20)
+    preco = round(custo_base * (1 + mod_reino), 2)
+    dificuldade = DIFICULDADE_RARIDADE.get(raridade, 10)
+    return jsonify({
+        "nome": elixir.get("nome", "?"),
+        "efeito": elixir.get("efeito", "?"),
+        "descricao": elixir.get("descrição", ""),
+        "material": tipo_mat,
+        "raridade": raridade,
+        "potencia": potencia,
+        "preco": preco,
+        "reino_nome": reino.get("nome", ""),
+        "dificuldade_criacao": dificuldade,
+        "dificuldade_extracao_material": dificuldade,
+    })
+
 
 @app.route("/api/alquimia", methods=["GET"])
 def list_alquimia():
@@ -258,6 +592,78 @@ def delete_reino(id):
     return jsonify({"error": "Não encontrado"}), 404
 
 
+@app.route("/api/reinos-info", methods=["GET"])
+def get_reinos_info():
+    """Retorna a lista de reinos com raça e sobrenomes (reinos-info.json)."""
+    if not os.path.isfile(REINOS_INFO_PATH):
+        return jsonify([])
+    try:
+        with open(REINOS_INFO_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/reinos/<id>/historia", methods=["GET"])
+def get_reino_historia(id):
+    """Retorna o conteúdo da história do reino (arquivo em front/historias/<nome>.md)."""
+    doc = _get_by_id("reinos", id)
+    if not doc:
+        return jsonify({"error": "Reino não encontrado"}), 404
+    nome = (doc.get("nome") or "").strip()
+    if not nome:
+        return jsonify({"nome": "", "raça": "", "historia": ""})
+    # Nome seguro para arquivo: sem caracteres perigosos
+    safe = re.sub(r'[^\w\s\-–—]', "", nome)
+    safe = re.sub(r'\s+', "_", safe).strip("_") or nome.replace(" ", "_")
+    for ext in (".md", ".txt", ""):
+        path = os.path.join(HISTORIAS_DIR, safe + ext)
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    texto = f.read()
+            except Exception:
+                texto = ""
+            return jsonify({"nome": nome, "historia": texto})
+    # Placeholder: só raça (reinos-info tem raça; reinos no DB podem não ter)
+    return jsonify({"nome": nome, "historia": f"# {nome}\n\n*(Arquivo de história não encontrado em historias/.)*"})
+
+
+@app.route("/api/reinos/<id>/mapa", methods=["GET"])
+def get_reino_mapa(id):
+    """Retorna a imagem do mapa do reino (arquivo em front/historias/mapas/<nome>.(png|jpg|...))."""
+    doc = _get_by_id("reinos", id)
+    if not doc:
+        return jsonify({"error": "Reino não encontrado"}), 404
+    nome = (doc.get("nome") or "").strip()
+    if not nome:
+        return jsonify({"error": "Reino sem nome"}), 404
+    safe = re.sub(r'[^\w\s\-–—]', "", nome)
+    safe = re.sub(r'\s+', "_", safe).strip("_") or nome.replace(" ", "_")
+    for ext in (".png", ".jpg", ".jpeg", ".webp", ".gif"):
+        path = os.path.join(MAPAS_DIR, safe + ext)
+        if os.path.isfile(path):
+            mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
+            return send_file(path, mimetype=mime.get(ext, "image/png"))
+    return jsonify({"error": "Mapa não encontrado para este reino"}), 404
+
+
+@app.route("/api/historias/world-story-for-players", methods=["GET"])
+def get_world_story():
+    """Retorna o conteúdo de front/historias/world-story-for-players.md para a aba Início."""
+    path = os.path.join(HISTORIAS_DIR, "world-story-for-players.md")
+    try:
+        if os.path.isfile(path):
+            with open(path, "r", encoding="utf-8") as f:
+                texto = f.read()
+        else:
+            texto = "Khonum é um mundo fantasioso fantástico!"
+    except Exception:
+        texto = "Khonum é um mundo fantasioso fantástico!"
+    return jsonify({"historia": texto})
+
+
 # ─── Materiais ──────────────────────────────────────────────────────────────
 
 @app.route("/api/materiais", methods=["GET"])
@@ -310,10 +716,20 @@ def list_runas():
     q = _build_query(["nome", "efeito"], {
         "tier": request.args.get("tier"),
     })
-    elem = request.args.get("elemento")
-    if elem:
-        q["elementos"] = elem
-    return jsonify(_list_collection("runas", q))
+    elementos = request.args.getlist("elemento")
+    if elementos:
+        # Normalizar: runas cujo array "elementos" contém todos os selecionados (1, 2 ou 3)
+        elementos_norm = [e.strip() for e in elementos if e and str(e).strip()]
+        if elementos_norm:
+            q["elementos"] = {"$all": elementos_norm}
+    try:
+        items = _list_collection("runas", q)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    # Ordenar por tier (Básico → Intermediário → Superior) e depois por nome
+    tier_order = {"Básico": 0, "Intermediário": 1, "Superior": 2}
+    items.sort(key=lambda x: (tier_order.get(x.get("tier") or "", 99), (x.get("nome") or "")))
+    return jsonify(items)
 
 
 @app.route("/api/runas/<id>", methods=["GET"])
@@ -365,6 +781,33 @@ def get_npc(id):
     doc = _get_by_id("NPC", id)
     if not doc:
         return jsonify({"error": "Não encontrado"}), 404
+    return jsonify(serialize(doc))
+
+
+@app.route("/api/npcs/<id>/completo", methods=["GET"])
+def get_npc_completo(id):
+    """Retorna NPC com equipamentos e elixires (por personagem_dono = nome do NPC). Enriquece com ataque1, ataque2, armadura_val, defesa_escudo."""
+    doc = _get_by_id("NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    nome = doc.get("nome")
+    if nome:
+        db = get_db()
+        equipamentos = list(db["equipamentos_NPC"].find({"personagem_dono": nome}).sort("tipo", 1))
+        elixires = list(db["elixir_NPC"].find({"personagem_dono": nome}).sort("nome", 1))
+        doc["equipamentos"] = [serialize(e) for e in equipamentos]
+        doc["elixires"] = [serialize(el) for el in elixires]
+        armas = [e for e in equipamentos if (e.get("tipo") or "").lower() in ("melee", "ranged", "arcane")]
+        armaduras = [e for e in equipamentos if (e.get("tipo") or "") == "Armadura"]
+        escudos = [e for e in equipamentos if (e.get("tipo") or "") == "Escudo"]
+        if len(armas) >= 1:
+            doc["ataque1"] = armas[0].get("dano") or armas[0].get("bônus") or armas[0].get("bonus") or "—"
+        if len(armas) >= 2:
+            doc["ataque2"] = armas[1].get("dano") or armas[1].get("bônus") or armas[1].get("bonus") or "—"
+        if armaduras:
+            doc["armadura_val"] = armaduras[0].get("defesa") or armaduras[0].get("bônus") or armaduras[0].get("bonus") or "—"
+        if escudos:
+            doc["defesa_escudo"] = escudos[0].get("bônus") or escudos[0].get("bonus") or escudos[0].get("defesa") or "—"
     return jsonify(doc)
 
 
@@ -378,19 +821,159 @@ def create_npc():
         return jsonify({"error": str(e)}), 400
 
 
+@app.route("/api/npcs/gerar", methods=["POST"])
+def gerar_npc():
+    """Gera e salva um NPC a partir das escolhas (raça, reino, linhagem, tipo, classe, natureza, nível)."""
+    data = request.get_json() or {}
+    raca = (data.get("raca") or "").strip()
+    reino_nome = (data.get("reino_nome") or "").strip()
+    linhagem = (data.get("linhagem") or "comum").strip().lower()
+    if linhagem not in ("nobre", "comum"):
+        linhagem = "comum"
+    tipo_npc = (data.get("tipo_npc") or "").strip()
+    classe = (data.get("classe") or "").strip()
+    natureza = (data.get("natureza") or "Neutro").strip()
+    try:
+        nivel = int(data.get("nivel", 1))
+        if nivel < 1 or nivel > 5:
+            nivel = 1
+    except (TypeError, ValueError):
+        nivel = 1
+    if not raca or not reino_nome or not tipo_npc or not classe:
+        return jsonify({"error": "Faltam raça, reino, tipo ou classe."}), 400
+    if not os.path.isfile(REINOS_INFO_PATH):
+        return jsonify({"error": "Arquivo reinos-info não encontrado."}), 500
+    try:
+        with open(REINOS_INFO_PATH, "r", encoding="utf-8") as f:
+            reinos_lista = json.load(f)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    try:
+        from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
+        db = get_db()
+        result = criar_npc_por_escolhas(
+            db, reinos_lista, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel
+        )
+        if result is None:
+            return jsonify({"error": "Reino não encontrado para essa raça."}), 400
+        return jsonify(result), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/npcs/<id>", methods=["PUT"])
 def update_npc(id):
-    data = request.get_json() or {}
-    if _update("NPC", id, data):
-        return jsonify({"ok": True})
-    return jsonify({"error": "Não encontrado"}), 404
+    try:
+        data = request.get_json() or {}
+        if _update("NPC", id, data):
+            return jsonify({"ok": True})
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/npcs/<id>", methods=["DELETE"])
 def delete_npc(id):
-    if _delete("NPC", id):
-        return jsonify({"ok": True}), 204
-    return jsonify({"error": "Não encontrado"}), 404
+    try:
+        if _delete("NPC", id):
+            return jsonify({"ok": True}), 204
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ─── Demônios (demon_NPC) ───────────────────────────────────────────────────
+
+@app.route("/api/demonios", methods=["GET"])
+def list_demonios():
+    q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
+    return jsonify(_list_collection("demon_NPC", q, sort_key="nome"))
+
+
+@app.route("/api/demonios/<id>", methods=["GET"])
+def get_demonio(id):
+    doc = _get_by_id("demon_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    return jsonify(serialize(doc))
+
+
+@app.route("/api/demonios", methods=["POST"])
+def create_demonio():
+    data = request.get_json() or {}
+    try:
+        rid = _create("demon_NPC", data)
+        return jsonify({"_id": rid}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/demonios/<id>", methods=["PUT"])
+def update_demonio(id):
+    try:
+        data = request.get_json() or {}
+        if _update("demon_NPC", id, data):
+            return jsonify({"ok": True})
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/demonios/<id>", methods=["DELETE"])
+def delete_demonio(id):
+    try:
+        if _delete("demon_NPC", id):
+            return jsonify({"ok": True}), 204
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ─── Animais / Feras (fera_NPC) ──────────────────────────────────────────────
+
+@app.route("/api/animais", methods=["GET"])
+def list_animais():
+    q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
+    return jsonify(_list_collection("fera_NPC", q, sort_key="nome"))
+
+
+@app.route("/api/animais/<id>", methods=["GET"])
+def get_animal(id):
+    doc = _get_by_id("fera_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    return jsonify(serialize(doc))
+
+
+@app.route("/api/animais", methods=["POST"])
+def create_animal():
+    data = request.get_json() or {}
+    try:
+        rid = _create("fera_NPC", data)
+        return jsonify({"_id": rid}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/animais/<id>", methods=["PUT"])
+def update_animal(id):
+    try:
+        data = request.get_json() or {}
+        if _update("fera_NPC", id, data):
+            return jsonify({"ok": True})
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/animais/<id>", methods=["DELETE"])
+def delete_animal(id):
+    try:
+        if _delete("fera_NPC", id):
+            return jsonify({"ok": True}), 204
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ─── Equipamentos NPC ───────────────────────────────────────────────────────
@@ -484,6 +1067,235 @@ def delete_elixir_npc(id):
     return jsonify({"error": "Não encontrado"}), 404
 
 
+# ─── Estabelecimentos ────────────────────────────────────────────────────────
+
+@app.route("/api/estabelecimentos", methods=["GET"])
+def list_estabelecimentos():
+    q = {}
+    if request.args.get("reino_nome"):
+        q["reino_nome"] = request.args.get("reino_nome")
+    if request.args.get("nivel") is not None and request.args.get("nivel") != "":
+        try:
+            q["nivel"] = int(request.args.get("nivel"))
+        except (TypeError, ValueError):
+            pass
+    if request.args.get("tipo") is not None and request.args.get("tipo") != "":
+        try:
+            q["tipo"] = int(request.args.get("tipo"))
+        except (TypeError, ValueError):
+            pass
+    return jsonify(_list_collection("estabelecimentos", q if q else None, sort_key="nome"))
+
+
+@app.route("/api/estabelecimentos/<id>", methods=["GET"])
+def get_estabelecimento(id):
+    try:
+        doc = _get_by_id("estabelecimentos", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        return jsonify(doc)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/estabelecimentos", methods=["POST"])
+def create_estabelecimento():
+    data = request.get_json() or {}
+    try:
+        rid = _create("estabelecimentos", data)
+        return jsonify({"_id": rid}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/estabelecimentos/<id>", methods=["PUT"])
+def update_estabelecimento(id):
+    try:
+        data = request.get_json() or {}
+        if _update("estabelecimentos", id, data):
+            return jsonify({"ok": True})
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/estabelecimentos/<id>", methods=["DELETE"])
+def delete_estabelecimento(id):
+    try:
+        if _delete("estabelecimentos", id):
+            return make_response("", 204)
+        return jsonify({"error": "Não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/estabelecimentos/gerar", methods=["POST"])
+def gerar_estabelecimento_api():
+    """Gera um estabelecimento (como cria_estabelecimento.py), cria NPC associado e salva."""
+    import random
+    data = request.get_json() or {}
+    try:
+        nivel = int(data.get("nivel", 1))
+        if nivel < 1 or nivel > 5:
+            nivel = 1
+    except (TypeError, ValueError):
+        nivel = 1
+    try:
+        tipo = int(data.get("tipo", 0))
+        if tipo < 0 or tipo > 3:
+            tipo = 0
+    except (TypeError, ValueError):
+        tipo = 0
+    reino_id = data.get("reino_id")
+    if not reino_id:
+        return jsonify({"error": "reino_id obrigatório"}), 400
+    db = get_db()
+    reino = _get_by_id("reinos", reino_id)
+    if not reino:
+        return jsonify({"error": "Reino não encontrado"}), 404
+    try:
+        from service.storytelling.cria_estabelecimento import gerar_estabelecimento as gerar
+        result = gerar(db, nivel, reino, tipo)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    reino_nome = reino.get("nome", "")
+    npc_nome = None
+    npc_id = None
+    if os.path.isfile(REINOS_INFO_PATH):
+        try:
+            with open(REINOS_INFO_PATH, "r", encoding="utf-8") as f:
+                reinos_info = json.load(f)
+            reino_info = next((r for r in reinos_info if r.get("nome") == reino_nome), None)
+            if reino_info:
+                raca = reino_info.get("raça", "Vaelthor")
+                linhagem = "nobre" if nivel == 5 else "comum"
+                tipo_npc = "Mercadores"
+                classes = ["Arcanista", "Clérigo", "Assassino", "Paladino", "Shaman", "Druida", "Eremita", "Ocultista"]
+                naturezas = ["Neutro", "Bom", "Mal"]
+                classe = random.choice(classes)
+                natureza = random.choice(naturezas)
+                from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
+                npc_doc = criar_npc_por_escolhas(
+                    db, reinos_info, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel
+                )
+                if npc_doc:
+                    npc_nome = npc_doc.get("nome")
+                    npc_id = npc_doc.get("_id")
+        except Exception:
+            pass
+    result["npc_nome"] = npc_nome or ""
+    result["npc_id"] = npc_id or ""
+    result_serialized = serialize(result)
+    try:
+        rid = _create("estabelecimentos", result_serialized)
+        result_serialized["_id"] = rid
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify(result_serialized), 201
+
+
+# ─── Imagens (tabela + identificador → imagem) ───────────────────────────────
+
+@app.route("/api/imagens", methods=["GET"])
+def list_imagens():
+    tabela = request.args.get("tabela")
+    identificador = request.args.get("identificador")
+    q = {}
+    if tabela:
+        q["tabela"] = tabela
+    if identificador:
+        q["identificador"] = identificador
+    return jsonify(_list_collection("imagens", q if q else None, sort_key="identificador"))
+
+
+@app.route("/api/imagens/buscar", methods=["GET"])
+def buscar_imagem():
+    """Retorna um documento de imagem por tabela e identificador."""
+    tabela = request.args.get("tabela")
+    identificador = request.args.get("identificador")
+    if not tabela or not identificador:
+        return jsonify({"error": "tabela e identificador obrigatórios"}), 400
+    db = get_db()
+    doc = db["imagens"].find_one({"tabela": tabela, "identificador": identificador})
+    return jsonify(serialize(doc)) if doc else jsonify(None)
+
+
+@app.route("/api/imagens/<id>", methods=["GET"])
+def get_imagem(id):
+    doc = _get_by_id("imagens", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    return jsonify(doc)
+
+
+@app.route("/api/imagens", methods=["POST"])
+def create_imagem():
+    data = request.get_json() or {}
+    if not data.get("tabela") or not data.get("identificador"):
+        return jsonify({"error": "tabela e identificador obrigatórios"}), 400
+    try:
+        rid = _create("imagens", data)
+        return jsonify({"_id": rid}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/imagens/<id>", methods=["PUT"])
+def update_imagem(id):
+    data = request.get_json() or {}
+    if _update("imagens", id, data):
+        return jsonify({"ok": True})
+    return jsonify({"error": "Não encontrado"}), 404
+
+
+@app.route("/api/imagens/<id>", methods=["DELETE"])
+def delete_imagem(id):
+    if _delete("imagens", id):
+        return jsonify({"ok": True}), 204
+    return jsonify({"error": "Não encontrado"}), 404
+
+
+@app.route("/api/imagens/upload", methods=["POST"])
+def upload_imagem():
+    """Recebe multipart: tabela, identificador e arquivo de imagem. Salva em pasta local e cria/atualiza documento em imagens."""
+    tabela = (request.form.get("tabela") or "").strip()
+    identificador = (request.form.get("identificador") or "").strip()
+    if not tabela or not identificador:
+        return jsonify({"error": "tabela e identificador obrigatórios"}), 400
+    file = request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"error": "arquivo de imagem obrigatório"}), 400
+    ext = os.path.splitext(file.filename)[1].lower() or ".png"
+    if ext not in (".png", ".jpg", ".jpeg", ".gif", ".webp"):
+        return jsonify({"error": "formato não permitido (use png, jpg, gif ou webp)"}), 400
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    import uuid
+    safe_name = f"{uuid.uuid4().hex}{ext}"
+    filepath = os.path.join(UPLOADS_DIR, safe_name)
+    try:
+        file.save(filepath)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    url = f"/api/uploads/{safe_name}"
+    db = get_db()
+    existing = db["imagens"].find_one({"tabela": tabela, "identificador": identificador})
+    doc = {"tabela": tabela, "identificador": identificador, "url": url}
+    if existing:
+        db["imagens"].update_one({"_id": existing["_id"]}, {"$set": {"url": url}})
+        return jsonify(serialize({**existing, **doc})), 200
+    rid = _create("imagens", doc)
+    return jsonify({"_id": str(rid), "url": url}), 201
+
+
+@app.route("/api/uploads/<path:filename>", methods=["GET"])
+def serve_upload(filename):
+    """Serve arquivo enviado por upload (imagens de NPC, etc.)."""
+    path = os.path.join(UPLOADS_DIR, filename)
+    if not os.path.isfile(path) or not os.path.abspath(path).startswith(os.path.abspath(UPLOADS_DIR)):
+        return jsonify({"error": "Não encontrado"}), 404
+    return send_file(path, mimetype=None, as_attachment=False)
+
+
 # ─── Health / info ──────────────────────────────────────────────────────────
 
 @app.route("/api")
@@ -493,11 +1305,19 @@ def api_info():
         "version": "1.0",
         "endpoints": [
             "/api/armas", "/api/armaduras", "/api/alquimia", "/api/reinos",
-            "/api/materiais", "/api/runas", "/api/npcs",
+            "/api/materiais", "/api/runas", "/api/npcs", "/api/npcs/<id>/completo",
             "/api/equipamentos-npc", "/api/elixir-npc",
+            "/api/reinos/<id>/historia", "/api/imagens",
         ],
     })
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    # Seed (dados default) ao iniciar: carrega JSONs se as collections estiverem vazias
+    try:
+        from seed import run_seed_if_needed
+        run_seed_if_needed()
+    except Exception as e:
+        print(f"[Seed] Aviso: {e}")
+    # 0.0.0.0 = escuta em todas as interfaces (acessível na rede local); acesso restrito a IPs privados em _restrict_to_local_network
+app.run(host="0.0.0.0", port=5000, debug=True)

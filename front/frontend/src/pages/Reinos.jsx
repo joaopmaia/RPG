@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { list, get, create, update, remove } from '../api'
 
 const COLLECTION = 'reinos'
 
 export default function Reinos() {
+  const { isAdmin } = useAuth()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,7 +21,7 @@ export default function Reinos() {
     setLoading(true)
     setError(null)
     list(COLLECTION, { q: q || undefined })
-      .then(setItems)
+      .then((data) => setItems(Array.isArray(data) ? data : []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
@@ -47,7 +50,7 @@ export default function Reinos() {
   }
 
   const del = (id) => {
-    if (confirm('Remover este reino?')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    if (confirm('Remover este reino? Esta ação não pode ser desfeita.')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
   }
 
   const campos = ['armas', 'armaduras', 'escudos', 'ferramentas', 'runicos', 'servicos', 'alquimia', 'materiais']
@@ -57,7 +60,7 @@ export default function Reinos() {
       <h1>Reinos</h1>
       <div className="filters">
         <input placeholder="Buscar por nome" value={q} onChange={(e) => setQ(e.target.value)} />
-        <button type="button" className="primary" onClick={openCreate}>Novo reino</button>
+        {isAdmin() && <button type="button" className="primary" onClick={openCreate}>Novo reino</button>}
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -81,9 +84,17 @@ export default function Reinos() {
                   <td>{row.armaduras}</td>
                   <td>{row.alquimia}</td>
                   <td>
-                    <button type="button" onClick={() => openEdit(row._id)}>Editar</button>
+                    <Link to={`/reinos/${row._id}/historia`}><button type="button">História</button></Link>
                     {' '}
-                    <button type="button" onClick={() => del(row._id)}>Remover</button>
+                    <Link to={`/reinos/${row._id}/mapa`}><button type="button">Mapa</button></Link>
+                    {isAdmin() && (
+                      <>
+                        {' '}
+                        <button type="button" onClick={() => openEdit(row._id)}>Editar</button>
+                        {' '}
+                        <button type="button" onClick={() => del(row._id)}>Remover</button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -92,7 +103,7 @@ export default function Reinos() {
         </div>
       )}
 
-      {editing && (
+      {isAdmin() && editing && (
         <div className="card" style={{ marginTop: '1rem', maxWidth: '480px' }}>
           <h3>{editing === 'new' ? 'Novo reino' : 'Editar reino'}</h3>
           <div className="form-row">

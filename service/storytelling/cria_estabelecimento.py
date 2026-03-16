@@ -117,6 +117,101 @@ NOMES_TIPO_ESTAB = {
     3: "Hospedagem / Taverna",
 }
 
+# Nomes aleatórios por nível: duas listas de 50; nome final = junção de duas partes (ex: "Taverna do Bode", "Coelho Dourado")
+# Formato por nível: 1-2 "{a} do {b}", 3-4 "{a} {b}", 5 "{b} {a}"
+NOMES_ESTABELECIMENTO = {
+    1: {
+        "lista_a": [
+            "Taverna", "Barraca", "Carroça", "Tenda", "Bar do", "Cantina", "Botequim", "Albergue", "Pousada", "Estalagem",
+            "Ferraria", "Forja", "Banca", "Trapézio", "Barraca do", "Toldo", "Rancho", "Cobertura", "Sótão", "Celeiro",
+            "Depósito", "Armazém", "Bar", "Taberna", "Hospedaria", "Refúgio", "Recanto", "Esquina", "Porto", "Cais",
+            "Caldeira", "Caldeirão", "Pote", "Frasco", "Alambique", "Destilaria", "Bebida", "Cerveja", "Vinho", "Hidromel",
+            "Martelo", "Bigorna", "Forja Velha", "Carvão", "Brasa", "Fogo", "Sopapo", "Malho", "Ferramenta", "Prego",
+        ],
+        "lista_b": [
+            "Bode", "Lobo", "Coelho", "Coruja", "Cervo", "Javali", "Rato", "Gato", "Cão", "Cavalo",
+            "Urso", "Raposa", "Texugo", "Lontra", "Falcão", "Águia", "Serpente", "Sapo", "Peixe", "Caranguejo",
+            "Três", "Sete", "Um", "Dourado", "Prateado", "Bronze", "Ferro", "Ouro", "Prata", "Cobre",
+            "Rei", "Rainha", "Príncipe", "Duque", "Conde", "Barão", "Lorde", "Cavaleiro", "Guerreiro", "Mago",
+            "Sorte", "Estrela", "Lua", "Sol", "Vento", "Chuva", "Nevoa", "Trilha", "Caminho", "Porta",
+        ],
+    },
+    2: {
+        "lista_a": [
+            "Empório", "Loja", "Comércio", "Casa", "Oficina", "Ferraria", "Alquimia", "Botica", "Taberna", "Estalagem",
+            "Armazém", "Depósito", "Bar", "Cantina", "Pousada", "Albergue", "Hospedaria", "Refúgio", "Recanto", "Porto",
+            "Forja", "Bigorna", "Martelo", "Caldeirão", "Alambique", "Destilaria", "Bebedouro", "Fonte", "Poço", "Cisterna",
+            "Mercado", "Feira", "Tenda", "Barraca", "Banca", "Balcão", "Balcão do", "Canto do", "Canto", "Esquina",
+            "Vila", "Vilarejo", "Aldeia", "Rua", "Praça", "Largo", "Beco", "Travessa", "Avenida", "Caminho",
+        ],
+        "lista_b": [
+            "Bode", "Lobo", "Coelho", "Coruja", "Cervo", "Javali", "Rato", "Gato", "Cão", "Cavalo",
+            "Urso", "Raposa", "Texugo", "Lontra", "Falcão", "Águia", "Serpente", "Sapo", "Peixe", "Caranguejo",
+            "Dourado", "Prateado", "Bronze", "Ferro", "Ouro", "Prata", "Cobre", "Estanho", "Aço", "Âmbar",
+            "Rei", "Rainha", "Príncipe", "Duque", "Conde", "Barão", "Lorde", "Cavaleiro", "Guerreiro", "Mago",
+            "Sorte", "Estrela", "Lua", "Sol", "Vento", "Chuva", "Nevoa", "Trilha", "Caminho", "Porta",
+        ],
+    },
+    3: {
+        "lista_a": [
+            "Loja", "Casa", "Oficina", "Ferraria", "Alquimia", "Botica", "Taberna", "Estalagem", "Armazém", "Empório",
+            "Forja", "Bigorna", "Caldeirão", "Alambique", "Destilaria", "Mercado", "Feira", "Salão", "Galeria", "Ateliê",
+            "Cidade", "Vila", "Praça", "Rua", "Largo", "Beco", "Travessa", "Avenida", "Porto", "Cais",
+            "Martelo", "Espada", "Escudo", "Elmo", "Armadura", "Poção", "Elixir", "Óleo", "Unguento", "Bálsamo",
+            "Lâmina", "Cutelo", "Machado", "Lança", "Arco", "Besta", "Adaga", "Mandril", "Ferramenta", "Prego",
+        ],
+        "lista_b": [
+            "Dourado", "Prateado", "Bronze", "Ferro", "Ouro", "Prata", "Cobre", "Aço", "Âmbar", "Jade",
+            "Bode", "Lobo", "Coelho", "Coruja", "Cervo", "Javali", "Urso", "Raposa", "Falcão", "Águia",
+            "Rei", "Rainha", "Príncipe", "Duque", "Conde", "Barão", "Lorde", "Cavaleiro", "Guerreiro", "Mago",
+            "Sorte", "Estrela", "Lua", "Sol", "Vento", "Chuva", "Nevoa", "Trilha", "Caminho", "Porta",
+            "Velho", "Novo", "Grande", "Pequeno", "Alto", "Baixo", "Norte", "Sul", "Leste", "Oeste",
+        ],
+    },
+    4: {
+        "lista_a": [
+            "Coelho", "Raposa", "Coruja", "Cervo", "Águia", "Leão", "Lobo", "Urso", "Falcão", "Serpente",
+            "Ouro", "Prata", "Bronze", "Jade", "Âmbar", "Ébano", "Marfim", "Seda", "Veludo", "Linho",
+            "Rei", "Rainha", "Príncipe", "Duque", "Conde", "Barão", "Lorde", "Cavaleiro", "Guerreiro", "Mago",
+            "Estrela", "Lua", "Sol", "Vento", "Chuva", "Nevoa", "Trilha", "Caminho", "Porta", "Ponte",
+            "Loja", "Casa", "Oficina", "Salão", "Galeria", "Ateliê", "Palácio", "Torre", "Mansão", "Solar",
+        ],
+        "lista_b": [
+            "Dourado", "Prateado", "Bronze", "Cobre", "Aço", "Cristal", "Pérola", "Rubi", "Safira", "Esmeralda",
+            "Velho", "Novo", "Grande", "Pequeno", "Alto", "Baixo", "Norte", "Sul", "Leste", "Oeste",
+            "Real", "Nobre", "Sagrado", "Antigo", "Místico", "Secreto", "Oculto", "Raro", "Único", "Fino",
+            "Brilhante", "Lustroso", "Polido", "Refinado", "Distinto", "Elegante", "Soberbo", "Majestoso", "Imperial", "Real",
+            "Primeiro", "Último", "Eterno", "Infinito", "Supremo", "Divino", "Celestial", "Abençoado", "Sagrado", "Puro",
+        ],
+    },
+    5: {
+        "lista_a": [
+            "Leilão", "Galeria", "Salão", "Casa", "Corte", "Palácio", "Torre", "Mansão", "Solar", "Fortaleza",
+            "Ouro", "Prata", "Jade", "Âmbar", "Ébano", "Marfim", "Seda", "Veludo", "Cristal", "Pérola",
+            "Rei", "Rainha", "Príncipe", "Duque", "Conde", "Barão", "Lorde", "Imperador", "César", "Grão-Duque",
+            "Estrela", "Lua", "Sol", "Coroa", "Cetro", "Trono", "Escudo", "Espada", "Cálice", "Relíquia",
+            "Nobre", "Real", "Imperial", "Sagrado", "Divino", "Celestial", "Supremo", "Eterno", "Único", "Raro",
+        ],
+        "lista_b": [
+            "Dourado", "Prateado", "Real", "Nobre", "Imperial", "Sagrado", "Divino", "Celestial", "Supremo", "Eterno",
+            "Primeiro", "Último", "Majestoso", "Soberbo", "Elegante", "Refinado", "Distinto", "Único", "Raro", "Fino",
+            "Brilhante", "Lustroso", "Polido", "Puro", "Abençoado", "Antigo", "Místico", "Secreto", "Oculto", "Supremo",
+            "Velho", "Novo", "Grande", "Alto", "Central", "Principal", "Real", "Imperial", "Cortês", "Gentil",
+            "Vermelho", "Azul", "Verde", "Branco", "Negro", "Prata", "Ouro", "Bronze", "Cobre", "Âmbar",
+        ],
+    },
+}
+
+
+def _gerar_nome_estabelecimento(nivel):
+    """Gera um nome aleatório para o estabelecimento com base no nível (ex: Taverna do Bode, Coelho Dourado)."""
+    cfg = NOMES_ESTABELECIMENTO.get(nivel, NOMES_ESTABELECIMENTO[1])
+    a = random.choice(cfg["lista_a"])
+    b = random.choice(cfg["lista_b"])
+    if nivel in (1, 2):
+        return f"{a} do {b}"
+    return f"{a} {b}"
+
 
 # ═══════════════════════════════════════════════════
 #  Funções utilitárias
@@ -360,6 +455,8 @@ def gerar_estoque_ferreiro(db, nivel, reino, runico, especializado):
             "mat_bonus": mat_bonus,
             "preco": math.ceil(preco),
         }
+        if material.get("efeito"):
+            entrada["efeito_material"] = material.get("efeito")
         if dano_base is not None:
             entrada["dano_base"] = dano_base
             if mat_bonus >= 0:
@@ -565,6 +662,49 @@ def _exibir_hospedagem(estoque):
     for i, item in enumerate(estoque, 1):
         print(f"\n  {i:>2}. {item['nome']}")
         print(f"      Preço: {item['preco']} moedas ({formatar_moedas(item['preco'])})")
+
+
+# ═══════════════════════════════════════════════════
+#  API: geração programática (retorna dict para salvar)
+# ═══════════════════════════════════════════════════
+
+def gerar_estabelecimento(db, nivel, reino, tipo_estab):
+    """
+    Gera um estabelecimento (estoque e metadados) para uso pela API.
+    reino: documento do reino (dict com nome, armas, alquimia, etc.)
+    tipo_estab: 0=Ferreiro, 1=Ferreiro Rúnico, 2=Alquimista, 3=Hospedagem
+    Retorna dict com nome, nivel, nivel_nome, reino_nome, tipo, tipo_nome, especializado?, estoque, observacoes.
+    """
+    cfg = NIVEIS.get(nivel, NIVEIS[1])
+    reino_nome = reino.get("nome", "?")
+    tipo_nome = NOMES_TIPO_ESTAB.get(tipo_estab, "?")
+    especializado = verificar_especializacao(nivel, tipo_estab)
+
+    if tipo_estab == 0:
+        estoque = gerar_estoque_ferreiro(db, nivel, reino, runico=False, especializado=especializado)
+    elif tipo_estab == 1:
+        estoque = gerar_estoque_ferreiro(db, nivel, reino, runico=True, especializado=especializado)
+    elif tipo_estab == 2:
+        estoque = gerar_estoque_alquimista(db, nivel, reino, especializado=especializado)
+    else:
+        estoque = gerar_estoque_hospedagem(nivel, reino)
+
+    observacoes = [f"Nível {nivel}: {cfg['nome']}. {cfg['desc']}"]
+    if especializado:
+        observacoes.append(f"Especializado em: {especializado}.")
+
+    nome = _gerar_nome_estabelecimento(nivel)
+    return {
+        "nome": nome,
+        "nivel": nivel,
+        "nivel_nome": cfg["nome"],
+        "reino_nome": reino_nome,
+        "tipo": tipo_estab,
+        "tipo_nome": tipo_nome,
+        "especializado": especializado or "",
+        "estoque": estoque,
+        "observacoes": observacoes,
+    }
 
 
 # ═══════════════════════════════════════════════════

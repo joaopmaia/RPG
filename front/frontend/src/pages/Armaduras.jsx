@@ -1,51 +1,36 @@
 import { useState, useEffect } from 'react'
-import { list, get, create, update, remove } from '../api'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { list, remove } from '../api'
 
 const COLLECTION = 'armaduras'
 
 export default function Armaduras() {
+  const { isAdmin } = useAuth()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [q, setQ] = useState('')
   const [tipo, setTipo] = useState('')
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ nome: '', defesa: '', durabilidade: '', peso: '', preco: '', tipo: 'Armadura' })
-
+  const [peso, setPeso] = useState('')
   const load = () => {
     setLoading(true)
     setError(null)
-    list(COLLECTION, { q: q || undefined, tipo: tipo || undefined })
-      .then(setItems)
+    list(COLLECTION, { q: q || undefined, tipo: tipo || undefined, peso: peso || undefined })
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : []
+        setItems(Array.from(new Map(arr.map((d) => [d._id, d])).values()))
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [q, tipo])
-
-  const openCreate = () => {
-    setEditing('new')
-    setForm({ nome: '', defesa: '', durabilidade: '', peso: '', preco: '', tipo: 'Armadura' })
-  }
-
-  const openEdit = (id) => {
-    get(COLLECTION, id).then((data) => {
-      const { _id, ...rest } = data
-      setForm(rest)
-      setEditing(id)
-    }).catch((e) => setError(e.message))
-  }
-
-  const save = () => {
-    if (editing === 'new') {
-      create(COLLECTION, form).then(() => { setEditing(null); load() }).catch((e) => setError(e.message))
-    } else {
-      update(COLLECTION, editing, form).then(() => { setEditing(null); load() }).catch((e) => setError(e.message))
-    }
-  }
+  useEffect(load, [q, tipo, peso])
 
   const del = (id) => {
-    if (confirm('Remover esta armadura?')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    if (confirm('Remover esta armadura? Esta ação não pode ser desfeita.')) {
+      remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    }
   }
 
   return (
@@ -58,7 +43,16 @@ export default function Armaduras() {
           <option value="Armadura">Armadura</option>
           <option value="Escudo">Escudo</option>
         </select>
-        <button type="button" className="primary" onClick={openCreate}>Nova armadura</button>
+        <select value={peso} onChange={(e) => setPeso(e.target.value)}>
+          <option value="">Todos os pesos</option>
+          <option value="Muito Leve">Muito Leve</option>
+          <option value="Leve">Leve</option>
+          <option value="Médio">Médio</option>
+          <option value="Pesado">Pesado</option>
+          <option value="Muito Pesado">Muito Pesado</option>
+        </select>
+        {isAdmin() && <Link to="/armaduras/criar" className="button primary">Nova armadura</Link>}
+        <Link to="/armaduras/novo-item" className="button">Novo Item</Link>
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -86,37 +80,18 @@ export default function Armaduras() {
                   <td>{row.preco}</td>
                   <td><span className="badge">{row.tipo}</span></td>
                   <td>
-                    <button type="button" onClick={() => openEdit(row._id)}>Editar</button>
-                    {' '}
-                    <button type="button" onClick={() => del(row._id)}>Remover</button>
+                    {isAdmin() && (
+                      <>
+                        <Link to={`/armaduras/${row._id}/editar`} className="button">Editar</Link>
+                        {' '}
+                        <button type="button" onClick={() => del(row._id)}>Remover</button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {editing && (
-        <div className="card" style={{ marginTop: '1rem', maxWidth: '480px' }}>
-          <h3>{editing === 'new' ? 'Nova armadura' : 'Editar armadura'}</h3>
-          {['nome', 'defesa', 'durabilidade', 'peso', 'preco'].map((key) => (
-            <div key={key} className="form-row">
-              <label>{key}</label>
-              <input value={form[key] || ''} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
-            </div>
-          ))}
-          <div className="form-row">
-            <label>Tipo</label>
-            <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}>
-              <option value="Armadura">Armadura</option>
-              <option value="Escudo">Escudo</option>
-            </select>
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-            <button type="button" className="primary" onClick={save}>Salvar</button>
-            <button type="button" onClick={() => setEditing(null)}>Cancelar</button>
-          </div>
         </div>
       )}
     </div>

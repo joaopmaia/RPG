@@ -19,7 +19,7 @@ busca-all-equips:
 # ──────────────────────────────────────────────
 busca-npc-full:
 	$(PYTHON) service/storytelling/busca_npc_full.py
-.PHONY: db-up db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc gerar-npc-custom visualizador-npc front front-run
+.PHONY: db-up db-up-run db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc gerar-npc-custom visualizador-npc front front-run run stop
 # ──────────────────────────────────────────────
 # Interagindo com NPC
 # ──────────────────────────────────────────────
@@ -80,8 +80,11 @@ setup: ## Cria o ambiente virtual e instala dependências
 # Banco de dados
 # ──────────────────────────────────────────────
 
-db-up: ## Sobe o MongoDB via Docker
+db-up: ## Sobe o MongoDB via Docker (usa sudo; para make run use db-up-run)
 	sudo docker compose -f database/docker-compose.yml up -d
+
+db-up-run: ## Sobe o MongoDB sem sudo (para make run; falha se precisar de sudo)
+	docker compose -f database/docker-compose.yml up -d
 
 db-down: ## Para o MongoDB
 	sudo docker compose -f database/docker-compose.yml down
@@ -103,6 +106,9 @@ db-migrate: ## Executa as migrations Python
 	$(PYTHON) database/migrations/09_init_elixir_npc.py
 	$(PYTHON) database/migrations/10_init_demon_npc.py
 	$(PYTHON) database/migrations/11_init_fera_npc.py
+	$(PYTHON) database/migrations/12_init_imagens.py
+	$(PYTHON) database/migrations/13_init_estabelecimentos.py
+	$(PYTHON) database/migrations/14_init_usuarios.py
 
 start: db-up db-migrate ## Inicia o MongoDB e executa as migrations
 
@@ -210,9 +216,51 @@ front-setup: ## Instala dependências do front (Python backend no venv do projet
 	cd front/frontend && npm install
 
 front-backend: ## Sobe a API do front em http://127.0.0.1:5000
-	$(PYTHON) front/run_backend.py
+	cd front/backend && $(CURDIR)/$(VENV)/bin/python3 app.py
 
 front-frontend: ## Sobe o frontend React em http://localhost:5173
 	cd front/frontend && npm run dev
 
 front-run: front-backend ## Alias: sobe apenas o backend (rode front-frontend em outro terminal)
+
+# ──────────────────────────────────────────────
+# Run (não bloqueia: banco + migrations + setup + backend + frontend em background)
+# ──────────────────────────────────────────────
+
+run: ## Sobe tudo em background; terminal não trava. Use 'make stop' para encerrar.
+	@echo "[run] Verificando ambiente..."
+	@test -d $(VENV) || ($(MAKE) setup && echo "[run] Venv criado.")
+	@$(MAKE) front-setup
+	@echo "[run] Subindo banco (tentativa sem sudo)..."
+	@$(MAKE) db-up-run 2>/dev/null || echo "[run] Aviso: não foi possível subir o banco. Se precisar, rode 'make db-up' num terminal (pede senha). Continuando..."
+	@echo "[run] Executando migrations..."
+	@$(MAKE) db-migrate
+	@echo "[run] Iniciando backend (porta 5000)..."
+	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
+	@sleep 1
+	@cd front/backend && nohup $(CURDIR)/$(VENV)/bin/python3 app.py >> $(CURDIR)/.front-backend.log 2>&1 & echo $$! > $(CURDIR)/.front-backend.pid
+	@echo "[run] Backend em background (PID $$(cat $(CURDIR)/.front-backend.pid)). Log: .front-backend.log"
+	@sleep 2
+	@echo "[run] Iniciando frontend (porta 5173)..."
+	@-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
+	@sleep 1
+	@cd front/frontend && nohup npm run dev >> $(CURDIR)/.front-frontend.log 2>&1 & echo $$! > $(CURDIR)/.front-frontend.pid
+	@echo "[run] Frontend em background (PID $$(cat $(CURDIR)/.front-frontend.pid)). Log: .front-frontend.log"
+	@echo ""
+	@echo "Sistema em execução. Frontend: http://localhost:5173  |  Backend: http://127.0.0.1:5000"
+	@echo "Para encerrar tudo: make stop"
+
+# ──────────────────────────────────────────────
+# Stop (frontend + backend + containers do banco)
+# ──────────────────────────────────────────────
+
+stop: ## Encerra frontend, backend e containers do banco; exibe 'Sistema finalizado com sucesso!'
+	@echo "[stop] Encerrando frontend (porta 5173)..."
+	@-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
+	@-test -f .front-frontend.pid && kill -9 $$(cat .front-frontend.pid) 2>/dev/null || true
+	@echo "[stop] Encerrando backend (porta 5000)..."
+	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
+	@-test -f .front-backend.pid && kill -9 $$(cat .front-backend.pid) 2>/dev/null || true
+	@echo "[stop] Parando containers do banco..."
+	@docker compose -f database/docker-compose.yml down 2>/dev/null || sudo docker compose -f database/docker-compose.yml down 2>/dev/null || true
+	@echo "Sistema finalizado com sucesso!"

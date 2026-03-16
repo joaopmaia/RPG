@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
 import { list, get, create, update, remove } from '../api'
 
 const COLLECTION = 'runas'
 const ELEMENTOS = ['Genia', 'Degila', 'Reetear', 'Arunalt', 'Saltrat', 'Pascalia']
+const ELEMENTO_IMAGEM = {
+  Degila: '/elementos/degila.png',
+  Genia: '/elementos/genia.png',
+  Arunalt: '/elementos/arunalt.png',
+  Saltrat: '/elementos/saltrat.png',
+  Reetear: '/elementos/reetear.png',
+  Pascalia: '/elementos/pascalia.png',
+}
 
 export default function Runas() {
+  const { isAdmin } = useAuth()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -13,16 +23,30 @@ export default function Runas() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState({ nome: '', tier: 'Básico', elementos: [], efeito: '', bonus: '', descricao: '' })
 
+  const [elementosSelecionados, setElementosSelecionados] = useState([])
+
   const load = () => {
     setLoading(true)
     setError(null)
-    list(COLLECTION, { q: q || undefined, tier: tier || undefined })
-      .then(setItems)
+    const params = { q: q || undefined, tier: tier || undefined }
+    if (elementosSelecionados.length > 0) params.elemento = [...elementosSelecionados]
+    list(COLLECTION, params)
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : []
+        setItems(Array.from(new Map(arr.map((d) => [d._id, d])).values()))
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [q, tier])
+  const elementosKey = JSON.stringify([...elementosSelecionados].sort())
+  useEffect(load, [q, tier, elementosKey])
+
+  const toggleElementoFiltro = (elem) => {
+    setElementosSelecionados((prev) =>
+      prev.includes(elem) ? prev.filter((e) => e !== elem) : [...prev, elem]
+    )
+  }
 
   const openCreate = () => {
     setEditing('new')
@@ -52,7 +76,9 @@ export default function Runas() {
   }
 
   const del = (id) => {
-    if (confirm('Remover esta runa?')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    if (confirm('Remover esta runa? Esta ação não pode ser desfeita.')) {
+      remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    }
   }
 
   return (
@@ -66,7 +92,34 @@ export default function Runas() {
           <option value="Intermediário">Intermediário</option>
           <option value="Superior">Superior</option>
         </select>
-        <button type="button" className="primary" onClick={openCreate}>Nova runa</button>
+        <span style={{ color: 'var(--parchment-dark)', fontSize: '0.9rem', marginRight: '0.5rem' }}>Filtrar por elementos (todas as runas que contêm os selecionados):</span>
+      </div>
+      <div className="runas-elementos-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+        {ELEMENTOS.map((elem) => (
+          <button
+            key={elem}
+            type="button"
+            className={'runas-elemento-card' + (elementosSelecionados.includes(elem) ? ' selected' : '')}
+            onClick={() => toggleElementoFiltro(elem)}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '0.5rem',
+              minWidth: '80px',
+              border: elementosSelecionados.includes(elem) ? '2px solid var(--accent)' : '1px solid var(--border-frame)',
+              borderRadius: '8px',
+              background: elementosSelecionados.includes(elem) ? 'var(--bg-card-hover)' : 'var(--bg-card)',
+              cursor: 'pointer',
+            }}
+          >
+            <img src={ELEMENTO_IMAGEM[elem]} alt={elem} style={{ width: 48, height: 48, objectFit: 'contain' }} />
+            <span style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>{elem}</span>
+          </button>
+        ))}
+      </div>
+      <div className="filters">
+        {isAdmin() && <button type="button" className="primary" onClick={openCreate}>Nova runa</button>}
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -88,11 +141,15 @@ export default function Runas() {
                   <td>{row.nome}</td>
                   <td><span className="badge">{row.tier}</span></td>
                   <td>{(row.elementos || []).join(', ')}</td>
-                  <td>{(row.efeito || '').slice(0, 40)}…</td>
+                  <td>{(row.efeito || '').slice(0, 40)}{(row.efeito || '').length > 40 ? '…' : ''}</td>
                   <td>
-                    <button type="button" onClick={() => openEdit(row._id)}>Editar</button>
-                    {' '}
-                    <button type="button" onClick={() => del(row._id)}>Remover</button>
+                    {isAdmin() && (
+                      <>
+                        <button type="button" onClick={() => openEdit(row._id)}>Editar</button>
+                        {' '}
+                        <button type="button" onClick={() => del(row._id)}>Remover</button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -101,7 +158,7 @@ export default function Runas() {
         </div>
       )}
 
-      {editing && (
+      {isAdmin() && editing && (
         <div className="card" style={{ marginTop: '1rem', maxWidth: '560px' }}>
           <h3>{editing === 'new' ? 'Nova runa' : 'Editar runa'}</h3>
           <div className="form-row">

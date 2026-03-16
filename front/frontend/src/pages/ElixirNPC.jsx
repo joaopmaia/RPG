@@ -15,7 +15,7 @@ export default function ElixirNPC() {
     setLoading(true)
     setError(null)
     list(COLLECTION, { personagem_dono: dono || undefined })
-      .then(setItems)
+      .then((data) => setItems(Array.isArray(data) ? data : []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
@@ -44,7 +44,7 @@ export default function ElixirNPC() {
   }
 
   const del = (id) => {
-    if (confirm('Remover este elixir?')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
+    if (confirm('Remover este elixir? Esta ação não pode ser desfeita.')) remove(COLLECTION, id).then(load).catch((e) => setError(e.message))
   }
 
   return (
