@@ -1,9 +1,10 @@
+import os
 import sys
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 # Configurações do Banco
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 def conectar():

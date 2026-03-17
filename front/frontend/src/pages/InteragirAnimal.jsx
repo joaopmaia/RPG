@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 import { get, update } from '../api'
 
 function Modal({ open, onClose, title, children }) {
@@ -60,6 +60,8 @@ const COLLECTION = 'animais'
 
 export default function InteragirAnimal() {
   const { id } = useParams()
+  const location = useLocation()
+  const fromPassarNoite = location.state?.fromPassarNoite
   const [doc, setDoc] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -262,6 +264,9 @@ export default function InteragirAnimal() {
   return (
     <div style={{ maxWidth: '800px' }}>
       <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        {fromPassarNoite && (
+          <Link to={`/roleplaying/noite/${fromPassarNoite}`}>← Voltar para Passar a Noite</Link>
+        )}
         <Link to="/animais">← Voltar à lista</Link>
         <Link to={`/animais/${id}/ficha`}><button type="button" className="primary">Visualizar ficha</button></Link>
       </div>

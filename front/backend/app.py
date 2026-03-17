@@ -40,7 +40,11 @@ UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 REINOS_INFO_PATH = os.path.join(PROJECT_ROOT, "service", "utils", "reinos-info.json")
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "khonum-cronicas-secret-local")
+_secret = (os.environ.get("FLASK_SECRET_KEY") or "").strip()
+if not _secret:
+    # Em desenvolvimento, usamos uma chave padrão; em produção, configure FLASK_SECRET_KEY no .env.
+    _secret = "khonum-cronicas-secret-local"
+app.config["SECRET_KEY"] = _secret
 COOKIE_NAME = "khonum_token"
 TOKEN_MAX_AGE = 24 * 3600  # 24h em segundos
 
@@ -50,8 +54,9 @@ def _is_local_origin(origin):
     o = (origin or "").strip().lower()
     return o.startswith("http://127.0.0.1") or o.startswith("http://localhost") or o.startswith("http://192.168.") or o.startswith("http://10.") or o.startswith("http://172.16.") or o.startswith("http://172.17.") or o.startswith("http://172.18.") or o.startswith("http://172.19.") or o.startswith("http://172.2") or o.startswith("http://172.30.") or o.startswith("http://172.31.")
 
+_cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000")
 CORS(app, resources={r"/api/*": {
-    "origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
+    "origins": [x.strip() for x in _cors_origins.split(",") if x.strip()],
     "allow_headers": ["Content-Type", "Authorization"],
     "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     "supports_credentials": True,
@@ -185,6 +190,27 @@ def _build_query(text_search_fields, exact_filters):
     q_param = request.args.get("q", "").strip()
     if q_param and text_search_fields:
         q["$or"] = [{"%s" % f: re.compile(re.escape(q_param), re.I)} for f in text_search_fields]
+    return q
+
+
+def _apply_estabelecimentos_filter(q, observacoes_field="observacoes"):
+    """
+    Filtro estabelecimentos: ?estabelecimentos=true|false.
+    - false (ou ausente): exclui documentos que tenham em observacoes a flag 'estabelecimento:true:'.
+    - true: lista apenas os que tenham a flag.
+    Se estabelecimentos=true e ?estabelecimento_nome=X, filtra pelo nome do estabelecimento (regex exato).
+    """
+    estabelecimentos = (request.args.get("estabelecimentos") or "").strip().lower()
+    estabelecimento_nome = (request.args.get("estabelecimento_nome") or "").strip()
+    if estabelecimentos == "true":
+        if estabelecimento_nome:
+            pattern = "estabelecimento:true:" + re.escape(estabelecimento_nome)
+            q[observacoes_field] = re.compile(pattern)
+        else:
+            q[observacoes_field] = re.compile("estabelecimento:true:")
+    else:
+        # default: excluir os que têm a flag (listar só os que não são de estabelecimento)
+        q["$nor"] = q.get("$nor", []) + [{observacoes_field: re.compile("estabelecimento:true:")}]
     return q
 
 
@@ -650,6 +676,19 @@ def get_reino_historia(id):
     return jsonify({"nome": nome, "historia": f"# {nome}\n\n*(Arquivo de história não encontrado em historias/.)*"})
 
 
+@app.route("/api/mapas/<filename>", methods=["GET"])
+def get_mapa_asset(filename):
+    """Serve uma imagem da pasta front/historias/mapas pelo nome do arquivo (ex.: camping.jpg)."""
+    if not filename or ".." in filename or "/" in filename or "\\" in filename:
+        return jsonify({"error": "Nome de arquivo inválido"}), 400
+    path = os.path.join(MAPAS_DIR, filename)
+    if not os.path.isfile(path):
+        return jsonify({"error": "Arquivo não encontrado"}), 404
+    ext = os.path.splitext(filename)[1].lower()
+    mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
+    return send_file(path, mimetype=mime.get(ext, "image/jpeg"))
+
+
 @app.route("/api/reinos/<id>/mapa", methods=["GET"])
 def get_reino_mapa(id):
     """Retorna a imagem do mapa do reino (arquivo em front/historias/mapas/<nome>.(png|jpg|...))."""
@@ -798,6 +837,7 @@ def list_npcs():
         "raça": request.args.get("raça"),
         "natureza": request.args.get("natureza"),
     })
+    _apply_estabelecimentos_filter(q)
     return jsonify(_list_collection("NPC", q))
 
 
@@ -912,6 +952,7 @@ def delete_npc(id):
 @app.route("/api/demonios", methods=["GET"])
 def list_demonios():
     q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
+    _apply_estabelecimentos_filter(q)
     return jsonify(_list_collection("demon_NPC", q, sort_key="nome"))
 
 
@@ -980,6 +1021,7 @@ def delete_demonio(id):
 @app.route("/api/animais", methods=["GET"])
 def list_animais():
     q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
+    _apply_estabelecimentos_filter(q)
     return jsonify(_list_collection("fera_NPC", q, sort_key="nome"))
 
 
@@ -1154,6 +1196,39 @@ def list_estabelecimentos():
     return jsonify(_list_collection("estabelecimentos", q if q else None, sort_key="nome"))
 
 
+@app.route("/api/estabelecimentos/<id>/noite", methods=["GET"])
+def get_estabelecimento_noite(id):
+    """Retorna o estabelecimento e as entidades (ladinos, animais, demônios) resolvidas por nome para a página Passar a Noite."""
+    try:
+        doc = _get_by_id("estabelecimentos", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        lista_ladinos = doc.get("lista_ladinos") or []
+        lista_animais = doc.get("lista_animais") or []
+        lista_demonios = doc.get("lista_demonios") or []
+        db = get_db()
+        ladinos = []
+        if lista_ladinos:
+            cursor = db["NPC"].find({"nome": {"$in": list(lista_ladinos)}})
+            ladinos = [serialize(d) for d in cursor]
+        animais = []
+        if lista_animais:
+            cursor = db["fera_NPC"].find({"nome": {"$in": list(lista_animais)}})
+            animais = [serialize(d) for d in cursor]
+        demonios = []
+        if lista_demonios:
+            cursor = db["demon_NPC"].find({"nome": {"$in": list(lista_demonios)}})
+            demonios = [serialize(d) for d in cursor]
+        return jsonify({
+            "estabelecimento": doc,
+            "ladinos": ladinos,
+            "animais": animais,
+            "demonios": demonios,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/estabelecimentos/<id>", methods=["GET"])
 def get_estabelecimento(id):
     try:
@@ -1203,13 +1278,14 @@ def gerar_estabelecimento_api():
     data = request.get_json() or {}
     try:
         nivel = int(data.get("nivel", 1))
-        if nivel < 1 or nivel > 5:
+        # Permitimos nível 0 apenas para acampamento; demais casos caem no padrão
+        if nivel < 0 or nivel > 5:
             nivel = 1
     except (TypeError, ValueError):
         nivel = 1
     try:
         tipo = int(data.get("tipo", 0))
-        if tipo < 0 or tipo > 3:
+        if tipo < 0 or tipo > 5:
             tipo = 0
     except (TypeError, ValueError):
         tipo = 0
@@ -1226,9 +1302,65 @@ def gerar_estabelecimento_api():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     reino_nome = reino.get("nome", "")
+    nome_estab = result.get("nome", "estabelecimento")
+
+    # Para Hospedagem (3), Taverna (4) e Acampamento (5): criar pools de ladinos, animais e demônios e preencher listas
+    if tipo in (3, 4, 5):
+        reinos_info = []
+        reino_info = None
+        raca = "Vaelthor"
+        if os.path.isfile(REINOS_INFO_PATH):
+            try:
+                with open(REINOS_INFO_PATH, "r", encoding="utf-8") as f:
+                    reinos_info = json.load(f)
+                reino_info = next((r for r in reinos_info if r.get("nome") == reino_nome), None)
+                raca = reino_info.get("raça", "Vaelthor") if reino_info else "Vaelthor"
+            except Exception:
+                pass
+
+        # Ladinos: quantidade 5–7 − nível (mín. 1); tipo Ladinos, classe Assassino, natureza Mal. Acampamento: nível do NPC = 1.
+        if reinos_info and reino_info:
+            from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
+            nivel_npc = 1 if tipo == 5 else nivel
+            qtd_ladinos = max(random.randint(5, 7) - nivel, 1)
+            for _ in range(qtd_ladinos):
+                npc_doc = criar_npc_por_escolhas(
+                    db, reinos_info, raca, reino_nome, "comum", "Ladinos", "Assassino", "Mal", nivel_npc
+                )
+                if npc_doc and npc_doc.get("nome"):
+                    result["lista_ladinos"].append(npc_doc["nome"])
+                    obs = [f"Ladrão de {nome_estab}.", f"estabelecimento:true:{nome_estab}"]
+                    _update("NPC", npc_doc.get("_id"), {"observacoes": obs})
+
+        # Demônios: quantidade 1–4 − nível (mín. 1); tier 10% superior, 30% normal, 60% inferior
+        from gerar_demon import gerar_demon_npc
+        qtd_demonios = max(random.randint(1, 4) - nivel, 1)
+        for _ in range(qtd_demonios):
+            r = random.random()
+            tier = "superior" if r < 0.1 else "normal" if r < 0.4 else "inferior"
+            doc = gerar_demon_npc(tier, db, nome=None, elemento=None)
+            doc["observacoes"] = [f"Demônio de {nome_estab}.", f"estabelecimento:true:{nome_estab}"]
+            _create("demon_NPC", doc)
+            result["lista_demonios"].append(doc["nome"])
+
+        # Animais: quantidade 4–6 − nível (mín. 1); nunca arcano; acampamento 70% comum/30% grande, senão 90%/10%; tipo Terrestre/Voador conforme regra
+        from gerar_fera import gerar_fera_npc
+        is_acamp = tipo == 5
+        qtd_animais = max(random.randint(4, 6) - nivel, 1)
+        for _ in range(qtd_animais):
+            chance_pequeno = 0.7 if is_acamp else 0.9
+            tier_fera = "comum" if random.random() < chance_pequeno else "grande"
+            chance_terrestre = 0.6 if is_acamp else 0.3
+            tipo_animal = "Terrestre" if random.random() < chance_terrestre else "Voador"
+            doc = gerar_fera_npc(tier_fera, tipo_animal, db, nome=None)
+            doc["observacoes"] = [f"Animal de {nome_estab}.", f"estabelecimento:true:{nome_estab}"]
+            _create("fera_NPC", doc)
+            result["lista_animais"].append(doc["nome"])
+
     npc_nome = None
     npc_id = None
-    if os.path.isfile(REINOS_INFO_PATH):
+    # Estabelecimentos do tipo Acampamento (5) não possuem NPC associado
+    if tipo != 5 and os.path.isfile(REINOS_INFO_PATH):
         try:
             with open(REINOS_INFO_PATH, "r", encoding="utf-8") as f:
                 reinos_info = json.load(f)
@@ -1388,5 +1520,6 @@ if __name__ == "__main__":
         print(f"[Seed] Aviso: {e}")
     # Em background (nohup) o reloader do Flask costuma derrubar o processo; desativa-se com RUN_IN_BACKGROUND=1
     use_reloader = os.environ.get("RUN_IN_BACKGROUND", "").strip() != "1"
+    port = int(os.environ.get("FLASK_PORT", "5000"))
     # 0.0.0.0 = escuta em todas as interfaces (acessível na rede local); acesso restrito a IPs privados
-    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=use_reloader)
+    app.run(host="0.0.0.0", port=port, debug=True, use_reloader=use_reloader)

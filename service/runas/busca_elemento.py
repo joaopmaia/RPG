@@ -10,12 +10,13 @@ Uso:
     python busca_elemento.py
 """
 
+import os
 import sys
 from itertools import combinations
 
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 COLLECTION = "runas"
 

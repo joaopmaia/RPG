@@ -22,7 +22,7 @@ from pymongo import MongoClient
 
 from service.utils import names
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 # ═══════════════════════════════════════════════════

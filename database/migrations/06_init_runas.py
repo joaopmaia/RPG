@@ -5,10 +5,11 @@ Uso:
     python 06_init_runas.py
 """
 
+import os
 from pymongo import MongoClient
 from pymongo.errors import CollectionInvalid
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 

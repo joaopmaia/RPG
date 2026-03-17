@@ -227,6 +227,15 @@ tr:hover td {
   background: var(--bg-card-hover);
 }
 
+.regras-doc .regras-formula {
+  font-family: var(--font-mono, monospace);
+  background: var(--bg-card-hover);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 0.25rem 0;
+}
+
 .success-msg {
   color: #6a8;
   font-size: 0.9rem;

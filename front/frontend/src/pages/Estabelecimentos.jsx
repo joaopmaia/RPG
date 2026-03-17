@@ -49,7 +49,7 @@ export default function Estabelecimentos() {
                 <th>Nível</th>
                 <th>Reino</th>
                 <th>NPC</th>
-                <th>Observações</th>
+                <th>Tipo</th>
                 <th></th>
               </tr>
             </thead>
@@ -66,7 +66,7 @@ export default function Estabelecimentos() {
                       '—'
                     )}
                   </td>
-                  <td>{(row.observacoes || []).join(' ').slice(0, 40)}{(row.observacoes || []).join(' ').length > 40 ? '…' : ''}</td>
+                  <td>{row.tipo_nome || '—'}</td>
                   <td onClick={(e) => e.stopPropagation()}>
                     {isAdmin() && <button type="button" onClick={(ev) => del(row._id, ev)}>Remover</button>}
                   </td>

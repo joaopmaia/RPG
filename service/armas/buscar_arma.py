@@ -8,12 +8,13 @@ Uso:
 """
 
 import json
+import os
 import sys
 import unicodedata
 
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 COLLECTION = "armas"
 

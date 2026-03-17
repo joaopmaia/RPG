@@ -274,3 +274,6 @@ stop: ## Encerra frontend, backend e containers do banco; exibe 'Sistema finaliz
 	@echo "[stop] Parando containers do banco..."
 	@docker compose -f database/docker-compose.yml down 2>/dev/null || sudo docker compose -f database/docker-compose.yml down 2>/dev/null || true
 	@echo "Sistema finalizado com sucesso!"
+
+
+full-reset: db-clean stop run

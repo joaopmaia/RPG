@@ -12,7 +12,7 @@ import sys
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 COLLECTION = "armaduras"
 

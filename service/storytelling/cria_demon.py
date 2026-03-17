@@ -5,6 +5,7 @@ Uso:
     python cria_demon.py
 """
 
+import os
 import random
 import sys
 
@@ -13,7 +14,7 @@ sys.path.insert(0, sys.path[0] + "/../..")
 from pymongo import MongoClient
 from service.utils.constantes import ATRIBUTOS, DEMON_NAMES
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 # ═══════════════════════════════════════════════════

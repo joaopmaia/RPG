@@ -1,15 +1,21 @@
-// Em desenvolvimento o front roda na porta 5173 e o backend na 5000 — a API deve apontar sempre para a 5000.
-// Use VITE_API_URL no .env (ex.: VITE_API_URL=http://192.168.x.x:5000) só se acessar o front de outro dispositivo.
-const API_ORIGIN = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL)
-  ? String(import.meta.env.VITE_API_URL).replace(/\/$/, '')
-  : 'http://127.0.0.1:5000';
-const API_BASE = `${API_ORIGIN}/api`;
+// URL da API: defina VITE_API_URL no .env do frontend (ex.: VITE_API_URL=http://127.0.0.1:5000).
+// Em produção, VITE_API_URL é obrigatória. Em dev, se não estiver definida, usa-se o fallback abaixo (apenas local).
+const _envUrl = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL;
+const API_ORIGIN = _envUrl
+  ? String(_envUrl).replace(/\/$/, '')
+  : (import.meta.env?.DEV ? 'http://127.0.0.1:5000' : '');
+const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : '/api';
 export { API_ORIGIN };
 
 const DEFAULT_OPTS = { credentials: 'include' };
 
 export function getReinoMapaUrl(id) {
   return `${API_ORIGIN}/api/reinos/${id}/mapa`;
+}
+
+/** URL para imagem da pasta mapas (ex.: camping.jpg). */
+export function getMapaAssetUrl(filename) {
+  return `${API_ORIGIN}/api/mapas/${encodeURIComponent(filename)}`;
 }
 
 function buildQuery(params) {
@@ -59,6 +65,11 @@ export async function list(collection, params) {
 
 export async function get(collection, id) {
   return apiFetch(`${API_BASE}/${collection}/${id}`);
+}
+
+/** Dados para Passar a Noite: estabelecimento + ladinos, animais e demônios resolvidos por nome. */
+export async function getEstabelecimentoNoite(id) {
+  return apiFetch(`${API_BASE}/estabelecimentos/${id}/noite`);
 }
 
 export async function create(collection, data) {

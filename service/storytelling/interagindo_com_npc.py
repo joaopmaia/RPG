@@ -19,7 +19,7 @@ defender = interacao_npc.defender
 aparar = interacao_npc.aparar
 rolar_atributo = interacao_npc.rolar_atributo
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 LOG_FILE = "interacao_npc.log"
 

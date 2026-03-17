@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { get } from '../api'
+import { get, getMapaAssetUrl } from '../api'
 import { moedasParaOuroPrataBronze } from '../utils/formatMoedas'
+
+const ACAMPAMENTO_IMAGEM = 'camping.jpg'
 
 const COR_RARIDADE = { Comum: '#8b7355', Incomum: '#6b8e23', Raro: '#4682b4', Épico: '#9370db', Lendário: '#daa520' }
 const NIVEL_NOMES = { 1: 'Ambulante', 2: 'Empório Local', 3: 'Loja de Cidade', 4: 'Loja de Luxo', 5: 'Leilão de Nobres' }
@@ -24,6 +26,10 @@ export default function EstabelecimentoDetalhe() {
 
   const estoque = estab.estoque || []
   const nivelNome = estab.nivel_nome || (estab.nivel && NIVEL_NOMES[estab.nivel]) || ''
+  const tipoNome = estab.tipo_nome || ''
+  const isAcampamento = tipoNome === 'Acampamento' || estab.tipo === 5
+  const isHospedagemOuTaverna =
+    tipoNome === 'Hospedagem' || tipoNome === 'Taverna' || isAcampamento || estab.tipo === 3 || estab.tipo === 4
 
   return (
     <div>
@@ -31,7 +37,14 @@ export default function EstabelecimentoDetalhe() {
         <Link to="/estabelecimentos" className="button">← Voltar à lista de estabelecimentos</Link>
       </div>
       <div className="card" style={{ maxWidth: '720px' }}>
-        <h1 style={{ marginBottom: '0.25rem' }}>{estab.nome}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+          <h1 style={{ marginBottom: 0 }}>{estab.nome}</h1>
+          {isHospedagemOuTaverna && (
+            <Link to={`/roleplaying/noite/${estab._id || id}`} state={{ novaNoite: true }} className="button primary">
+              Passar a noite
+            </Link>
+          )}
+        </div>
         <p style={{ color: 'var(--parchment-dark)', marginBottom: '1.5rem' }}>
           {nivelNome && `${nivelNome} · `}
           {estab.reino_nome && `Reino: ${estab.reino_nome}`}
@@ -40,6 +53,33 @@ export default function EstabelecimentoDetalhe() {
           )}
         </p>
 
+        {isAcampamento ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '1rem 0',
+              marginBottom: '1rem',
+            }}
+          >
+            <img
+              src={getMapaAssetUrl(ACAMPAMENTO_IMAGEM)}
+              alt="Acampamento"
+              style={{
+                maxWidth: 'min(720px, 100%)',
+                width: '100%',
+                maxHeight: 'min(420px, 55vh)',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: 12,
+                border: '2px solid var(--border-frame)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+              }}
+            />
+          </div>
+        ) : (
+          <>
         <h3 style={{ marginBottom: '1rem' }}>Itens à venda</h3>
         <div className="estabelecimento-loja" style={{ display: 'grid', gap: '1.25rem', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
           {estoque.map((item, i) => {
@@ -103,6 +143,8 @@ export default function EstabelecimentoDetalhe() {
           })}
         </div>
         {estoque.length === 0 && <p style={{ color: 'var(--parchment-dark)' }}>Nenhum item no estoque.</p>}
+          </>
+        )}
       </div>
     </div>
   )

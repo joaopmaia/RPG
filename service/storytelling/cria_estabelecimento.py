@@ -7,6 +7,7 @@ Uso:
 """
 
 import math
+import os
 import random
 import sys
 from typing import List, Dict, Optional
@@ -16,7 +17,7 @@ from pymongo import MongoClient
 sys.path.insert(0, sys.path[0] + "/../..")
 from service.utils.constantes import CHANCES_RANK, CHANCES_RUNA
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 # ═══════════════════════════════════════════════════
@@ -24,6 +25,12 @@ DATABASE = "rpg"
 # ═══════════════════════════════════════════════════
 
 NIVEIS = {
+    0: {
+        "nome": "Acampamento",
+        "desc": "Acampamento improvisado, sem estrutura de loja ou serviços fixos.",
+        "base": 0,
+        "dado": 0,
+    },
     1: {
         "nome": "Ambulante",
         "desc": "Carroças ou barracas improvisadas em estradas ou vilas pobres",
@@ -114,7 +121,9 @@ NOMES_TIPO_ESTAB = {
     0: "Ferreiro",
     1: "Ferreiro Rúnico",
     2: "Alquimista",
-    3: "Hospedagem / Taverna",
+    3: "Hospedagem",
+    4: "Taverna",
+    5: "Acampamento",
 }
 
 # Nomes aleatórios por nível: duas listas de 50; nome final = junção de duas partes (ex: "Taverna do Bode", "Coelho Dourado")
@@ -347,7 +356,7 @@ def verificar_especializacao(nivel, tipo_estab):
     """Regra de Especialização: Nível 3-4, chance 1 em 6 de ser especializado."""
     if nivel not in (3, 4):
         return None
-    if tipo_estab == 3:  # hospedagem não tem especialização
+    if tipo_estab in (3, 4, 5):  # hospedagem / taverna / acampamento não têm especialização
         return None
     if rolar(6) != 6:
         return None
@@ -552,27 +561,52 @@ def gerar_estoque_alquimista(db, nivel, reino, especializado):
     return estoque
 
 
-def gerar_estoque_hospedagem(nivel, reino):
-    """Gera o cardápio de uma hospedagem/taverna."""
+def gerar_estoque_hospedagem(nivel, reino, tipo_estab):
+    """Gera o cardápio de uma hospedagem/taverna/acampamento."""
+    # Acampamento: não vende nada (apenas descanso narrativo / visual)
+    if tipo_estab == 5:
+        return []
+
     mod_reino = float(reino.get("servicos", "0"))
 
-    estoque = []  # type: List[Dict]
+    estoque: List[Dict] = []
 
     # Comida — Refeição Completa (1d15)
-    preco_comida = rolar(15) * (1 + mod_reino)
-    estoque.append({
-        "nome": "Refeição Completa",
-        "preco": math.ceil(preco_comida),
-    })
+    preco_comida_base = rolar(15) * (1 + mod_reino)
+    if tipo_estab == 3:  # Hospedagem: refeição escala com o nível
+        preco_comida = preco_comida_base * max(nivel, 1)
+    else:  # Taverna ou outros: valor normal
+        preco_comida = preco_comida_base
+    estoque.append(
+        {
+            "nome": "Refeição Completa",
+            "preco": math.ceil(preco_comida),
+        }
+    )
 
-    # Hospedagens — até o nível do estabelecimento
-    for i in range(min(nivel, 5)):
-        h = HOSPEDAGENS[i]
+    # Hospedagens
+    if tipo_estab == 4:
+        # Taverna: apenas Hospedagem 1 Estrela
+        h = HOSPEDAGENS[0]
         preco = random.randint(h["min"], h["max"]) * (1 + mod_reino)
-        estoque.append({
-            "nome": h["nome"],
-            "preco": math.ceil(preco),
-        })
+        estoque.append(
+            {
+                "nome": h["nome"],
+                "preco": math.ceil(preco),
+            }
+        )
+    elif tipo_estab == 3:
+        # Hospedagem: apenas X estrelas, sendo X = nível (1 a 5)
+        if nivel > 0:
+            idx = min(max(nivel, 1), 5) - 1
+            h = HOSPEDAGENS[idx]
+            preco = random.randint(h["min"], h["max"]) * (1 + mod_reino)
+            estoque.append(
+                {
+                    "nome": h["nome"],
+                    "preco": math.ceil(preco),
+                }
+            )
 
     return estoque
 
@@ -672,9 +706,12 @@ def gerar_estabelecimento(db, nivel, reino, tipo_estab):
     """
     Gera um estabelecimento (estoque e metadados) para uso pela API.
     reino: documento do reino (dict com nome, armas, alquimia, etc.)
-    tipo_estab: 0=Ferreiro, 1=Ferreiro Rúnico, 2=Alquimista, 3=Hospedagem
+    tipo_estab: 0=Ferreiro, 1=Ferreiro Rúnico, 2=Alquimista, 3=Hospedagem, 4=Taverna, 5=Acampamento
     Retorna dict com nome, nivel, nivel_nome, reino_nome, tipo, tipo_nome, especializado?, estoque, observacoes.
     """
+    # Para Acampamento, forçamos o nível lógico 0 (configuração própria)
+    if tipo_estab == 5:
+        nivel = 0
     cfg = NIVEIS.get(nivel, NIVEIS[1])
     reino_nome = reino.get("nome", "?")
     tipo_nome = NOMES_TIPO_ESTAB.get(tipo_estab, "?")
@@ -687,13 +724,27 @@ def gerar_estabelecimento(db, nivel, reino, tipo_estab):
     elif tipo_estab == 2:
         estoque = gerar_estoque_alquimista(db, nivel, reino, especializado=especializado)
     else:
-        estoque = gerar_estoque_hospedagem(nivel, reino)
+        estoque = gerar_estoque_hospedagem(nivel, reino, tipo_estab)
 
-    observacoes = [f"Nível {nivel}: {cfg['nome']}. {cfg['desc']}"]
-    if especializado:
-        observacoes.append(f"Especializado em: {especializado}.")
+    if tipo_estab == 5:
+        # Nome único por reino: "Acampamento em {reino}" ou "Acampamento em {reino} 2", "Acampamento em {reino} 3", ...
+        base = f"Acampamento em {reino_nome}"
+        try:
+            count = db["estabelecimentos"].count_documents({"tipo": 5, "reino_nome": reino_nome})
+        except Exception:
+            count = 0
+        nome = base if count == 0 else f"{base} {count + 1}"
+        observacoes = [f"Acampamento especial em {reino_nome}."]
+    else:
+        nome = _gerar_nome_estabelecimento(nivel)
+        observacoes = [f"Nível {nivel}: {cfg['nome']}. {cfg['desc']}"]
+        if especializado:
+            observacoes.append(f"Especializado em: {especializado}.")
 
-    nome = _gerar_nome_estabelecimento(nivel)
+    # Inicializa listas de nomes usadas para eventos noturnos
+    lista_ladinos: List[str] = []
+    lista_animais: List[str] = []
+    lista_demonios: List[str] = []
     return {
         "nome": nome,
         "nivel": nivel,
@@ -703,6 +754,9 @@ def gerar_estabelecimento(db, nivel, reino, tipo_estab):
         "tipo_nome": tipo_nome,
         "especializado": especializado or "",
         "estoque": estoque,
+        "lista_ladinos": lista_ladinos,
+        "lista_animais": lista_animais,
+        "lista_demonios": lista_demonios,
         "observacoes": observacoes,
     }
 

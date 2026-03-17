@@ -12,6 +12,9 @@ export default function NPCs() {
   const [q, setQ] = useState('')
   const [raça, setRaça] = useState('')
   const [natureza, setNatureza] = useState('')
+  const [estabelecimentosFilter, setEstabelecimentosFilter] = useState('false')
+  const [estabelecimentoNome, setEstabelecimentoNome] = useState('')
+  const [estabelecimentosLista, setEstabelecimentosLista] = useState([])
   const [expandido, setExpandido] = useState(null)
   const [detalheCompleto, setDetalheCompleto] = useState(null)
   const [menuAberto, setMenuAberto] = useState(null)
@@ -26,13 +29,16 @@ export default function NPCs() {
   const load = () => {
     setLoading(true)
     setError(null)
-    list(COLLECTION, { q: q || undefined, raça: raça || undefined, natureza: natureza || undefined })
+    const params = { q: q || undefined, raça: raça || undefined, natureza: natureza || undefined, estabelecimentos: estabelecimentosFilter }
+    if (estabelecimentosFilter === 'true' && estabelecimentoNome) params.estabelecimento_nome = estabelecimentoNome
+    list(COLLECTION, params)
       .then((data) => setItems(Array.isArray(data) ? data : []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [q, raça, natureza])
+  useEffect(() => { list('estabelecimentos').then((arr) => setEstabelecimentosLista(Array.isArray(arr) ? arr : [])).catch(() => {}) }, [])
+  useEffect(load, [q, raça, natureza, estabelecimentosFilter, estabelecimentoNome])
 
   const toggleExpandir = (id) => {
     if (expandido === id) {
@@ -120,6 +126,18 @@ export default function NPCs() {
           <option value="Bom">Bom</option>
           <option value="Mal">Mal</option>
         </select>
+        <select value={estabelecimentosFilter} onChange={(e) => { setEstabelecimentosFilter(e.target.value); if (e.target.value !== 'true') setEstabelecimentoNome('') }}>
+          <option value="false">Excluir de estabelecimentos</option>
+          <option value="true">Somente de estabelecimentos</option>
+        </select>
+        {estabelecimentosFilter === 'true' && (
+          <select value={estabelecimentoNome} onChange={(e) => setEstabelecimentoNome(e.target.value)}>
+            <option value="">Todos os estabelecimentos</option>
+            {estabelecimentosLista.map((e) => (
+              <option key={e._id} value={e.nome || ''}>{e.nome || '—'}</option>
+            ))}
+          </select>
+        )}
         <Link to="/npcs/criar"><button type="button" className="primary">Criar NPC</button></Link>
       </div>
       {error && <p className="error-msg">{error}</p>}

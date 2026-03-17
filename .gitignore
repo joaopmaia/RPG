@@ -5,9 +5,14 @@ database/data/
 .venv/
 __pycache__/
 
-# Credenciais locais (não versionar)
+# Credenciais e configuração local (não versionar)
 .env
+.env.local
+.env.*.local
 front/backend/.env
+front/frontend/.env
+front/frontend/.env.local
+front/frontend/.env.*.local
 
 # Uploads de imagens (NPC, etc.)
 front/backend/uploads/

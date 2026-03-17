@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 import { getNpcCompleto, update, list, create, remove, equipamentoPrevia } from '../api'
 
 // Modal estável (fora do componente) para não remontar inputs e perder foco
@@ -87,6 +87,8 @@ const ATRIBUTOS_NPC = [
 
 export default function InteragirNPC() {
   const { id } = useParams()
+  const location = useLocation()
+  const fromPassarNoite = location.state?.fromPassarNoite
   const [npc, setNpc] = useState(null)
   const [runasList, setRunasList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -699,6 +701,9 @@ export default function InteragirNPC() {
   return (
     <div style={{ maxWidth: '800px' }}>
       <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        {fromPassarNoite && (
+          <Link to={`/roleplaying/noite/${fromPassarNoite}`}>← Voltar para Passar a Noite</Link>
+        )}
         <Link to="/npcs">← Voltar à lista</Link>
         <Link to={`/npcs/${id}/ficha`}><button type="button" className="primary">Visualizar ficha</button></Link>
       </div>

@@ -42,6 +42,28 @@ import EstabelecimentoCriar from './pages/EstabelecimentoCriar'
 import EstabelecimentoDetalhe from './pages/EstabelecimentoDetalhe'
 import MinhasFichas from './pages/MinhasFichas'
 import FichasJogadores from './pages/FichasJogadores'
+import Regras from './pages/Regras'
+import RegrasCriacaoFicha from './pages/RegrasCriacaoFicha'
+import RegrasAtributo from './pages/RegrasAtributo'
+import RegrasPericia from './pages/RegrasPericia'
+import RegrasInventario from './pages/RegrasInventario'
+import RegrasDificuldades from './pages/RegrasDificuldades'
+import RegrasAcertoCritico from './pages/RegrasAcertoCritico'
+import RegrasAtaqueMirado from './pages/RegrasAtaqueMirado'
+import RegrasSistemaCombate from './pages/RegrasSistemaCombate'
+import RegrasStatus from './pages/RegrasStatus'
+import RegrasAlquimia from './pages/RegrasAlquimia'
+import RegrasMateriais from './pages/RegrasMateriais'
+import RegrasEquipamentos from './pages/RegrasEquipamentos'
+import RegrasHospedagens from './pages/RegrasHospedagens'
+import RegrasViagens from './pages/RegrasViagens'
+import RoleplayingViagens from './pages/RoleplayingViagens'
+import PassarNoite from './pages/PassarNoite'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import Guias from './pages/Guias'
+import GuiasAtributos from './pages/GuiasAtributos'
+import GuiasPericias from './pages/GuiasPericias'
+import GuiasAntecedentes from './pages/GuiasAntecedentes'
 
 function AdminRoute({ children }) {
   const { isAdmin } = useAuth()
@@ -79,6 +101,25 @@ export default function App() {
           <Route path="reinos/:id/historia" element={<ReinoHistoria />} />
           <Route path="reinos/:id/mapa" element={<ReinoMapa />} />
           <Route path="runas" element={<Runas />} />
+          <Route path="regras" element={<Regras />} />
+          <Route path="regras/criacao-ficha" element={<RegrasCriacaoFicha />} />
+          <Route path="regras/atributos/:slug" element={<RegrasAtributo />} />
+          <Route path="regras/pericias/:slug" element={<RegrasPericia />} />
+          <Route path="regras/inventario" element={<RegrasInventario />} />
+          <Route path="regras/dificuldades-acoes" element={<RegrasDificuldades />} />
+          <Route path="regras/acerto-critico" element={<RegrasAcertoCritico />} />
+          <Route path="regras/ataque-mirado" element={<RegrasAtaqueMirado />} />
+          <Route path="regras/sistema-combate" element={<RegrasSistemaCombate />} />
+          <Route path="regras/status" element={<RegrasStatus />} />
+          <Route path="regras/alquimia" element={<RegrasAlquimia />} />
+          <Route path="regras/materiais" element={<RegrasMateriais />} />
+          <Route path="regras/equipamentos" element={<RegrasEquipamentos />} />
+          <Route path="regras/hospedagens" element={<RegrasHospedagens />} />
+          <Route path="regras/viagens" element={<RegrasViagens />} />
+          <Route path="guias" element={<Guias />} />
+          <Route path="guias/atributos" element={<GuiasAtributos />} />
+          <Route path="guias/pericias" element={<GuiasPericias />} />
+          <Route path="guias/antecedentes" element={<GuiasAntecedentes />} />
           <Route path="npcs" element={<AdminRoute><NPCs /></AdminRoute>} />
           <Route path="npcs/criar" element={<AdminRoute><NPCCriar /></AdminRoute>} />
           <Route path="npcs/:id/ficha" element={<AdminRoute><NPCFicha /></AdminRoute>} />
@@ -97,6 +138,8 @@ export default function App() {
           <Route path="estabelecimentos" element={<Estabelecimentos />} />
           <Route path="estabelecimentos/criar" element={<AdminRoute><EstabelecimentoCriar /></AdminRoute>} />
           <Route path="estabelecimentos/:id" element={<EstabelecimentoDetalhe />} />
+          <Route path="roleplaying/viagens" element={<RoleplayingViagens />} />
+          <Route path="roleplaying/noite/:id" element={<ErrorBoundary showDetails={import.meta.env?.DEV}><PassarNoite /></ErrorBoundary>} />
           <Route path="minhas-fichas" element={<AuthRoute><MinhasFichas /></AuthRoute>} />
           <Route path="fichas-jogadores" element={<AdminRoute><FichasJogadores /></AdminRoute>} />
         </Route>

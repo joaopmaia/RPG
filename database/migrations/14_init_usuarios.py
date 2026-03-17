@@ -4,10 +4,11 @@ Armazena usuários do sistema (login): usuario (único), senha_hash, perfil ('us
 O usuário admin é criado pelo backend a partir das variáveis ADMIN_USER e ADMIN_PASSWORD no .env.
 """
 
+import os
 from pymongo import MongoClient
 from pymongo.errors import CollectionInvalid
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 

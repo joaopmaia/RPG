@@ -6,7 +6,9 @@ const TIPOS = [
   { value: 0, label: 'Ferreiro' },
   { value: 1, label: 'Ferreiro Rúnico' },
   { value: 2, label: 'Alquimista' },
-  { value: 3, label: 'Hospedagem / Taverna' },
+  { value: 3, label: 'Hospedagem' },
+  { value: 4, label: 'Taverna' },
+  { value: 5, label: 'Acampamento' },
 ]
 const NIVEIS = [
   { value: 1, label: 'Nível 1 - Ambulante' },
@@ -32,9 +34,15 @@ export default function EstabelecimentoCriar() {
       setError('Selecione um reino.')
       return
     }
+    const payload = {
+      // Para acampamento, usamos nível lógico 0 (tratado especificamente no backend)
+      nivel: form.tipo === 5 ? 0 : form.nivel,
+      reino_id: form.reino_id,
+      tipo: form.tipo,
+    }
     setGerando(true)
     setError(null)
-    gerarEstabelecimento({ nivel: form.nivel, reino_id: form.reino_id, tipo: form.tipo })
+    gerarEstabelecimento(payload)
       .then((data) => {
         if (data?._id) navigate(`/estabelecimentos/${data._id}`)
         else navigate('/estabelecimentos')
@@ -53,14 +61,16 @@ export default function EstabelecimentoCriar() {
         <p style={{ color: 'var(--parchment-dark)', marginBottom: '1rem' }}>
           Gera um estabelecimento com estoque: selecione nível, reino e tipo.
         </p>
-        <div className="form-row">
-          <label>Nível</label>
-          <select value={form.nivel} onChange={(e) => setForm({ ...form, nivel: Number(e.target.value) })}>
-            {NIVEIS.map((n) => (
-              <option key={n.value} value={n.value}>{n.label}</option>
-            ))}
-          </select>
-        </div>
+        {form.tipo !== 5 && (
+          <div className="form-row">
+            <label>Nível</label>
+            <select value={form.nivel} onChange={(e) => setForm({ ...form, nivel: Number(e.target.value) })}>
+              {NIVEIS.map((n) => (
+                <option key={n.value} value={n.value}>{n.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
         <div className="form-row">
           <label>Reino</label>
           <select value={form.reino_id} onChange={(e) => setForm({ ...form, reino_id: e.target.value })}>

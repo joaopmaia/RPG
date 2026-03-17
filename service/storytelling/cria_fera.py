@@ -5,6 +5,7 @@ Uso:
     python cria_fera.py
 """
 
+import os
 import random
 import sys
 
@@ -25,7 +26,7 @@ from service.utils.constantes import (
     ANIMAIS_ARCANOS_HABILIDADES
 )
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 DATABASE = "rpg"
 
 # ═══════════════════════════════════════════════════
