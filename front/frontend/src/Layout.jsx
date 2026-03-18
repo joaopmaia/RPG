@@ -17,7 +17,7 @@ const navBase = [
     { to: '/alquimia', label: 'Alquimia' },
     { to: '/materiais', label: 'Materiais' },
   ], paths: equipamentosPaths },
-  { to: '/regras', label: 'Regras', sub: [
+    { to: '/regras', label: 'Regras', sub: [
     { to: '/regras/criacao-ficha', label: 'Criação de Ficha' },
     { to: '/regras/inventario', label: 'Inventário' },
     { to: '/regras/dificuldades-acoes', label: 'Dificuldades de Ações' },
@@ -30,11 +30,14 @@ const navBase = [
     { to: '/regras/equipamentos', label: 'Equipamentos' },
     { to: '/regras/hospedagens', label: 'Hospedagens' },
     { to: '/regras/viagens', label: 'Viagens' },
+    { to: '/regras/musicas', label: 'Músicas' },
+    { to: '/regras/runas', label: 'Runas' },
   ], paths: regrasPaths },
   { to: '/guias', label: 'Guias', sub: [
     { to: '/guias/atributos', label: 'Atributos' },
     { to: '/guias/pericias', label: 'Perícias' },
     { to: '/guias/antecedentes', label: 'Antecedentes' },
+    { to: '/guias/glossario', label: 'Glossário' },
   ], paths: guiasPaths },
   { to: '/roleplaying', label: 'Roleplaying', sub: [
     { to: '/npcs', label: 'NPCs' },
@@ -45,6 +48,7 @@ const navBase = [
   ], paths: roleplayingPaths },
   { to: '/reinos', label: 'Reinos' },
   { to: '/runas', label: 'Runas' },
+  { to: '/musicas', label: 'Músicas' },
 ]
 
 export default function Layout() {

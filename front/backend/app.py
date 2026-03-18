@@ -35,6 +35,7 @@ if PROJECT_ROOT not in sys.path:
 HISTORIAS_DIR = os.path.join(os.path.dirname(__file__), "..", "historias")
 # Pasta de mapas por reino (front/historias/mapas) — imagens com nome do reino
 MAPAS_DIR = os.path.join(HISTORIAS_DIR, "mapas")
+COORDENADAS_DIR = os.path.abspath(os.path.join(MAPAS_DIR, "coordenadas"))
 # Pasta para upload de imagens (NPC, etc.)
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 REINOS_INFO_PATH = os.path.join(PROJECT_ROOT, "service", "utils", "reinos-info.json")
@@ -674,6 +675,55 @@ def get_reino_historia(id):
             return jsonify({"nome": nome, "historia": texto})
     # Placeholder: só raça (reinos-info tem raça; reinos no DB podem não ter)
     return jsonify({"nome": nome, "historia": f"# {nome}\n\n*(Arquivo de história não encontrado em historias/.)*"})
+
+
+# ─── Viagens (coordenadas por categoria) ─────────────────────────────────────
+
+_CATEGORIA_LABEL = {"drovenar": "Drovenar", "vaelthor": "Vaelthor", "sylmari": "Sylmari", "points": "Pontos de Interesse"}
+
+
+@app.route("/api/viagens/categorias", methods=["GET"])
+def list_viagens_categorias():
+    """Lista categorias de coordenadas: Drovenar, Vaelthor, Sylmari, Pontos de Interesse."""
+    if not os.path.isdir(COORDENADAS_DIR):
+        return jsonify([])
+    out = []
+    for name in sorted(os.listdir(COORDENADAS_DIR)):
+        if not name.endswith(".json") or not name.startswith("coordenadas-"):
+            continue
+        slug = name.replace("coordenadas-", "").replace(".json", "").lower()
+        label = _CATEGORIA_LABEL.get(slug) or slug.capitalize()
+        out.append({"id": slug, "label": label})
+    return jsonify(out)
+
+
+@app.route("/api/viagens/coordenadas/<categoria>", methods=["GET"])
+def get_viagens_coordenadas(categoria):
+    """Retorna lista de lugares da categoria: [{ nome, coords: [x, y] }]."""
+    slug = (categoria or "").strip().lower()
+    if not slug:
+        return jsonify([])
+    fname = f"coordenadas-{slug}.json"
+    path = os.path.join(COORDENADAS_DIR, fname)
+    if not os.path.isfile(path):
+        return jsonify([])
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    # Normalizar: pode ser lista de { "Nome": [x,y] } ou um único objeto
+    if isinstance(data, list):
+        items = data
+    else:
+        items = [data] if isinstance(data, dict) else []
+    out = []
+    for item in items:
+        if isinstance(item, dict):
+            for nome, coords in item.items():
+                if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+                    out.append({"nome": nome, "coords": [float(coords[0]), float(coords[1])]})
+    return jsonify(out)
 
 
 @app.route("/api/mapas/<filename>", methods=["GET"])

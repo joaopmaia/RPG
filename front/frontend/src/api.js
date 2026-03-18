@@ -156,6 +156,16 @@ export async function getReinosInfo() {
   return apiFetch(`${API_BASE}/reinos-info`);
 }
 
+/** Categorias de viagens: Drovenar, Vaelthor, Sylmari, Pontos de Interesse */
+export async function getViagensCategorias() {
+  return apiFetch(`${API_BASE}/viagens/categorias`);
+}
+
+/** Lugares de uma categoria: [{ nome, coords: [x, y] }] */
+export async function getViagensCoordenadas(categoria) {
+  return apiFetch(`${API_BASE}/viagens/coordenadas/${encodeURIComponent(categoria)}`);
+}
+
 export async function getWorldStory() {
   return apiFetch(`${API_BASE}/historias/world-story-for-players`);
 }

@@ -57,13 +57,18 @@ import RegrasMateriais from './pages/RegrasMateriais'
 import RegrasEquipamentos from './pages/RegrasEquipamentos'
 import RegrasHospedagens from './pages/RegrasHospedagens'
 import RegrasViagens from './pages/RegrasViagens'
+import RegrasMusicas from './pages/RegrasMusicas'
+import RegrasRunas from './pages/RegrasRunas'
+import Musicas from './pages/Musicas'
 import RoleplayingViagens from './pages/RoleplayingViagens'
+import RoleplayingViagemIniciar from './pages/RoleplayingViagemIniciar'
 import PassarNoite from './pages/PassarNoite'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import Guias from './pages/Guias'
 import GuiasAtributos from './pages/GuiasAtributos'
 import GuiasPericias from './pages/GuiasPericias'
 import GuiasAntecedentes from './pages/GuiasAntecedentes'
+import GuiasGlossario from './pages/GuiasGlossario'
 
 function AdminRoute({ children }) {
   const { isAdmin } = useAuth()
@@ -101,6 +106,7 @@ export default function App() {
           <Route path="reinos/:id/historia" element={<ReinoHistoria />} />
           <Route path="reinos/:id/mapa" element={<ReinoMapa />} />
           <Route path="runas" element={<Runas />} />
+          <Route path="musicas" element={<Musicas />} />
           <Route path="regras" element={<Regras />} />
           <Route path="regras/criacao-ficha" element={<RegrasCriacaoFicha />} />
           <Route path="regras/atributos/:slug" element={<RegrasAtributo />} />
@@ -116,10 +122,13 @@ export default function App() {
           <Route path="regras/equipamentos" element={<RegrasEquipamentos />} />
           <Route path="regras/hospedagens" element={<RegrasHospedagens />} />
           <Route path="regras/viagens" element={<RegrasViagens />} />
+          <Route path="regras/musicas" element={<RegrasMusicas />} />
+          <Route path="regras/runas" element={<RegrasRunas />} />
           <Route path="guias" element={<Guias />} />
           <Route path="guias/atributos" element={<GuiasAtributos />} />
           <Route path="guias/pericias" element={<GuiasPericias />} />
           <Route path="guias/antecedentes" element={<GuiasAntecedentes />} />
+          <Route path="guias/glossario" element={<GuiasGlossario />} />
           <Route path="npcs" element={<AdminRoute><NPCs /></AdminRoute>} />
           <Route path="npcs/criar" element={<AdminRoute><NPCCriar /></AdminRoute>} />
           <Route path="npcs/:id/ficha" element={<AdminRoute><NPCFicha /></AdminRoute>} />
@@ -139,6 +148,7 @@ export default function App() {
           <Route path="estabelecimentos/criar" element={<AdminRoute><EstabelecimentoCriar /></AdminRoute>} />
           <Route path="estabelecimentos/:id" element={<EstabelecimentoDetalhe />} />
           <Route path="roleplaying/viagens" element={<RoleplayingViagens />} />
+          <Route path="roleplaying/viagens/iniciar" element={<RoleplayingViagemIniciar />} />
           <Route path="roleplaying/noite/:id" element={<ErrorBoundary showDetails={import.meta.env?.DEV}><PassarNoite /></ErrorBoundary>} />
           <Route path="minhas-fichas" element={<AuthRoute><MinhasFichas /></AuthRoute>} />
           <Route path="fichas-jogadores" element={<AdminRoute><FichasJogadores /></AdminRoute>} />

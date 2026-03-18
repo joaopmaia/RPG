@@ -1,8 +1,8 @@
 [
-    { "Karningul": [85, 25] },
-    { "Meruem": [88, 22] },
-    { "Valarien": [92, 45] },
-    { "Delendir": [82, 65] },
-    { "Argas": [86, 62] },
-    { "Shientara": [84, 58] }
+    { "Karningul": [-80, -35] },
+    { "Meruem": [-85, -50] },
+    { "Valarien": [-90, -19] },
+    { "Delendir": [-75, -5] },
+    { "Argas": [-85, 0] },
+    { "Shientara": [-73, 6] }
   ]

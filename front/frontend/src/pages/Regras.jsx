@@ -22,6 +22,8 @@ export default function Regras() {
           <li style={{ marginBottom: '0.5rem' }}><Link to="/regras/equipamentos">Equipamentos</Link> — armas, armaduras e escudos.</li>
           <li style={{ marginBottom: '0.5rem' }}><Link to="/regras/hospedagens">Hospedagens</Link> — descanso e recuperação.</li>
           <li style={{ marginBottom: '0.5rem' }}><Link to="/regras/viagens">Viagens</Link> — deslocamento e condução.</li>
+          <li style={{ marginBottom: '0.5rem' }}><Link to="/regras/musicas">Músicas</Link> — canções por raça, instrumentos e efeitos em combate.</li>
+          <li style={{ marginBottom: '0.5rem' }}><Link to="/regras/runas">Runas</Link> — escrita arcana e elementos.</li>
         </ul>
       </div>
     </div>

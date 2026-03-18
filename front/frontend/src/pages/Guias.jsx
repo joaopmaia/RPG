@@ -5,7 +5,7 @@ export default function Guias() {
     <div>
       <h1>Guias</h1>
       <p style={{ color: 'var(--parchment-dark)', marginBottom: '1.5rem' }}>
-        Biblioteca com as páginas informativas do jogo: atributos, perícias e antecedentes.
+        Biblioteca com as páginas informativas do jogo: atributos, perícias, antecedentes e termos do mundo.
       </p>
       <div className="card" style={{ maxWidth: 520 }}>
         <h2 style={{ marginTop: 0 }}>Índice</h2>
@@ -18,6 +18,9 @@ export default function Guias() {
           </li>
           <li style={{ marginBottom: '0.75rem' }}>
             <Link to="/guias/antecedentes">Antecedentes</Link> — pontos de background para a criação de ficha: antecedentes positivos e negativos, custos e efeitos.
+          </li>
+          <li style={{ marginBottom: '0.75rem' }}>
+            <Link to="/guias/glossario">Glossário</Link> — explicações para nomes próprios e locais importantes, como Siroth&apos;Val, Eldarae e Ithilmar.
           </li>
         </ul>
       </div>
