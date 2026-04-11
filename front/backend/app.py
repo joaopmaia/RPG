@@ -49,6 +49,44 @@ HISTORIAS_DIR = os.path.join(os.path.dirname(__file__), "..", "historias")
 # Pasta de mapas por reino (front/historias/mapas) — imagens com nome do reino
 MAPAS_DIR = os.path.join(HISTORIAS_DIR, "mapas")
 COORDENADAS_DIR = os.path.abspath(os.path.join(MAPAS_DIR, "coordenadas"))
+
+# Mapas em disco podem ser .jpg, .jpeg, .png, etc.; o cliente pode pedir outra extensão (ex.: khonum.jpg vs khonum.jpeg).
+_MAP_IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".webp", ".gif")
+_MAP_MIME = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+}
+
+
+def _resolve_mapa_path(filename: str):
+    """
+    Caminho absoluto em MAPAS_DIR se existir. Se o ficheiro exato não existir,
+    tenta o mesmo nome base com outras extensões (ex.: pedido khonum.jpg → ficheiro khonum.jpeg).
+    """
+    if not filename or ".." in filename or "/" in filename or "\\" in filename:
+        return None
+    direct = os.path.join(MAPAS_DIR, filename)
+    if os.path.isfile(direct):
+        return direct
+    base, ext = os.path.splitext(filename)
+    if not base:
+        return None
+    ext_l = ext.lower()
+    for e in _MAP_IMAGE_EXTS:
+        if e == ext_l:
+            continue
+        p = os.path.join(MAPAS_DIR, base + e)
+        if os.path.isfile(p):
+            return p
+    if not ext_l:
+        for e in _MAP_IMAGE_EXTS:
+            p = os.path.join(MAPAS_DIR, base + e)
+            if os.path.isfile(p):
+                return p
+    return None
 # Pasta para upload de imagens (NPC, etc.)
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 REINOS_INFO_PATH = os.path.join(PROJECT_ROOT, "service", "utils", "reinos-info.json")
@@ -815,15 +853,15 @@ def get_viagens_coordenadas(categoria):
 
 @app.route("/api/mapas/<filename>", methods=["GET"])
 def get_mapa_asset(filename):
-    """Serve uma imagem da pasta front/historias/mapas pelo nome do arquivo (ex.: camping.jpg)."""
+    """Serve uma imagem da pasta front/historias/mapas; aceita várias extensões para o mesmo nome base."""
     if not filename or ".." in filename or "/" in filename or "\\" in filename:
         return jsonify({"error": "Nome de arquivo inválido"}), 400
-    path = os.path.join(MAPAS_DIR, filename)
-    if not os.path.isfile(path):
+    path = _resolve_mapa_path(filename)
+    if not path:
         return jsonify({"error": "Arquivo não encontrado"}), 404
-    ext = os.path.splitext(filename)[1].lower()
-    mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
-    return send_file(path, mimetype=mime.get(ext, "image/jpeg"))
+    ext = os.path.splitext(path)[1].lower()
+    mime = _MAP_MIME.get(ext, "image/jpeg")
+    return send_file(path, mimetype=mime)
 
 
 @app.route("/api/reinos/<id>/mapa", methods=["GET"])
@@ -842,13 +880,12 @@ def get_reino_mapa(id):
     for b in (safe, safe.lower()):
         if b and b not in bases:
             bases.append(b)
-    # Ordem: jpg/jpeg antes de png (mapas costumam ser fotos/export JPEG; ainda aceita png e demais)
     for base in bases:
-        for ext in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+        for ext in _MAP_IMAGE_EXTS:
             path = os.path.join(MAPAS_DIR, base + ext)
             if os.path.isfile(path):
-                mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
-                return send_file(path, mimetype=mime.get(ext, "image/png"))
+                mime = _MAP_MIME.get(ext, "image/png")
+                return send_file(path, mimetype=mime)
     return jsonify({"error": "Mapa não encontrado para este reino"}), 404
 
 
