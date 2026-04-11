@@ -81,9 +81,25 @@
   flex-wrap: wrap;
 }
 
-.layout-user-name {
+.layout-user-name-link {
   color: var(--parchment);
   font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.layout-user-name-link:hover {
+  border-bottom-color: var(--parchment-dark);
+}
+
+.layout-campanha-select {
+  font-size: 0.85rem;
+  max-width: 220px;
+  padding: 0.25rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-frame);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--parchment);
 }
 
 .layout-logout {

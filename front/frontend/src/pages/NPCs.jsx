@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { list, get, update, create, remove, getNpcCompleto, uploadImagem } from '../api'
+import { useAuth } from '../context/useAuth'
 
 const COLLECTION = 'npcs'
 
 export default function NPCs() {
+  const { podeEditarCampanha, campanhaId } = useAuth()
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -37,8 +39,8 @@ export default function NPCs() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { list('estabelecimentos').then((arr) => setEstabelecimentosLista(Array.isArray(arr) ? arr : [])).catch(() => {}) }, [])
-  useEffect(load, [q, raça, natureza, estabelecimentosFilter, estabelecimentoNome])
+  useEffect(() => { list('estabelecimentos').then((arr) => setEstabelecimentosLista(Array.isArray(arr) ? arr : [])).catch(() => {}) }, [campanhaId])
+  useEffect(load, [q, raça, natureza, estabelecimentosFilter, estabelecimentoNome, campanhaId])
 
   const toggleExpandir = (id) => {
     if (expandido === id) {
@@ -138,7 +140,9 @@ export default function NPCs() {
             ))}
           </select>
         )}
-        <Link to="/npcs/criar"><button type="button" className="primary">Criar NPC</button></Link>
+        {podeEditarCampanha() && (
+          <Link to="/npcs/criar"><button type="button" className="primary">Criar NPC</button></Link>
+        )}
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -196,12 +200,16 @@ export default function NPCs() {
                             <div className="npc-acoes-backdrop" style={{ position: 'fixed', inset: 0, zIndex: 99 }} onClick={() => setMenuAberto(null)} aria-hidden="true" />
                             <div className="npc-acoes-menu card" style={{ position: 'absolute', right: 0, top: '100%', marginTop: '2px', minWidth: '200px', zIndex: 100, padding: '0.5rem 0' }}>
                               <button type="button" className="npc-acoes-btn" onClick={() => { setMenuAberto(null); navigate(`/npcs/${row._id}/ficha`); }}>Ver ficha completa</button>
-                              <button type="button" className="npc-acoes-btn" onClick={() => { setMenuAberto(null); navigate(`/npcs/${row._id}/editar`); }}>Editar NPC</button>
-                              <button type="button" className="npc-acoes-btn" onClick={() => { setModalObservacao({ npcId: row._id, nome: row.nome }); setMenuAberto(null); setNovaObservacao(''); setAcaoError(null); }}>Adicionar observação</button>
-                              <button type="button" className="npc-acoes-btn" onClick={() => { setModalImagem({ npcId: row._id, nome: row.nome }); setNovaImagemUrl(''); setNovaImagemFile(null); setAcaoError(null); }}>Adicionar imagem</button>
-                              <button type="button" className="npc-acoes-btn" onClick={() => { setMenuAberto(null); navigate(`/npcs/${row._id}/interagir`); }}>Interagir com NPC</button>
-                              <hr style={{ borderColor: 'var(--border-frame)', margin: '0.25rem 0' }} />
-                              <button type="button" className="npc-acoes-btn" style={{ color: 'var(--parchment-dark)' }} onClick={() => { setMenuAberto(null); del(row._id); }}>Excluir NPC</button>
+                              {podeEditarCampanha() && (
+                                <>
+                                  <button type="button" className="npc-acoes-btn" onClick={() => { setMenuAberto(null); navigate(`/npcs/${row._id}/editar`); }}>Editar NPC</button>
+                                  <button type="button" className="npc-acoes-btn" onClick={() => { setModalObservacao({ npcId: row._id, nome: row.nome }); setMenuAberto(null); setNovaObservacao(''); setAcaoError(null); }}>Adicionar observação</button>
+                                  <button type="button" className="npc-acoes-btn" onClick={() => { setModalImagem({ npcId: row._id, nome: row.nome }); setNovaImagemUrl(''); setNovaImagemFile(null); setAcaoError(null); }}>Adicionar imagem</button>
+                                  <button type="button" className="npc-acoes-btn" onClick={() => { setMenuAberto(null); navigate(`/npcs/${row._id}/interagir`); }}>Interagir com NPC</button>
+                                  <hr style={{ borderColor: 'var(--border-frame)', margin: '0.25rem 0' }} />
+                                  <button type="button" className="npc-acoes-btn" style={{ color: 'var(--parchment-dark)' }} onClick={() => { setMenuAberto(null); del(row._id); }}>Excluir NPC</button>
+                                </>
+                              )}
                             </div>
                           </>
                         )}

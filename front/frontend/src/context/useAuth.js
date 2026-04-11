@@ -7,6 +7,10 @@ const defaultAuth = {
   login: async () => {},
   logout: () => {},
   isAdmin: () => false,
+  campanhaId: null,
+  setCampanhaId: () => {},
+  podeEditarCampanha: () => false,
+  refreshMe: async () => null,
 }
 
 export function useAuth() {

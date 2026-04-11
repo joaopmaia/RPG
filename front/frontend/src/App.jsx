@@ -69,6 +69,7 @@ import GuiasAtributos from './pages/GuiasAtributos'
 import GuiasPericias from './pages/GuiasPericias'
 import GuiasAntecedentes from './pages/GuiasAntecedentes'
 import GuiasGlossario from './pages/GuiasGlossario'
+import PerfilUsuario from './pages/PerfilUsuario'
 
 function AdminRoute({ children }) {
   const { isAdmin } = useAuth()
@@ -78,6 +79,19 @@ function AdminRoute({ children }) {
 function AuthRoute({ children }) {
   const { user } = useAuth()
   return user ? children : <Navigate to="/" replace />
+}
+
+/** NPCs, demônios e animais: exige login; campanha via cabeçalho (localStorage). */
+function RoleplayingRoute({ children }) {
+  const { user } = useAuth()
+  return user ? children : <Navigate to="/" replace />
+}
+
+/** Criar/editar/excluir/interagir em conteúdo de campanha (mestre/admin global). */
+function RoleplayingEditRoute({ children }) {
+  const { user, podeEditarCampanha } = useAuth()
+  if (!user) return <Navigate to="/" replace />
+  return podeEditarCampanha() ? children : <Navigate to="/" replace />
 }
 
 export default function App() {
@@ -129,28 +143,29 @@ export default function App() {
           <Route path="guias/pericias" element={<GuiasPericias />} />
           <Route path="guias/antecedentes" element={<GuiasAntecedentes />} />
           <Route path="guias/glossario" element={<GuiasGlossario />} />
-          <Route path="npcs" element={<AdminRoute><NPCs /></AdminRoute>} />
-          <Route path="npcs/criar" element={<AdminRoute><NPCCriar /></AdminRoute>} />
-          <Route path="npcs/:id/ficha" element={<AdminRoute><NPCFicha /></AdminRoute>} />
-          <Route path="npcs/:id/interagir" element={<AdminRoute><InteragirNPC /></AdminRoute>} />
-          <Route path="npcs/:id/editar" element={<AdminRoute><NPCEditar /></AdminRoute>} />
-          <Route path="demonios" element={<AdminRoute><Demonios /></AdminRoute>} />
-          <Route path="demonios/criar" element={<AdminRoute><DemonioCriar /></AdminRoute>} />
-          <Route path="demonios/:id/ficha" element={<AdminRoute><DemonioFicha /></AdminRoute>} />
-          <Route path="demonios/:id/editar" element={<AdminRoute><DemonioEditar /></AdminRoute>} />
-          <Route path="demonios/:id/interagir" element={<AdminRoute><InteragirDemonio /></AdminRoute>} />
-          <Route path="animais" element={<AdminRoute><Animais /></AdminRoute>} />
-          <Route path="animais/criar" element={<AdminRoute><AnimalCriar /></AdminRoute>} />
-          <Route path="animais/:id/ficha" element={<AdminRoute><AnimalFicha /></AdminRoute>} />
-          <Route path="animais/:id/editar" element={<AdminRoute><AnimalEditar /></AdminRoute>} />
-          <Route path="animais/:id/interagir" element={<AdminRoute><InteragirAnimal /></AdminRoute>} />
-          <Route path="estabelecimentos" element={<Estabelecimentos />} />
-          <Route path="estabelecimentos/criar" element={<AdminRoute><EstabelecimentoCriar /></AdminRoute>} />
-          <Route path="estabelecimentos/:id" element={<EstabelecimentoDetalhe />} />
+          <Route path="npcs" element={<RoleplayingRoute><NPCs /></RoleplayingRoute>} />
+          <Route path="npcs/criar" element={<RoleplayingEditRoute><NPCCriar /></RoleplayingEditRoute>} />
+          <Route path="npcs/:id/ficha" element={<RoleplayingRoute><NPCFicha /></RoleplayingRoute>} />
+          <Route path="npcs/:id/interagir" element={<RoleplayingEditRoute><InteragirNPC /></RoleplayingEditRoute>} />
+          <Route path="npcs/:id/editar" element={<RoleplayingEditRoute><NPCEditar /></RoleplayingEditRoute>} />
+          <Route path="demonios" element={<RoleplayingRoute><Demonios /></RoleplayingRoute>} />
+          <Route path="demonios/criar" element={<RoleplayingEditRoute><DemonioCriar /></RoleplayingEditRoute>} />
+          <Route path="demonios/:id/ficha" element={<RoleplayingRoute><DemonioFicha /></RoleplayingRoute>} />
+          <Route path="demonios/:id/editar" element={<RoleplayingEditRoute><DemonioEditar /></RoleplayingEditRoute>} />
+          <Route path="demonios/:id/interagir" element={<RoleplayingEditRoute><InteragirDemonio /></RoleplayingEditRoute>} />
+          <Route path="animais" element={<RoleplayingRoute><Animais /></RoleplayingRoute>} />
+          <Route path="animais/criar" element={<RoleplayingEditRoute><AnimalCriar /></RoleplayingEditRoute>} />
+          <Route path="animais/:id/ficha" element={<RoleplayingRoute><AnimalFicha /></RoleplayingRoute>} />
+          <Route path="animais/:id/editar" element={<RoleplayingEditRoute><AnimalEditar /></RoleplayingEditRoute>} />
+          <Route path="animais/:id/interagir" element={<RoleplayingEditRoute><InteragirAnimal /></RoleplayingEditRoute>} />
+          <Route path="estabelecimentos" element={<RoleplayingRoute><Estabelecimentos /></RoleplayingRoute>} />
+          <Route path="estabelecimentos/criar" element={<RoleplayingEditRoute><EstabelecimentoCriar /></RoleplayingEditRoute>} />
+          <Route path="estabelecimentos/:id" element={<RoleplayingRoute><EstabelecimentoDetalhe /></RoleplayingRoute>} />
           <Route path="roleplaying/viagens" element={<RoleplayingViagens />} />
           <Route path="roleplaying/viagens/iniciar" element={<RoleplayingViagemIniciar />} />
-          <Route path="roleplaying/noite/:id" element={<ErrorBoundary showDetails={import.meta.env?.DEV}><PassarNoite /></ErrorBoundary>} />
+          <Route path="roleplaying/noite/:id" element={<ErrorBoundary showDetails={import.meta.env?.DEV}><RoleplayingRoute><PassarNoite /></RoleplayingRoute></ErrorBoundary>} />
           <Route path="minhas-fichas" element={<AuthRoute><MinhasFichas /></AuthRoute>} />
+          <Route path="conta" element={<AuthRoute><PerfilUsuario /></AuthRoute>} />
           <Route path="fichas-jogadores" element={<AdminRoute><FichasJogadores /></AdminRoute>} />
         </Route>
       </Routes>

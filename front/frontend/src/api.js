@@ -7,6 +7,24 @@ const API_ORIGIN = _envUrl
 const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : '/api';
 export { API_ORIGIN };
 
+const CAMPANHA_STORAGE_KEY = 'khonum_campanha_id';
+
+export function getCampanhaId() {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(CAMPANHA_STORAGE_KEY) || null;
+}
+
+export function setCampanhaId(id) {
+  if (typeof localStorage === 'undefined') return;
+  if (id == null || id === '') localStorage.removeItem(CAMPANHA_STORAGE_KEY);
+  else localStorage.setItem(CAMPANHA_STORAGE_KEY, String(id));
+}
+
+function campanhaHeaders() {
+  const id = getCampanhaId();
+  return id ? { 'X-Campanha-Id': id } : {};
+}
+
 const DEFAULT_OPTS = { credentials: 'include' };
 
 export function getReinoMapaUrl(id) {
@@ -43,7 +61,11 @@ async function parseErrorResponse(res) {
 }
 
 async function apiFetch(url, options = {}) {
-  const opts = { ...DEFAULT_OPTS, ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) } };
+  const opts = {
+    ...DEFAULT_OPTS,
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...campanhaHeaders(), ...(options.headers || {}) },
+  };
   try {
     const res = await fetch(url, opts);
     if (!res.ok) {
@@ -105,7 +127,11 @@ export async function gerarAnimal(data) {
 }
 
 export async function remove(collection, id) {
-  const res = await fetch(`${API_BASE}/${collection}/${id}`, { method: 'DELETE', ...DEFAULT_OPTS, headers: { 'Content-Type': 'application/json' } }).catch((e) => {
+  const res = await fetch(`${API_BASE}/${collection}/${id}`, {
+    method: 'DELETE',
+    ...DEFAULT_OPTS,
+    headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
+  }).catch((e) => {
     if (e.name === 'TypeError' && (e.message === 'Failed to fetch' || e.message.includes('fetch'))) {
       throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando (make front-backend ou make run) e se o MongoDB está ativo.');
     }
@@ -125,7 +151,7 @@ export async function getReinoHistoria(id) {
 /** Retorna documento de imagem por tabela e identificador, ou null se não existir. */
 export async function buscarImagem(tabela, identificador) {
   const q = `?tabela=${encodeURIComponent(tabela)}&identificador=${encodeURIComponent(identificador)}`;
-  const res = await fetch(`${API_BASE}/imagens/buscar${q}`, { ...DEFAULT_OPTS });
+  const res = await fetch(`${API_BASE}/imagens/buscar${q}`, { ...DEFAULT_OPTS, headers: { ...campanhaHeaders() } });
   if (!res.ok) return null;
   const data = await res.json();
   return data || null;
@@ -146,6 +172,7 @@ export async function uploadImagem(tabela, identificador, file) {
   const res = await fetch(`${API_BASE}/imagens/upload`, {
     method: 'POST',
     credentials: 'include',
+    headers: { ...campanhaHeaders() },
     body: form,
   });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || await res.text());
@@ -154,6 +181,60 @@ export async function uploadImagem(tabela, identificador, file) {
 
 export async function getReinosInfo() {
   return apiFetch(`${API_BASE}/reinos-info`);
+}
+
+/** Campanhas visíveis ao usuário (admin: todas; demais: só as vinculadas). */
+export async function listCampanhas() {
+  return apiFetch(`${API_BASE}/campanhas`);
+}
+
+/** Catálogo para ingressar (nome, mestre, id). excluirMinhas remove campanhas já no perfil. */
+export async function listCampanhasCatalogo(excluirMinhas = true) {
+  const q = excluirMinhas ? '?excluir_minhas=1' : ''
+  return apiFetch(`${API_BASE}/campanhas/catalogo${q}`)
+}
+
+export async function criarCampanhaUsuario(nome) {
+  return apiFetch(`${API_BASE}/campanhas/criar`, {
+    method: 'POST',
+    body: JSON.stringify({ nome }),
+  })
+}
+
+export async function ingressarCampanha(campanhaId) {
+  return apiFetch(`${API_BASE}/campanhas/ingressar`, {
+    method: 'POST',
+    body: JSON.stringify({ campanha_id: campanhaId }),
+  })
+}
+
+export async function sairCampanhaPerfil(campanhaId) {
+  const res = await fetch(`${API_BASE}/campanhas/perfil/${encodeURIComponent(campanhaId)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || res.statusText)
+  return data
+}
+
+export async function deletarCampanha(campanhaId) {
+  const res = await fetch(`${API_BASE}/campanhas/${encodeURIComponent(campanhaId)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || res.statusText)
+  return data
+}
+
+export async function changePassword(senhaAtual, senhaNova) {
+  return apiFetch(`${API_BASE}/auth/senha`, {
+    method: 'PATCH',
+    body: JSON.stringify({ senha_atual: senhaAtual, senha_nova: senhaNova }),
+  })
 }
 
 /** Categorias de viagens: Drovenar, Vaelthor, Sylmari, Pontos de Interesse */
@@ -174,7 +255,7 @@ export async function loginAuth(usuario, senha) {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
     body: JSON.stringify({ usuario: usuario.trim(), senha }),
   });
   const data = await res.json().catch(() => ({}));
@@ -183,11 +264,11 @@ export async function loginAuth(usuario, senha) {
 }
 
 export async function logoutAuth() {
-  await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' });
+  await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include', headers: { ...campanhaHeaders() } });
 }
 
 export async function getAuthMe() {
-  const res = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/auth/me`, { credentials: 'include', headers: { ...campanhaHeaders() } });
   if (!res.ok) return null;
   return res.json();
 }
@@ -197,7 +278,7 @@ export async function gerarNpc(data) {
     const res = await fetch(`${API_BASE}/npcs/gerar`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -234,7 +315,7 @@ export async function gerarEstabelecimento(data) {
     const res = await fetch(`${API_BASE}/estabelecimentos/gerar`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...campanhaHeaders() },
       body: JSON.stringify(data),
     });
     if (!res.ok) {

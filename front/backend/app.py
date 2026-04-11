@@ -8,6 +8,7 @@ import json
 import os
 import re
 import sys
+import uuid
 from datetime import datetime, timedelta
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -25,6 +26,15 @@ except ImportError:
     pass
 
 from db import get_db
+from campaign_access import (
+    assert_doc_in_campaign,
+    merge_campaign_filter,
+    normalize_uuid,
+    pode_editar_roleplaying_response,
+    require_roleplaying_context,
+    resolve_campanha_for_insert,
+    strip_campanha_from_body_for_player,
+)
 
 # Raiz do repositório (front/backend/../..)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -58,7 +68,7 @@ def _is_local_origin(origin):
 _cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000")
 CORS(app, resources={r"/api/*": {
     "origins": [x.strip() for x in _cors_origins.split(",") if x.strip()],
-    "allow_headers": ["Content-Type", "Authorization"],
+    "allow_headers": ["Content-Type", "Authorization", "X-Campanha-Id"],
     "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     "supports_credentials": True,
 }})
@@ -93,7 +103,7 @@ def _cors_credentials(response):
     if origin and _is_local_origin(origin):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Campanha-Id"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     return response
 
@@ -276,6 +286,10 @@ def _decode_token():
     return payload
 
 
+def _roleplaying_ctx(require_write=False):
+    return require_roleplaying_context(_decode_token, get_db, require_write=require_write)
+
+
 @app.route("/api/auth/login", methods=["POST"])
 def auth_login():
     """Login: { usuario, senha } -> cookie (24h) + JSON com user. Atualiza current_token_hash no DB."""
@@ -299,7 +313,13 @@ def auth_login():
         col.update_one({"_id": doc["_id"]}, {"$set": {"current_token_hash": token_hash_val}})
     except Exception:
         pass
-    resp = make_response(jsonify({"user": {"usuario": doc["usuario"], "perfil": doc.get("perfil", "user")}}))
+    resp = make_response(jsonify({
+        "user": {
+            "usuario": doc["usuario"],
+            "perfil": doc.get("perfil", "user"),
+            "campanhas": doc.get("campanhas") or [],
+        },
+    }))
     resp.set_cookie(
         COOKIE_NAME,
         token,
@@ -330,7 +350,44 @@ def auth_me():
     payload = _decode_token()
     if not payload:
         return jsonify({"error": "Não autenticado"}), 401
-    return jsonify({"usuario": payload["usuario"], "perfil": payload["perfil"]})
+    db = get_db()
+    doc = db["usuarios"].find_one({"usuario": payload["usuario"]})
+    if not doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    campanhas = doc.get("campanhas") or []
+    ch = normalize_uuid(request.headers.get("X-Campanha-Id") or request.args.get("campanha_id") or "")
+    pode = pode_editar_roleplaying_response(doc, ch)
+    return jsonify({
+        "usuario": doc["usuario"],
+        "perfil": doc.get("perfil", "user"),
+        "campanhas": campanhas,
+        "pode_editar_roleplaying": pode,
+    })
+
+
+@app.route("/api/auth/senha", methods=["PATCH"])
+def auth_change_password():
+    """Altera a senha: { senha_atual, senha_nova }."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    data = request.get_json() or {}
+    senha_atual = data.get("senha_atual") or ""
+    senha_nova = data.get("senha_nova") or ""
+    if len(senha_nova) < 6:
+        return jsonify({"error": "A nova senha deve ter pelo menos 6 caracteres."}), 400
+    db = get_db()
+    col = db["usuarios"]
+    doc = col.find_one({"usuario": payload["usuario"]})
+    if not doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    if not check_password_hash(doc.get("senha_hash", ""), senha_atual):
+        return jsonify({"error": "Senha atual incorreta."}), 401
+    col.update_one(
+        {"_id": doc["_id"]},
+        {"$set": {"senha_hash": generate_password_hash(senha_nova, method="pbkdf2:sha256")}},
+    )
+    return jsonify({"ok": True})
 
 
 # ─── Armas ──────────────────────────────────────────────────────────────────
@@ -750,11 +807,18 @@ def get_reino_mapa(id):
         return jsonify({"error": "Reino sem nome"}), 404
     safe = re.sub(r'[^\w\s\-–—]', "", nome)
     safe = re.sub(r'\s+', "_", safe).strip("_") or nome.replace(" ", "_")
-    for ext in (".png", ".jpg", ".jpeg", ".webp", ".gif"):
-        path = os.path.join(MAPAS_DIR, safe + ext)
-        if os.path.isfile(path):
-            mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
-            return send_file(path, mimetype=mime.get(ext, "image/png"))
+    # Tenta o nome normalizado e a variante em minúsculas (ex.: Khasil no DB ↔ khasil.jpeg no disco)
+    bases = []
+    for b in (safe, safe.lower()):
+        if b and b not in bases:
+            bases.append(b)
+    # Ordem: jpg/jpeg antes de png (mapas costumam ser fotos/export JPEG; ainda aceita png e demais)
+    for base in bases:
+        for ext in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+            path = os.path.join(MAPAS_DIR, base + ext)
+            if os.path.isfile(path):
+                mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
+                return send_file(path, mimetype=mime.get(ext, "image/png"))
     return jsonify({"error": "Mapa não encontrado para este reino"}), 404
 
 
@@ -879,22 +943,199 @@ def delete_runa(id):
     return jsonify({"error": "Não encontrado"}), 404
 
 
+# ─── Campanhas ─────────────────────────────────────────────────────────────
+
+@app.route("/api/campanhas", methods=["GET"])
+def list_campanhas():
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    db = get_db()
+    user_doc = db["usuarios"].find_one({"usuario": payload["usuario"]})
+    if not user_doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    if user_doc.get("perfil") == "admin":
+        items = list(db["campanhas"].find().sort("nome", 1))
+        return jsonify([serialize(d) for d in items])
+    ids = []
+    for c in user_doc.get("campanhas") or []:
+        cid = c.get("campanha_id")
+        if cid:
+            ids.append(str(cid))
+    if not ids:
+        return jsonify([])
+    items = list(db["campanhas"].find({"id": {"$in": ids}}).sort("nome", 1))
+    return jsonify([serialize(d) for d in items])
+
+
+@app.route("/api/campanhas/catalogo", methods=["GET"])
+def campanhas_catalogo():
+    """Lista campanhas (nome, mestre, id) para ingressar. ?excluir_minhas=1 remove as que o usuário já possui."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    db = get_db()
+    user_doc = db["usuarios"].find_one({"usuario": payload["usuario"]})
+    if not user_doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    excluir = (request.args.get("excluir_minhas") or "").strip().lower() in ("1", "true", "yes", "on")
+    minhas = set()
+    if excluir:
+        for c in user_doc.get("campanhas") or []:
+            cid = c.get("campanha_id")
+            if cid:
+                nu = normalize_uuid(str(cid))
+                if nu:
+                    minhas.add(nu)
+    items = list(db["campanhas"].find().sort("nome", 1))
+    out = []
+    for d in items:
+        cid = d.get("id")
+        nu = normalize_uuid(str(cid)) if cid else None
+        if excluir and nu and nu in minhas:
+            continue
+        out.append({"id": d["id"], "nome": d.get("nome", ""), "mestre": d.get("mestre", "")})
+    return jsonify(out)
+
+
+@app.route("/api/campanhas/criar", methods=["POST"])
+def campanha_criar_usuario():
+    """Cria campanha com nome único; mestre = usuário logado; adiciona ao perfil como mestre."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    usuario = payload["usuario"]
+    data = request.get_json() or {}
+    nome = (data.get("nome") or "").strip()
+    if not nome:
+        return jsonify({"error": "Nome da campanha é obrigatório."}), 400
+    db = get_db()
+    if db["campanhas"].find_one({"nome": nome}):
+        return jsonify({"error": "Já existe uma campanha com este nome."}), 409
+    cid = str(uuid.uuid4())
+    try:
+        db["campanhas"].insert_one({"id": cid, "nome": nome, "mestre": usuario})
+        db["usuarios"].update_one(
+            {"usuario": usuario},
+            {"$push": {"campanhas": {"function": "mestre", "campanha_id": cid}}},
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify({"id": cid, "nome": nome, "mestre": usuario}), 201
+
+
+@app.route("/api/campanhas/ingressar", methods=["POST"])
+def campanha_ingressar():
+    """Adiciona campanha existente ao perfil como jogador: { campanha_id }."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    usuario = payload["usuario"]
+    data = request.get_json() or {}
+    cid = normalize_uuid(data.get("campanha_id") or data.get("campanha") or "")
+    if not cid:
+        return jsonify({"error": "campanha_id inválido."}), 400
+    db = get_db()
+    user_doc = db["usuarios"].find_one({"usuario": usuario})
+    if not user_doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    if not db["campanhas"].find_one({"id": cid}):
+        return jsonify({"error": "Campanha não encontrada."}), 404
+    for c in user_doc.get("campanhas") or []:
+        if normalize_uuid(str(c.get("campanha_id") or "")) == cid:
+            return jsonify({"error": "Você já participa desta campanha."}), 409
+    db["usuarios"].update_one(
+        {"usuario": usuario},
+        {"$push": {"campanhas": {"function": "jogador", "campanha_id": cid}}},
+    )
+    return jsonify({"ok": True}), 200
+
+
+@app.route("/api/campanhas/perfil/<campanha_id>", methods=["DELETE"])
+def campanha_sair_perfil(campanha_id):
+    """Remove a campanha do perfil (apenas se function for jogador)."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    usuario = payload["usuario"]
+    cid = normalize_uuid(campanha_id)
+    if not cid:
+        return jsonify({"error": "campanha_id inválido."}), 400
+    db = get_db()
+    user_doc = db["usuarios"].find_one({"usuario": usuario})
+    if not user_doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    entry = None
+    for c in user_doc.get("campanhas") or []:
+        if normalize_uuid(str(c.get("campanha_id") or "")) == cid:
+            entry = c
+            break
+    if not entry:
+        return jsonify({"error": "Campanha não encontrada no seu perfil."}), 404
+    fn = (entry.get("function") or "").strip().lower()
+    if fn == "mestre":
+        return jsonify({"error": "Mestres não podem apenas sair do perfil. Exclua a campanha ou transfira o mestre."}), 403
+    db["usuarios"].update_one({"usuario": usuario}, {"$pull": {"campanhas": {"campanha_id": cid}}})
+    return jsonify({"ok": True}), 200
+
+
+@app.route("/api/campanhas/<campanha_id>", methods=["DELETE"])
+def campanha_deletar(campanha_id):
+    """Mestre da campanha (ou admin global) exclui a campanha, vínculos em usuários e dados de roleplaying."""
+    payload = _decode_token()
+    if not payload:
+        return jsonify({"error": "Não autenticado"}), 401
+    usuario = payload["usuario"]
+    cid = normalize_uuid(campanha_id)
+    if not cid:
+        return jsonify({"error": "campanha_id inválido."}), 400
+    db = get_db()
+    user_doc = db["usuarios"].find_one({"usuario": usuario})
+    if not user_doc:
+        return jsonify({"error": "Não autenticado"}), 401
+    is_global_admin = user_doc.get("perfil") == "admin"
+    is_mestre = False
+    for c in user_doc.get("campanhas") or []:
+        if normalize_uuid(str(c.get("campanha_id") or "")) == cid and (c.get("function") or "").strip().lower() == "mestre":
+            is_mestre = True
+            break
+    if not is_global_admin and not is_mestre:
+        return jsonify({"error": "Apenas o mestre da campanha ou um administrador pode excluí-la."}), 403
+    res = db["campanhas"].delete_one({"id": cid})
+    if res.deleted_count == 0:
+        return jsonify({"error": "Campanha não encontrada."}), 404
+    db["usuarios"].update_many({}, {"$pull": {"campanhas": {"campanha_id": cid}}})
+    for coll in ("NPC", "demon_NPC", "fera_NPC", "equipamentos_NPC", "elixir_NPC", "estabelecimentos"):
+        if coll in db.list_collection_names():
+            db[coll].delete_many({"campanha": cid})
+    return jsonify({"ok": True}), 200
+
+
 # ─── NPC ────────────────────────────────────────────────────────────────────
 
 @app.route("/api/npcs", methods=["GET"])
 def list_npcs():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = _build_query(["nome", "tipo", "raça", "natureza"], {
         "raça": request.args.get("raça"),
         "natureza": request.args.get("natureza"),
     })
     _apply_estabelecimentos_filter(q)
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("NPC", q))
 
 
 @app.route("/api/npcs/<id>", methods=["GET"])
 def get_npc(id):
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(serialize(doc))
 
@@ -902,14 +1143,24 @@ def get_npc(id):
 @app.route("/api/npcs/<id>/completo", methods=["GET"])
 def get_npc_completo(id):
     """Retorna NPC com equipamentos e elixires (por personagem_dono = nome do NPC). Enriquece com ataque1, ataque2, armadura_val, defesa_escudo."""
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     nome = doc.get("nome")
     if nome:
         db = get_db()
-        equipamentos = list(db["equipamentos_NPC"].find({"personagem_dono": nome}).sort("tipo", 1))
-        elixires = list(db["elixir_NPC"].find({"personagem_dono": nome}).sort("nome", 1))
+        eq_q = {"personagem_dono": nome}
+        el_q = {"personagem_dono": nome}
+        if doc.get("campanha"):
+            eq_q["campanha"] = doc["campanha"]
+            el_q["campanha"] = doc["campanha"]
+        equipamentos = list(db["equipamentos_NPC"].find(eq_q).sort("tipo", 1))
+        elixires = list(db["elixir_NPC"].find(el_q).sort("nome", 1))
         doc["equipamentos"] = [serialize(e) for e in equipamentos]
         doc["elixires"] = [serialize(el) for el in elixires]
         armas = [e for e in equipamentos if (e.get("tipo") or "").lower() in ("melee", "ranged", "arcane")]
@@ -928,7 +1179,15 @@ def get_npc_completo(id):
 
 @app.route("/api/npcs", methods=["POST"])
 def create_npc():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("NPC", data)
         return jsonify({"_id": rid}), 201
@@ -939,6 +1198,9 @@ def create_npc():
 @app.route("/api/npcs/gerar", methods=["POST"])
 def gerar_npc():
     """Gera e salva um NPC a partir das escolhas (raça, reino, linhagem, tipo, classe, natureza, nível)."""
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
     raca = (data.get("raca") or "").strip()
     reino_nome = (data.get("reino_nome") or "").strip()
@@ -964,10 +1226,14 @@ def gerar_npc():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     try:
+        cid, cerr = resolve_campanha_for_insert(ctx, data)
+        if cerr:
+            return cerr
         from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
         db = get_db()
         result = criar_npc_por_escolhas(
-            db, reinos_lista, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel
+            db, reinos_lista, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel,
+            campanha_id=cid,
         )
         if result is None:
             return jsonify({"error": "Reino não encontrado para essa raça."}), 400
@@ -979,7 +1245,15 @@ def gerar_npc():
 @app.route("/api/npcs/<id>", methods=["PUT"])
 def update_npc(id):
     try:
-        data = request.get_json() or {}
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
+        data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
         if _update("NPC", id, data):
             return jsonify({"ok": True})
         return jsonify({"error": "Não encontrado"}), 404
@@ -990,6 +1264,14 @@ def update_npc(id):
 @app.route("/api/npcs/<id>", methods=["DELETE"])
 def delete_npc(id):
     try:
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
         if _delete("NPC", id):
             return jsonify({"ok": True}), 204
         return jsonify({"error": "Não encontrado"}), 404
@@ -1001,15 +1283,24 @@ def delete_npc(id):
 
 @app.route("/api/demonios", methods=["GET"])
 def list_demonios():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
     _apply_estabelecimentos_filter(q)
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("demon_NPC", q, sort_key="nome"))
 
 
 @app.route("/api/demonios/<id>", methods=["GET"])
 def get_demonio(id):
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("demon_NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(serialize(doc))
 
@@ -1017,6 +1308,9 @@ def get_demonio(id):
 @app.route("/api/demonios/gerar", methods=["POST"])
 def gerar_demonio():
     """Gera um demônio semi-aleatório (tier + nome opcional + elemento opcional) e salva em demon_NPC."""
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
     tier = (data.get("tier") or "normal").strip().lower()
     if tier not in ("inferior", "normal", "superior"):
@@ -1026,9 +1320,13 @@ def gerar_demonio():
     if elemento and elemento not in ("Genia", "Degila", "Reetear", "Arunalt", "Saltrat", "Pascalia"):
         elemento = None
     try:
+        cid, cerr = resolve_campanha_for_insert(ctx, data)
+        if cerr:
+            return cerr
         from gerar_demon import gerar_demon_npc
         db = get_db()
         doc = gerar_demon_npc(tier, db, nome=nome, elemento=elemento)
+        doc["campanha"] = cid
         rid = _create("demon_NPC", doc)
         return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
     except Exception as e:
@@ -1037,7 +1335,15 @@ def gerar_demonio():
 
 @app.route("/api/demonios", methods=["POST"])
 def create_demonio():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("demon_NPC", data)
         return jsonify({"_id": rid}), 201
@@ -1048,7 +1354,15 @@ def create_demonio():
 @app.route("/api/demonios/<id>", methods=["PUT"])
 def update_demonio(id):
     try:
-        data = request.get_json() or {}
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("demon_NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
+        data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
         if _update("demon_NPC", id, data):
             return jsonify({"ok": True})
         return jsonify({"error": "Não encontrado"}), 404
@@ -1059,6 +1373,14 @@ def update_demonio(id):
 @app.route("/api/demonios/<id>", methods=["DELETE"])
 def delete_demonio(id):
     try:
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("demon_NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
         if _delete("demon_NPC", id):
             return jsonify({"ok": True}), 204
         return jsonify({"error": "Não encontrado"}), 404
@@ -1070,15 +1392,24 @@ def delete_demonio(id):
 
 @app.route("/api/animais", methods=["GET"])
 def list_animais():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = _build_query(["nome", "tipo", "raça"], {"nível": request.args.get("nível")})
     _apply_estabelecimentos_filter(q)
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("fera_NPC", q, sort_key="nome"))
 
 
 @app.route("/api/animais/<id>", methods=["GET"])
 def get_animal(id):
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("fera_NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(serialize(doc))
 
@@ -1086,6 +1417,9 @@ def get_animal(id):
 @app.route("/api/animais/gerar", methods=["POST"])
 def gerar_animal():
     """Gera um animal semi-aleatório (tier + tipo + nome opcional) e salva em fera_NPC."""
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
     tier = (data.get("tier") or "comum").strip().lower()
     if tier not in ("comum", "grande", "arcano"):
@@ -1095,9 +1429,13 @@ def gerar_animal():
         tipo = "Terrestre"
     nome = (data.get("nome") or "").strip() or None
     try:
+        cid, cerr = resolve_campanha_for_insert(ctx, data)
+        if cerr:
+            return cerr
         from gerar_fera import gerar_fera_npc
         db = get_db()
         doc = gerar_fera_npc(tier, tipo, db, nome=nome)
+        doc["campanha"] = cid
         rid = _create("fera_NPC", doc)
         return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
     except Exception as e:
@@ -1106,7 +1444,15 @@ def gerar_animal():
 
 @app.route("/api/animais", methods=["POST"])
 def create_animal():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("fera_NPC", data)
         return jsonify({"_id": rid}), 201
@@ -1117,7 +1463,15 @@ def create_animal():
 @app.route("/api/animais/<id>", methods=["PUT"])
 def update_animal(id):
     try:
-        data = request.get_json() or {}
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("fera_NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
+        data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
         if _update("fera_NPC", id, data):
             return jsonify({"ok": True})
         return jsonify({"error": "Não encontrado"}), 404
@@ -1128,6 +1482,14 @@ def update_animal(id):
 @app.route("/api/animais/<id>", methods=["DELETE"])
 def delete_animal(id):
     try:
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("fera_NPC", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
         if _delete("fera_NPC", id):
             return jsonify({"ok": True}), 204
         return jsonify({"error": "Não encontrado"}), 404
@@ -1139,6 +1501,9 @@ def delete_animal(id):
 
 @app.route("/api/equipamentos-npc", methods=["GET"])
 def list_equipamentos_npc():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = {}
     dono = request.args.get("personagem_dono")
     if dono:
@@ -1146,20 +1511,34 @@ def list_equipamentos_npc():
     tipo = request.args.get("tipo")
     if tipo:
         q["tipo"] = tipo
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("equipamentos_NPC", q if q else None, sort_key="nome"))
 
 
 @app.route("/api/equipamentos-npc/<id>", methods=["GET"])
 def get_equipamento_npc(id):
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("equipamentos_NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(doc)
 
 
 @app.route("/api/equipamentos-npc", methods=["POST"])
 def create_equipamento_npc():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("equipamentos_NPC", data)
         return jsonify({"_id": rid}), 201
@@ -1169,7 +1548,15 @@ def create_equipamento_npc():
 
 @app.route("/api/equipamentos-npc/<id>", methods=["PUT"])
 def update_equipamento_npc(id):
-    data = request.get_json() or {}
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
+    doc = _get_by_id("equipamentos_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
+        return jsonify({"error": "Não encontrado"}), 404
+    data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
     if _update("equipamentos_NPC", id, data):
         return jsonify({"ok": True})
     return jsonify({"error": "Não encontrado"}), 404
@@ -1177,6 +1564,14 @@ def update_equipamento_npc(id):
 
 @app.route("/api/equipamentos-npc/<id>", methods=["DELETE"])
 def delete_equipamento_npc(id):
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
+    doc = _get_by_id("equipamentos_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
+        return jsonify({"error": "Não encontrado"}), 404
     if _delete("equipamentos_NPC", id):
         return jsonify({"ok": True}), 204
     return jsonify({"error": "Não encontrado"}), 404
@@ -1186,24 +1581,41 @@ def delete_equipamento_npc(id):
 
 @app.route("/api/elixir-npc", methods=["GET"])
 def list_elixir_npc():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = {}
     dono = request.args.get("personagem_dono")
     if dono:
         q["personagem_dono"] = dono
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("elixir_NPC", q if q else None, sort_key="nome"))
 
 
 @app.route("/api/elixir-npc/<id>", methods=["GET"])
 def get_elixir_npc(id):
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     doc = _get_by_id("elixir_NPC", id)
     if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
         return jsonify({"error": "Não encontrado"}), 404
     return jsonify(doc)
 
 
 @app.route("/api/elixir-npc", methods=["POST"])
 def create_elixir_npc():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("elixir_NPC", data)
         return jsonify({"_id": rid}), 201
@@ -1213,7 +1625,15 @@ def create_elixir_npc():
 
 @app.route("/api/elixir-npc/<id>", methods=["PUT"])
 def update_elixir_npc(id):
-    data = request.get_json() or {}
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
+    doc = _get_by_id("elixir_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
+        return jsonify({"error": "Não encontrado"}), 404
+    data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
     if _update("elixir_NPC", id, data):
         return jsonify({"ok": True})
     return jsonify({"error": "Não encontrado"}), 404
@@ -1221,6 +1641,14 @@ def update_elixir_npc(id):
 
 @app.route("/api/elixir-npc/<id>", methods=["DELETE"])
 def delete_elixir_npc(id):
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
+    doc = _get_by_id("elixir_NPC", id)
+    if not doc:
+        return jsonify({"error": "Não encontrado"}), 404
+    if not assert_doc_in_campaign(doc, ctx):
+        return jsonify({"error": "Não encontrado"}), 404
     if _delete("elixir_NPC", id):
         return jsonify({"ok": True}), 204
     return jsonify({"error": "Não encontrado"}), 404
@@ -1230,6 +1658,9 @@ def delete_elixir_npc(id):
 
 @app.route("/api/estabelecimentos", methods=["GET"])
 def list_estabelecimentos():
+    err, ctx = _roleplaying_ctx(require_write=False)
+    if err:
+        return err
     q = {}
     if request.args.get("reino_nome"):
         q["reino_nome"] = request.args.get("reino_nome")
@@ -1243,6 +1674,7 @@ def list_estabelecimentos():
             q["tipo"] = int(request.args.get("tipo"))
         except (TypeError, ValueError):
             pass
+    q = merge_campaign_filter(q, ctx)
     return jsonify(_list_collection("estabelecimentos", q if q else None, sort_key="nome"))
 
 
@@ -1250,24 +1682,39 @@ def list_estabelecimentos():
 def get_estabelecimento_noite(id):
     """Retorna o estabelecimento e as entidades (ladinos, animais, demônios) resolvidas por nome para a página Passar a Noite."""
     try:
+        err, ctx = _roleplaying_ctx(require_write=False)
+        if err:
+            return err
         doc = _get_by_id("estabelecimentos", id)
         if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
             return jsonify({"error": "Não encontrado"}), 404
         lista_ladinos = doc.get("lista_ladinos") or []
         lista_animais = doc.get("lista_animais") or []
         lista_demonios = doc.get("lista_demonios") or []
+        camp = doc.get("campanha")
         db = get_db()
         ladinos = []
         if lista_ladinos:
-            cursor = db["NPC"].find({"nome": {"$in": list(lista_ladinos)}})
+            qn = {"nome": {"$in": list(lista_ladinos)}}
+            if camp:
+                qn["campanha"] = camp
+            cursor = db["NPC"].find(qn)
             ladinos = [serialize(d) for d in cursor]
         animais = []
         if lista_animais:
-            cursor = db["fera_NPC"].find({"nome": {"$in": list(lista_animais)}})
+            qa = {"nome": {"$in": list(lista_animais)}}
+            if camp:
+                qa["campanha"] = camp
+            cursor = db["fera_NPC"].find(qa)
             animais = [serialize(d) for d in cursor]
         demonios = []
         if lista_demonios:
-            cursor = db["demon_NPC"].find({"nome": {"$in": list(lista_demonios)}})
+            qd = {"nome": {"$in": list(lista_demonios)}}
+            if camp:
+                qd["campanha"] = camp
+            cursor = db["demon_NPC"].find(qd)
             demonios = [serialize(d) for d in cursor]
         return jsonify({
             "estabelecimento": doc,
@@ -1282,8 +1729,13 @@ def get_estabelecimento_noite(id):
 @app.route("/api/estabelecimentos/<id>", methods=["GET"])
 def get_estabelecimento(id):
     try:
+        err, ctx = _roleplaying_ctx(require_write=False)
+        if err:
+            return err
         doc = _get_by_id("estabelecimentos", id)
         if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
             return jsonify({"error": "Não encontrado"}), 404
         return jsonify(doc)
     except Exception as e:
@@ -1292,7 +1744,15 @@ def get_estabelecimento(id):
 
 @app.route("/api/estabelecimentos", methods=["POST"])
 def create_estabelecimento():
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
+    data = strip_campanha_from_body_for_player(data, ctx)
+    data["campanha"] = cid
     try:
         rid = _create("estabelecimentos", data)
         return jsonify({"_id": rid}), 201
@@ -1303,7 +1763,15 @@ def create_estabelecimento():
 @app.route("/api/estabelecimentos/<id>", methods=["PUT"])
 def update_estabelecimento(id):
     try:
-        data = request.get_json() or {}
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("estabelecimentos", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
+        data = strip_campanha_from_body_for_player(request.get_json() or {}, ctx)
         if _update("estabelecimentos", id, data):
             return jsonify({"ok": True})
         return jsonify({"error": "Não encontrado"}), 404
@@ -1314,6 +1782,14 @@ def update_estabelecimento(id):
 @app.route("/api/estabelecimentos/<id>", methods=["DELETE"])
 def delete_estabelecimento(id):
     try:
+        err, ctx = _roleplaying_ctx(require_write=True)
+        if err:
+            return err
+        doc = _get_by_id("estabelecimentos", id)
+        if not doc:
+            return jsonify({"error": "Não encontrado"}), 404
+        if not assert_doc_in_campaign(doc, ctx):
+            return jsonify({"error": "Não encontrado"}), 404
         if _delete("estabelecimentos", id):
             return make_response("", 204)
         return jsonify({"error": "Não encontrado"}), 404
@@ -1325,7 +1801,13 @@ def delete_estabelecimento(id):
 def gerar_estabelecimento_api():
     """Gera um estabelecimento (como cria_estabelecimento.py), cria NPC associado e salva."""
     import random
+    err, ctx = _roleplaying_ctx(require_write=True)
+    if err:
+        return err
     data = request.get_json() or {}
+    cid, cerr = resolve_campanha_for_insert(ctx, data)
+    if cerr:
+        return cerr
     try:
         nivel = int(data.get("nivel", 1))
         # Permitimos nível 0 apenas para acampamento; demais casos caem no padrão
@@ -1375,7 +1857,8 @@ def gerar_estabelecimento_api():
             qtd_ladinos = max(random.randint(5, 7) - nivel, 1)
             for _ in range(qtd_ladinos):
                 npc_doc = criar_npc_por_escolhas(
-                    db, reinos_info, raca, reino_nome, "comum", "Ladinos", "Assassino", "Mal", nivel_npc
+                    db, reinos_info, raca, reino_nome, "comum", "Ladinos", "Assassino", "Mal", nivel_npc,
+                    campanha_id=cid,
                 )
                 if npc_doc and npc_doc.get("nome"):
                     result["lista_ladinos"].append(npc_doc["nome"])
@@ -1390,6 +1873,7 @@ def gerar_estabelecimento_api():
             tier = "superior" if r < 0.1 else "normal" if r < 0.4 else "inferior"
             doc = gerar_demon_npc(tier, db, nome=None, elemento=None)
             doc["observacoes"] = [f"Demônio de {nome_estab}.", f"estabelecimento:true:{nome_estab}"]
+            doc["campanha"] = cid
             _create("demon_NPC", doc)
             result["lista_demonios"].append(doc["nome"])
 
@@ -1404,6 +1888,7 @@ def gerar_estabelecimento_api():
             tipo_animal = "Terrestre" if random.random() < chance_terrestre else "Voador"
             doc = gerar_fera_npc(tier_fera, tipo_animal, db, nome=None)
             doc["observacoes"] = [f"Animal de {nome_estab}.", f"estabelecimento:true:{nome_estab}"]
+            doc["campanha"] = cid
             _create("fera_NPC", doc)
             result["lista_animais"].append(doc["nome"])
 
@@ -1425,7 +1910,8 @@ def gerar_estabelecimento_api():
                 natureza = random.choice(naturezas)
                 from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
                 npc_doc = criar_npc_por_escolhas(
-                    db, reinos_info, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel
+                    db, reinos_info, raca, reino_nome, linhagem, tipo_npc, classe, natureza, nivel,
+                    campanha_id=cid,
                 )
                 if npc_doc:
                     npc_nome = npc_doc.get("nome")
@@ -1434,6 +1920,7 @@ def gerar_estabelecimento_api():
             pass
     result["npc_nome"] = npc_nome or ""
     result["npc_id"] = npc_id or ""
+    result["campanha"] = cid
     result_serialized = serialize(result)
     try:
         rid = _create("estabelecimentos", result_serialized)
@@ -1518,7 +2005,6 @@ def upload_imagem():
     if ext not in (".png", ".jpg", ".jpeg", ".gif", ".webp"):
         return jsonify({"error": "formato não permitido (use png, jpg, gif ou webp)"}), 400
     os.makedirs(UPLOADS_DIR, exist_ok=True)
-    import uuid
     safe_name = f"{uuid.uuid4().hex}{ext}"
     filepath = os.path.join(UPLOADS_DIR, safe_name)
     try:

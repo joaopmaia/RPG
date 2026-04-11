@@ -109,11 +109,12 @@ db-migrate: ## Executa as migrations Python
 	$(PYTHON) database/migrations/12_init_imagens.py
 	$(PYTHON) database/migrations/13_init_estabelecimentos.py
 	$(PYTHON) database/migrations/14_init_usuarios.py
+	$(PYTHON) database/migrations/15_init_campanha.py
 
 start: db-up db-migrate ## Inicia o MongoDB e executa as migrations
 
-db-clean: ## Limpa todas as collections do banco
-	$(PYTHON) -c "from pymongo import MongoClient; db = MongoClient('mongodb://localhost:27017')['rpg']; [db.drop_collection(c) for c in db.list_collection_names()]; print('Banco limpo com sucesso.')"
+db-clean: ## Remove dados de roleplaying (NPC*, estabelecimentos); preserva armas, armaduras, alquimia, reinos, materiais, imagens, usuarios, campanhas, runas
+	$(PYTHON) database/scripts/db_clean_roleplaying.py
 
 # ──────────────────────────────────────────────
 # Scripts de serviço

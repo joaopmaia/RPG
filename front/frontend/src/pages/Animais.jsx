@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { list, remove } from '../api'
+import { useAuth } from '../context/useAuth'
 
 const COLLECTION = 'animais'
 
 export default function Animais() {
+  const { podeEditarCampanha, campanhaId } = useAuth()
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -26,8 +28,8 @@ export default function Animais() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { list('estabelecimentos').then((arr) => setEstabelecimentosLista(Array.isArray(arr) ? arr : [])).catch(() => {}) }, [])
-  useEffect(load, [q, nivel, estabelecimentosFilter, estabelecimentoNome])
+  useEffect(() => { list('estabelecimentos').then((arr) => setEstabelecimentosLista(Array.isArray(arr) ? arr : [])).catch(() => {}) }, [campanhaId])
+  useEffect(load, [q, nivel, estabelecimentosFilter, estabelecimentoNome, campanhaId])
 
   const del = (id) => {
     if (confirm('Remover este animal/fera?')) {
@@ -58,7 +60,9 @@ export default function Animais() {
             ))}
           </select>
         )}
-        <Link to="/animais/criar"><button type="button" className="primary">Gerar animal</button></Link>
+        {podeEditarCampanha() && (
+          <Link to="/animais/criar"><button type="button" className="primary">Gerar animal</button></Link>
+        )}
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -88,8 +92,12 @@ export default function Animais() {
                   <td>
                     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                       <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/ficha`)}>Ficha</button>
-                      <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/interagir`)}>Interagir</button>
-                      <button type="button" className="link-like" style={{ color: 'var(--parchment-dark)' }} onClick={() => del(row._id)}>Excluir</button>
+                      {podeEditarCampanha() && (
+                        <>
+                          <button type="button" className="link-like" onClick={() => navigate(`/animais/${row._id}/interagir`)}>Interagir</button>
+                          <button type="button" className="link-like" style={{ color: 'var(--parchment-dark)' }} onClick={() => del(row._id)}>Excluir</button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

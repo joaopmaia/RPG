@@ -39,8 +39,11 @@ export default function ReinoMapa() {
         {imgError ? (
           <div className="reino-mapa-placeholder card">
             <p>Nenhum mapa disponível para este reino.</p>
-            <p style={{ fontSize: '0.9rem', color: 'var(--parchment-dark)' }}>
-              Adicione uma imagem com o nome do reino na pasta <code>front/historias/mapas/</code> (ex.: <code>{nome.replace(/\s+/g, '_')}.png</code>).
+            <p style={{ fontSize: '0.9rem', color: 'var(--parchment-dark)', lineHeight: 1.55 }}>
+              Coloque um arquivo na pasta <code>front/historias/mapas/</code> com o nome do reino (espaços viram{' '}
+              <code>_</code>). <strong>Formatos aceitos:</strong> <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>,{' '}
+              <code>.webp</code> ou <code>.gif</code>. Ex.: <code>{nome.replace(/\s+/g, '_')}.jpg</code> ou{' '}
+              <code>{nome.replace(/\s+/g, '_').toLowerCase()}.jpeg</code>.
             </p>
           </div>
         ) : (

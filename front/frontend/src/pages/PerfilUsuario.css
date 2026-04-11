@@ -1,0 +1,145 @@
+.perfil-usuario {
+  max-width: 720px;
+}
+
+.perfil-usuario h1 {
+  margin-top: 0;
+}
+
+.perfil-msg.ok {
+  color: var(--parchment, #e8dcc8);
+}
+
+.perfil-msg.error {
+  color: #c98a7a;
+}
+
+.perfil-card {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.perfil-card h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.perfil-dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.perfil-dl dt {
+  color: var(--parchment-dark, #a89880);
+  margin: 0;
+}
+
+.perfil-dl dd {
+  margin: 0;
+}
+
+.perfil-form .form-row {
+  margin-bottom: 0.75rem;
+}
+
+.perfil-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.perfil-form input {
+  max-width: 320px;
+  width: 100%;
+}
+
+.perfil-campanhas-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.perfil-campanhas-head h2 {
+  margin: 0;
+}
+
+.perfil-empty {
+  color: var(--parchment-dark, #a89880);
+  margin: 0;
+}
+
+.perfil-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.perfil-acoes .danger {
+  color: #c98a7a;
+}
+
+.perfil-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.perfil-modal {
+  max-width: 420px;
+  width: 100%;
+  padding: 1.25rem;
+}
+
+.perfil-modal h3 {
+  margin-top: 0;
+}
+
+.perfil-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.perfil-tabs button {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-frame, #5c4033);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.perfil-tabs button.active {
+  background: rgba(92, 64, 51, 0.35);
+  border-color: var(--border-frame, #5c4033);
+}
+
+.perfil-hint {
+  font-size: 0.9rem;
+  color: var(--parchment-dark, #a89880);
+  margin: 0 0 0.75rem;
+}
+
+.perfil-modal-body select,
+.perfil-modal-body input {
+  width: 100%;
+  max-width: none;
+}
+
+.perfil-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

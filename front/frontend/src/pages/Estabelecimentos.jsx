@@ -4,7 +4,7 @@ import { useAuth } from '../context/useAuth'
 import { list, remove } from '../api'
 
 export default function Estabelecimentos() {
-  const { isAdmin } = useAuth()
+  const { podeEditarCampanha, campanhaId } = useAuth()
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -22,7 +22,7 @@ export default function Estabelecimentos() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [])
+  useEffect(load, [campanhaId])
 
   const del = (id, e) => {
     e?.preventDefault?.()
@@ -36,7 +36,7 @@ export default function Estabelecimentos() {
     <div>
       <h1>Estabelecimentos</h1>
       <div className="filters">
-        {isAdmin() && <Link to="/estabelecimentos/criar" className="button primary">Novo estabelecimento</Link>}
+        {podeEditarCampanha() && <Link to="/estabelecimentos/criar" className="button primary">Novo estabelecimento</Link>}
       </div>
       {error && <p className="error-msg">{error}</p>}
       {loading && <p>Carregando…</p>}
@@ -61,14 +61,14 @@ export default function Estabelecimentos() {
                   <td>{row.reino_nome}</td>
                   <td onClick={(e) => e.stopPropagation()}>
                     {row.npc_id && row.npc_nome ? (
-                      isAdmin() ? <Link to={`/npcs/${row.npc_id}/ficha`}>{row.npc_nome}</Link> : <span>{row.npc_nome}</span>
+                      <Link to={`/npcs/${row.npc_id}/ficha`}>{row.npc_nome}</Link>
                     ) : (
                       '—'
                     )}
                   </td>
                   <td>{row.tipo_nome || '—'}</td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    {isAdmin() && <button type="button" onClick={(ev) => del(row._id, ev)}>Remover</button>}
+                    {podeEditarCampanha() && <button type="button" onClick={(ev) => del(row._id, ev)}>Remover</button>}
                   </td>
                 </tr>
               ))}

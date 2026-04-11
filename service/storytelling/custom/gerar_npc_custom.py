@@ -11,7 +11,7 @@ import json
 import os
 import random
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 # Garantir que o projeto esteja no path
 _raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
@@ -409,6 +409,7 @@ def salvar_npc_completo(
     natureza: str,
     observacoes: List[str],
     moedas: str,
+    campanha_id: Optional[str] = None,
 ):
     """Salva NPC na coleção NPC e equipamentos/elixires nas coleções auxiliares."""
     from service.storytelling.utils.salva_npc import salva_npc
@@ -421,16 +422,16 @@ def salvar_npc_completo(
         if t in ("melee", "ranged", "arcane"):
             if not arma1:
                 arma1 = eq.get("nome", "")
-                _salvar_equipamento(db, nome_completo, eq)
+                _salvar_equipamento(db, nome_completo, eq, campanha_id=campanha_id)
             elif not arma2:
                 arma2 = eq.get("nome", "")
-                _salvar_equipamento(db, nome_completo, eq)
+                _salvar_equipamento(db, nome_completo, eq, campanha_id=campanha_id)
         elif t == "armadura" and not armadura:
             armadura = eq.get("nome", "")
-            _salvar_equipamento(db, nome_completo, eq)
+            _salvar_equipamento(db, nome_completo, eq, campanha_id=campanha_id)
         elif t == "escudo" and not escudo:
             escudo = eq.get("nome", "")
-            _salvar_equipamento(db, nome_completo, eq)
+            _salvar_equipamento(db, nome_completo, eq, campanha_id=campanha_id)
 
     npc_obj = {
         "nome": nome_completo,
@@ -459,6 +460,8 @@ def salvar_npc_completo(
         "observacoes": observacoes,
         "natureza": natureza,
     }
+    if campanha_id:
+        npc_obj["campanha"] = campanha_id
     salva_npc(db, npc_obj)
 
     for el in elixires:
@@ -470,10 +473,12 @@ def salvar_npc_completo(
             "materia_prima": el.get("material", ""),
             "bonus_materia_prima": el.get("potencia", ""),
         }
+        if campanha_id:
+            elixir_obj["campanha"] = campanha_id
         cria_elixir_npc(db, elixir_obj)
 
 
-def _salvar_equipamento(db, nome_npc: str, eq: Dict):
+def _salvar_equipamento(db, nome_npc: str, eq: Dict, campanha_id: Optional[str] = None):
     from service.storytelling.utils.cria_equipamento_npc import cria_equipamento_npc
 
     eq_obj = {
@@ -491,6 +496,8 @@ def _salvar_equipamento(db, nome_npc: str, eq: Dict):
         "efeito": eq.get("efeito_material", ""),
         "runas": [],
     }
+    if campanha_id:
+        eq_obj["campanha"] = campanha_id
     cria_equipamento_npc(db, eq_obj)
 
 
@@ -718,6 +725,7 @@ def criar_npc_por_escolhas(
     classe: str,
     natureza: str,
     nivel: int,
+    campanha_id: Optional[str] = None,
 ) -> Optional[Dict]:
     """
     Cria e salva um NPC a partir das escolhas (para uso pela API).
@@ -759,6 +767,7 @@ def criar_npc_por_escolhas(
         natureza,
         observacoes,
         moedas,
+        campanha_id=campanha_id,
     )
     # Buscar o NPC recém-inserido (por nome)
     from bson import ObjectId

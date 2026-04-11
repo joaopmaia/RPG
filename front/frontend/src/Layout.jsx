@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Outlet, NavLink, useLocation, Link } from 'react-router-dom'
 import { useAuth } from './context/useAuth'
+import { listCampanhas } from './api'
 import LoginModal from './components/LoginModal'
 import './Layout.css'
 
@@ -53,13 +54,24 @@ const navBase = [
 
 export default function Layout() {
   const location = useLocation()
-  const { user, loading, isAdmin, logout } = useAuth()
+  const { user, loading, isAdmin, logout, campanhaId, setCampanhaId } = useAuth()
+  const [campanhaOpts, setCampanhaOpts] = useState([])
   const [equipOpen, setEquipOpen] = useState(equipamentosPaths.some((p) => location.pathname.startsWith(p)))
   const [regrasOpen, setRegrasOpen] = useState(regrasPaths.some((p) => location.pathname.startsWith(p)))
   const [guiasOpen, setGuiasOpen] = useState(guiasPaths.some((p) => location.pathname.startsWith(p)))
   const [roleplayingOpen, setRoleplayingOpen] = useState(roleplayingPaths.some((p) => location.pathname.startsWith(p)))
   const [loginOpen, setLoginOpen] = useState(false)
   const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    if (!user) {
+      setCampanhaOpts([])
+      return
+    }
+    listCampanhas()
+      .then((arr) => setCampanhaOpts(Array.isArray(arr) ? arr : []))
+      .catch(() => setCampanhaOpts([]))
+  }, [user])
 
   const nav = [...navBase]
   if (user) {
@@ -83,7 +95,22 @@ export default function Layout() {
             {!loading && (
               user ? (
                 <span className="layout-user">
-                  <span className="layout-user-name">{user.usuario}</span>
+                  {campanhaOpts.length > 0 && (
+                    <select
+                      className="layout-campanha-select"
+                      value={campanhaId || ''}
+                      onChange={(e) => setCampanhaId(e.target.value || null)}
+                      aria-label="Campanha ativa"
+                    >
+                      {isAdmin() && <option value="">Todas as campanhas</option>}
+                      {campanhaOpts.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nome}</option>
+                      ))}
+                    </select>
+                  )}
+                  <Link to="/conta" className="layout-user-name-link" title="Minha conta">
+                    {user.usuario}
+                  </Link>
                   <button type="button" className="layout-logout" onClick={logout}>Sair</button>
                 </span>
               ) : (
