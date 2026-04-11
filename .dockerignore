@@ -1,0 +1,21 @@
+# Contexto da raiz (docker compose build). Mantém imagens enxutas e builds reproduzíveis.
+.git
+.github
+.cursor
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/node_modules
+**/dist
+**/build
+data
+database/data
+.env
+.env.*
+!.env.example
+**/.front-*.pid
+**/.front-*.log
+front/backend/uploads
+*.md
+!README.md

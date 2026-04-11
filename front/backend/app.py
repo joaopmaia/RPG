@@ -1,31 +1,30 @@
 """
-API REST local para o projeto RPG.
-Expõe CRUD para: armas, armaduras, alquimia, reinos, materiais, runas, NPC, equipamentos_NPC, elixir_NPC, imagens.
-Autenticação: login (JWT em cookie, 24h), logout invalida no DB. Acesso apenas rede local.
+API REST do projeto RPG (stateless: JWT Bearer).
+CRUD: armas, armaduras, alquimia, reinos, materiais, runas, NPC, equipamentos_NPC, elixir_NPC, imagens.
+Autenticação: JWT no header Authorization: Bearer <token>; logout invalida hash no MongoDB.
 """
 import hashlib
 import json
 import os
 import re
 import sys
+import time
+import traceback
 import uuid
 from datetime import datetime, timedelta
+from functools import wraps
+
 from bson import ObjectId
 from bson.errors import InvalidId
-from flask import Flask, request, jsonify, send_file, make_response
+from flask import Flask, g, request, jsonify, send_file, make_response
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 
-# Carregar .env do diretório do backend (não versionado; ver .env.example)
-try:
-    from dotenv import load_dotenv
-    _env_path = os.path.join(os.path.dirname(__file__), ".env")
-    load_dotenv(_env_path)
-except ImportError:
-    pass
-
-from db import get_db
+from config import settings
+from logging_config import setup_logging
+from errors import api_error
 from campaign_access import (
     assert_doc_in_campaign,
     merge_campaign_filter,
@@ -35,6 +34,10 @@ from campaign_access import (
     resolve_campanha_for_insert,
     strip_campanha_from_body_for_player,
 )
+
+logger = setup_logging()
+
+from db import get_db
 
 # Raiz do repositório (front/backend/../..)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -51,69 +54,50 @@ UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 REINOS_INFO_PATH = os.path.join(PROJECT_ROOT, "service", "utils", "reinos-info.json")
 
 app = Flask(__name__)
-_secret = (os.environ.get("FLASK_SECRET_KEY") or "").strip()
-if not _secret:
-    # Em desenvolvimento, usamos uma chave padrão; em produção, configure FLASK_SECRET_KEY no .env.
-    _secret = "khonum-cronicas-secret-local"
-app.config["SECRET_KEY"] = _secret
-COOKIE_NAME = "khonum_token"
+app.config["SECRET_KEY"] = settings.jwt_secret_key
+COOKIE_NAME = "khonum_token"  # legado; preferir Authorization Bearer
 TOKEN_MAX_AGE = 24 * 3600  # 24h em segundos
 
-def _is_local_origin(origin):
-    if not origin:
-        return True
-    o = (origin or "").strip().lower()
-    return o.startswith("http://127.0.0.1") or o.startswith("http://localhost") or o.startswith("http://192.168.") or o.startswith("http://10.") or o.startswith("http://172.16.") or o.startswith("http://172.17.") or o.startswith("http://172.18.") or o.startswith("http://172.19.") or o.startswith("http://172.2") or o.startswith("http://172.30.") or o.startswith("http://172.31.")
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": settings.cors_origins,
+            "allow_headers": ["Content-Type", "Authorization", "X-Campanha-Id"],
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "supports_credentials": False,
+        }
+    },
+)
 
-_cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000")
-CORS(app, resources={r"/api/*": {
-    "origins": [x.strip() for x in _cors_origins.split(",") if x.strip()],
-    "allow_headers": ["Content-Type", "Authorization", "X-Campanha-Id"],
-    "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    "supports_credentials": True,
-}})
-
-def _is_private_ip(ip):
-    if not ip:
-        return False
-    if ip in ("127.0.0.1", "localhost", "::1"):
-        return True
-    parts = ip.split(".")
-    if len(parts) == 4:
-        try:
-            a, b = int(parts[0]), int(parts[1])
-            if a == 10:
-                return True
-            if a == 172 and 16 <= b <= 31:
-                return True
-            if a == 192 and b == 168:
-                return True
-        except ValueError:
-            pass
-    return False
 
 @app.before_request
-def _restrict_to_local_network():
-    if request.remote_addr and not _is_private_ip(request.remote_addr):
-        return jsonify({"error": "Acesso permitido apenas na rede local"}), 403
+def _log_request_start():
+    g._t0 = time.perf_counter()
+
 
 @app.after_request
-def _cors_credentials(response):
-    origin = request.origin
-    if origin and _is_local_origin(origin):
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Campanha-Id"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+def _log_request_done(response):
+    if request.path.startswith("/api"):
+        t0 = getattr(g, "_t0", None)
+        ms = (time.perf_counter() - t0) * 1000 if t0 is not None else 0.0
+        logger.info("%s %s -> %s | %.1f ms", request.method, request.path, response.status_code, ms)
     return response
+
+
+@app.errorhandler(HTTPException)
+def _handle_http_exception(exc):
+    return api_error(exc.description or str(exc), exc.code or 500)
 
 
 @app.errorhandler(Exception)
 def _handle_error(exc):
-    """Garante que qualquer exceção não tratada retorne JSON e não derrube o worker."""
+    if isinstance(exc, HTTPException):
+        return _handle_http_exception(exc)
     if hasattr(exc, "code") and exc.code is not None and 400 <= exc.code < 600:
-        return jsonify({"error": str(exc)}), exc.code
-    return jsonify({"error": str(exc)}), 500
+        return api_error(str(exc), exc.code)
+    logger.exception("Erro não tratado | %s", type(exc).__name__)
+    return api_error(str(exc), 500)
 
 
 @app.route("/api/health", methods=["GET"])
@@ -254,17 +238,15 @@ def _token_hash(token_str):
 
 
 def _get_token_from_request():
-    token = request.cookies.get(COOKIE_NAME)
-    if token:
-        return token
+    """Prioriza Authorization: Bearer; cookie legado como fallback."""
     auth = request.headers.get("Authorization")
     if auth and auth.startswith("Bearer "):
         return auth[7:].strip()
-    return None
+    return request.cookies.get(COOKIE_NAME)
 
 
 def _decode_token():
-    """Extrai e valida o JWT (cookie ou header). Verifica se o token segue válido no DB. Retorna payload ou None."""
+    """Valida JWT (Bearer ou cookie) e revogação no DB (current_token_hash)."""
     token = _get_token_from_request()
     if not token:
         return None
@@ -286,61 +268,109 @@ def _decode_token():
     return payload
 
 
+def token_required(f):
+    """Decorator: exige JWT válido; expõe payload em g.jwt_payload."""
+
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        payload = _decode_token()
+        if not payload:
+            return api_error("Não autenticado", 401)
+        g.jwt_payload = payload
+        return f(*args, **kwargs)
+
+    return wrapped
+
+
 def _roleplaying_ctx(require_write=False):
     return require_roleplaying_context(_decode_token, get_db, require_write=require_write)
 
 
-@app.route("/api/auth/login", methods=["POST"])
-def auth_login():
-    """Login: { usuario, senha } -> cookie (24h) + JSON com user. Atualiza current_token_hash no DB."""
-    _ensure_admin_user()
-    data = request.get_json() or {}
-    usuario = (data.get("usuario") or "").strip()
-    senha = data.get("senha") or ""
-    if not usuario or not senha:
-        return jsonify({"error": "Usuário e senha obrigatórios"}), 400
-    db = get_db()
-    col = db["usuarios"]
-    doc = col.find_one({"usuario": usuario})
-    if not doc or not check_password_hash(doc.get("senha_hash", ""), senha):
-        return jsonify({"error": "Usuário ou senha inválidos"}), 401
-    payload = {"usuario": doc["usuario"], "perfil": doc.get("perfil", "user"), "exp": datetime.utcnow() + timedelta(hours=24)}
+def _issue_token_response(doc):
+    """Gera JWT e atualiza current_token_hash; retorna corpo JSON para o cliente (Bearer)."""
+    payload = {
+        "usuario": doc["usuario"],
+        "perfil": doc.get("perfil", "user"),
+        "exp": datetime.utcnow() + timedelta(seconds=TOKEN_MAX_AGE),
+    }
     token = jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
     if isinstance(token, bytes):
         token = token.decode("utf-8")
     token_hash_val = _token_hash(token)
     try:
-        col.update_one({"_id": doc["_id"]}, {"$set": {"current_token_hash": token_hash_val}})
+        get_db()["usuarios"].update_one({"_id": doc["_id"]}, {"$set": {"current_token_hash": token_hash_val}})
     except Exception:
         pass
-    resp = make_response(jsonify({
+    resp = {
+        "success": True,
+        "access_token": token,
+        "token_type": "Bearer",
+        "expires_in": TOKEN_MAX_AGE,
         "user": {
             "usuario": doc["usuario"],
             "perfil": doc.get("perfil", "user"),
             "campanhas": doc.get("campanhas") or [],
         },
-    }))
-    resp.set_cookie(
-        COOKIE_NAME,
-        token,
-        max_age=TOKEN_MAX_AGE,
-        httponly=True,
-        samesite="Lax",
-        path="/",
-    )
-    return resp
+    }
+    return jsonify(resp), 200
+
+
+@app.route("/api/auth/register", methods=["POST"])
+def auth_register():
+    """Cadastro: { usuario, senha } -> JWT + user."""
+    _ensure_admin_user()
+    data = request.get_json() or {}
+    usuario = (data.get("usuario") or "").strip()
+    senha = data.get("senha") or ""
+    if len(usuario) < 3 or len(usuario) > 32:
+        return api_error("Usuário deve ter entre 3 e 32 caracteres.", 422)
+    if not re.match(r"^[a-zA-Z0-9_]+$", usuario):
+        return api_error("Usuário: apenas letras, números e underscore.", 422)
+    if len(senha) < 6:
+        return api_error("Senha deve ter pelo menos 6 caracteres.", 422)
+    db = get_db()
+    col = db["usuarios"]
+    if col.find_one({"usuario": usuario}):
+        return api_error("Usuário já cadastrado.", 409)
+    doc = {
+        "usuario": usuario,
+        "senha_hash": generate_password_hash(senha, method="pbkdf2:sha256"),
+        "perfil": "user",
+        "campanhas": [],
+    }
+    try:
+        rid = col.insert_one(doc).inserted_id
+        doc["_id"] = rid
+    except Exception as e:
+        return api_error(str(e), 400)
+    return _issue_token_response(doc)
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def auth_login():
+    """Login: { usuario, senha } -> access_token (Bearer) + user."""
+    _ensure_admin_user()
+    data = request.get_json() or {}
+    usuario = (data.get("usuario") or "").strip()
+    senha = data.get("senha") or ""
+    if not usuario or not senha:
+        return api_error("Usuário e senha obrigatórios", 400)
+    db = get_db()
+    col = db["usuarios"]
+    doc = col.find_one({"usuario": usuario})
+    if not doc or not check_password_hash(doc.get("senha_hash", ""), senha):
+        return api_error("Usuário ou senha inválidos", 401)
+    return _issue_token_response(doc)
 
 
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():
-    """Remove o cookie e invalida o token no DB (current_token_hash)."""
+    """Invalida o token atual no DB (stateless: cliente deve apagar o token local)."""
     payload = _decode_token()
     if payload and payload.get("usuario"):
         db = get_db()
         db["usuarios"].update_one({"usuario": payload["usuario"]}, {"$unset": {"current_token_hash": 1}})
-    resp = make_response(jsonify({"ok": True}))
-    resp.set_cookie(COOKIE_NAME, "", max_age=0, path="/", httponly=True, samesite="Lax")
-    return resp
+    return jsonify({"success": True, "data": {"message": "Logout efetuado"}}), 200
 
 
 @app.route("/api/auth/me", methods=["GET"])
@@ -1229,6 +1259,15 @@ def gerar_npc():
         cid, cerr = resolve_campanha_for_insert(ctx, data)
         if cerr:
             return cerr
+        logger.info(
+            "gerar_npc | início | raca=%s reino=%s tipo=%s classe=%s nivel=%s | campanha=%s",
+            raca,
+            reino_nome,
+            tipo_npc,
+            classe,
+            nivel,
+            cid,
+        )
         from service.storytelling.custom.gerar_npc_custom import criar_npc_por_escolhas
         db = get_db()
         result = criar_npc_por_escolhas(
@@ -1236,9 +1275,13 @@ def gerar_npc():
             campanha_id=cid,
         )
         if result is None:
+            logger.warning("gerar_npc | reino não encontrado para raça | raca=%s reino=%s", raca, reino_nome)
             return jsonify({"error": "Reino não encontrado para essa raça."}), 400
+        logger.info("gerar_npc | ok | nome=%s", (result or {}).get("nome"))
         return jsonify(result), 201
     except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        logger.exception("gerar_npc | falha: %s", e)
         return jsonify({"error": str(e)}), 500
 
 
@@ -1323,13 +1366,16 @@ def gerar_demonio():
         cid, cerr = resolve_campanha_for_insert(ctx, data)
         if cerr:
             return cerr
+        logger.info("gerar_demonio | tier=%s nome=%s elemento=%s | campanha=%s", tier, nome, elemento, cid)
         from gerar_demon import gerar_demon_npc
         db = get_db()
         doc = gerar_demon_npc(tier, db, nome=nome, elemento=elemento)
         doc["campanha"] = cid
         rid = _create("demon_NPC", doc)
+        logger.info("gerar_demonio | ok | id=%s nome=%s", rid, doc.get("nome"))
         return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
     except Exception as e:
+        logger.exception("gerar_demonio | falha")
         return jsonify({"error": str(e)}), 400
 
 
@@ -1432,13 +1478,16 @@ def gerar_animal():
         cid, cerr = resolve_campanha_for_insert(ctx, data)
         if cerr:
             return cerr
+        logger.info("gerar_animal | tier=%s tipo=%s nome=%s | campanha=%s", tier, tipo, nome, cid)
         from gerar_fera import gerar_fera_npc
         db = get_db()
         doc = gerar_fera_npc(tier, tipo, db, nome=nome)
         doc["campanha"] = cid
         rid = _create("fera_NPC", doc)
+        logger.info("gerar_animal | ok | id=%s nome=%s", rid, doc.get("nome"))
         return jsonify({"_id": rid, "nome": doc.get("nome")}), 201
     except Exception as e:
+        logger.exception("gerar_animal | falha")
         return jsonify({"error": str(e)}), 400
 
 
@@ -1541,8 +1590,10 @@ def create_equipamento_npc():
     data["campanha"] = cid
     try:
         rid = _create("equipamentos_NPC", data)
+        logger.info("equipamentos_NPC | criado | id=%s personagem=%s", rid, data.get("personagem_dono"))
         return jsonify({"_id": rid}), 201
     except Exception as e:
+        logger.exception("equipamentos_NPC | falha ao criar")
         return jsonify({"error": str(e)}), 400
 
 
@@ -1828,10 +1879,18 @@ def gerar_estabelecimento_api():
     reino = _get_by_id("reinos", reino_id)
     if not reino:
         return jsonify({"error": "Reino não encontrado"}), 404
+    logger.info(
+        "gerar_estabelecimento | início | reino=%s nivel=%s tipo=%s | campanha=%s",
+        reino.get("nome"),
+        nivel,
+        tipo,
+        cid,
+    )
     try:
         from service.storytelling.cria_estabelecimento import gerar_estabelecimento as gerar
         result = gerar(db, nivel, reino, tipo)
     except Exception as e:
+        logger.exception("gerar_estabelecimento | falha em gerar()")
         return jsonify({"error": str(e)}), 500
     reino_nome = reino.get("nome", "")
     nome_estab = result.get("nome", "estabelecimento")
@@ -1926,7 +1985,9 @@ def gerar_estabelecimento_api():
         rid = _create("estabelecimentos", result_serialized)
         result_serialized["_id"] = rid
     except Exception as e:
+        logger.exception("gerar_estabelecimento | falha ao persistir")
         return jsonify({"error": str(e)}), 400
+    logger.info("gerar_estabelecimento | ok | id=%s nome=%s", rid, result_serialized.get("nome"))
     return jsonify(result_serialized), 201
 
 
@@ -2048,14 +2109,18 @@ def api_info():
 
 
 if __name__ == "__main__":
-    # Seed (dados default) ao iniciar: carrega JSONs se as collections estiverem vazias
+    host = (os.environ.get("FLASK_HOST") or "0.0.0.0").strip()
+    logger.info(
+        "Servidor | bind=%s:%s | debug=%s | LOG_LEVEL=%s",
+        host,
+        settings.port,
+        not settings.is_production,
+        os.getenv("LOG_LEVEL") or "INFO",
+    )
     try:
         from seed import run_seed_if_needed
         run_seed_if_needed()
     except Exception as e:
-        print(f"[Seed] Aviso: {e}")
-    # Em background (nohup) o reloader do Flask costuma derrubar o processo; desativa-se com RUN_IN_BACKGROUND=1
+        logger.warning("Seed | não aplicado: %s", e)
     use_reloader = os.environ.get("RUN_IN_BACKGROUND", "").strip() != "1"
-    port = int(os.environ.get("FLASK_PORT", "5000"))
-    # 0.0.0.0 = escuta em todas as interfaces (acessível na rede local); acesso restrito a IPs privados
-    app.run(host="0.0.0.0", port=port, debug=True, use_reloader=use_reloader)
+    app.run(host=host, port=settings.port, debug=not settings.is_production, use_reloader=use_reloader)

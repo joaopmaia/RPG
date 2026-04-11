@@ -7,11 +7,13 @@ Uso:
     ou, a partir da raiz do projeto: python service/storytelling/custom/gerar_npc_custom.py
 """
 
+from __future__ import annotations
+
 import json
 import os
 import random
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # Garantir que o projeto esteja no path
 _raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))

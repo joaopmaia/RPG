@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useCallback } from 'react'
-import { getAuthMe, loginAuth, logoutAuth, getCampanhaId, setCampanhaId as persistCampanhaId } from '../api'
+import { getAuthMe, loginAuth, logoutAuth, registerAuth, getCampanhaId, setCampanhaId as persistCampanhaId } from '../api'
 
 export const AuthContext = createContext(null)
 
@@ -42,21 +42,24 @@ export function AuthProvider({ children }) {
     }
   }, [user, refreshMe])
 
-  const setCampanhaId = useCallback((id) => {
-    persistCampanhaId(id)
-    setCampanhaIdState(id || null)
-    refreshMe()
-  }, [refreshMe])
+  const setCampanhaId = useCallback(
+    (id) => {
+      persistCampanhaId(id)
+      setCampanhaIdState(id || null)
+      refreshMe()
+    },
+    [refreshMe],
+  )
 
-  const login = async (usuario, senha) => {
-    const data = await loginAuth(usuario, senha)
-    if (data.user) {
+  const applyUserFromAuthPayload = (data) => {
+    const u = data.user
+    if (u) {
       setUser({
-        usuario: data.user.usuario,
-        perfil: data.user.perfil,
-        campanhas: data.user.campanhas || [],
+        usuario: u.usuario,
+        perfil: u.perfil,
+        campanhas: u.campanhas || [],
       })
-      const campanhas = data.user.campanhas || []
+      const campanhas = u.campanhas || []
       if (campanhas.length && !getCampanhaId()) {
         const first = campanhas[0].campanha_id
         if (first) {
@@ -64,7 +67,39 @@ export function AuthProvider({ children }) {
           setCampanhaIdState(first)
         }
       }
-      await refreshMe()
+    }
+  }
+
+  const mergeMeIntoUser = (me) => {
+    if (!me) return
+    setUser({
+      usuario: me.usuario,
+      perfil: me.perfil,
+      campanhas: me.campanhas || [],
+    })
+    setPodeEditarRoleplaying(!!me.pode_editar_roleplaying)
+  }
+
+  const login = async (usuario, senha) => {
+    const data = await loginAuth(usuario, senha)
+    applyUserFromAuthPayload(data)
+    try {
+      const me = await getAuthMe()
+      mergeMeIntoUser(me)
+    } catch {
+      /* login já devolveu user + token; falha transitória em /me não deve desfazer a sessão */
+    }
+    return data
+  }
+
+  const register = async (usuario, senha) => {
+    const data = await registerAuth(usuario, senha)
+    applyUserFromAuthPayload(data)
+    try {
+      const me = await getAuthMe()
+      mergeMeIntoUser(me)
+    } catch {
+      /* idem */
     }
     return data
   }
@@ -77,7 +112,6 @@ export function AuthProvider({ children }) {
 
   const isAdmin = () => user && user.perfil === 'admin'
 
-  /** Pode criar/editar/excluir NPC, demônios, animais e estabelecimentos na campanha atual. */
   const podeEditarCampanha = () => isAdmin() || podeEditarRoleplaying
 
   return (
@@ -86,6 +120,7 @@ export function AuthProvider({ children }) {
         user,
         loading,
         login,
+        register,
         logout,
         isAdmin,
         campanhaId,

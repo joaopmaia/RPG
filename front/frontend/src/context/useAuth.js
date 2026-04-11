@@ -5,6 +5,7 @@ const defaultAuth = {
   user: null,
   loading: false,
   login: async () => {},
+  register: async () => {},
   logout: () => {},
   isAdmin: () => false,
   campanhaId: null,

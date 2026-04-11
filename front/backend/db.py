@@ -1,21 +1,39 @@
 """
-Conexão com MongoDB para o front local.
+Conexão com MongoDB para o backend.
 Reutiliza um único cliente (singleton) para evitar múltiplas conexões e falhas por timeout.
 """
-import os
+import logging
 from typing import Optional
+
 from pymongo import MongoClient
 from pymongo.database import Database
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
-DATABASE = os.environ.get("RPG_DATABASE", "rpg")
+from config import settings
+
+MONGO_URI = settings.mongo_uri
+DATABASE = settings.rpg_database
 
 _client: Optional[MongoClient] = None
+_log = logging.getLogger("rpg.db")
+
+
+def _safe_uri(uri: str) -> str:
+    if not uri or "@" not in uri or "://" not in uri:
+        return uri
+    try:
+        scheme, rest = uri.split("://", 1)
+        if "@" in rest:
+            hostpart = rest.split("@", 1)[1]
+            return f"{scheme}://***@{hostpart}"
+    except Exception:
+        pass
+    return uri
 
 
 def get_db() -> Database:
     global _client
     if _client is None:
+        _log.info("MongoDB | conexão nova | db=%s | uri=%s", DATABASE, _safe_uri(MONGO_URI))
         _client = MongoClient(
             MONGO_URI,
             serverSelectionTimeoutMS=5000,

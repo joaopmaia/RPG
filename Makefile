@@ -19,7 +19,7 @@ busca-all-equips:
 # ──────────────────────────────────────────────
 busca-npc-full:
 	$(PYTHON) service/storytelling/busca_npc_full.py
-.PHONY: db-up db-up-run db-down db-restart db-logs db-migrate db-clean setup salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc gerar-npc-custom visualizador-npc front front-run run stop
+.PHONY: db-up db-up-run db-down db-restart db-logs db-migrate db-clean setup venv-setup build up up-all up-d run stop clean docker-first-run logs-backend tail-backend salvar-tudo salvar-arma buscar-arma listar-armas salvar-armadura buscar-armadura listar-armaduras salvar-alquimia buscar-alquimia listar-alquimia salvar-reino buscar-reino listar-reinos salvar-material buscar-material listar-materiais salvar-runa buscar-runa busca-elemento converter-planilha calcula-preco cria-estabelecimento cria-npc cria-demon cria-fera busca-npc interagindo-com-npc gerar-npc-custom visualizador-npc front-run run-local stop-local
 # ──────────────────────────────────────────────
 # Interagindo com NPC
 # ──────────────────────────────────────────────
@@ -64,12 +64,20 @@ busca-equipamento-npc:
 	$(PYTHON) service/storytelling/busca_equipamento_npc.py
 VENV = .venv
 PYTHON = $(VENV)/bin/python3
+DOCKER_COMPOSE = docker compose
 
 # ──────────────────────────────────────────────
-# Setup
+# Setup (Docker na raiz)
 # ──────────────────────────────────────────────
 
-setup: ## Cria o ambiente virtual e instala dependências
+setup: ## Verifica Docker/Compose, cria .env e ./data/db
+	@command -v docker >/dev/null 2>&1 || (echo "Docker não encontrado. Instale: https://docs.docker.com/get-docker/"; exit 1)
+	@($(DOCKER_COMPOSE) version >/dev/null 2>&1) || command -v docker-compose >/dev/null 2>&1 || (echo "Docker Compose não encontrado. Instale: https://docs.docker.com/compose/install/"; exit 1)
+	@test -f .env || (cp .env.example .env && echo "Arquivo .env criado a partir de .env.example.")
+	@mkdir -p ./data/db
+	@echo "Setup concluído. Próximo: make build && make up"
+
+venv-setup: ## Ambiente virtual Python + pip (fluxo sem Docker)
 	python3 -m venv $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r service/requirements.txt
@@ -77,22 +85,69 @@ setup: ## Cria o ambiente virtual e instala dependências
 	@echo "Ative com:  source $(VENV)/bin/activate"
 
 # ──────────────────────────────────────────────
+# Docker — stack completo (docker-compose.yml na raiz)
+# ──────────────────────────────────────────────
+
+build: ## Instala dependências nas imagens (pip e npm) sem cache
+	@$(DOCKER_COMPOSE) build --no-cache
+	@echo "Imagem atualizada. Se alterou service/ ou backend, suba de novo com: make run   (ou: docker compose up --build)"
+
+up: ## Sobe o stack; apenas logs do backend no terminal (tempo real, Ctrl+C encerra)
+	@$(DOCKER_COMPOSE) up --attach backend
+
+up-all: ## Sobe o stack com logs de todos os serviços (db + backend + frontend)
+	@$(DOCKER_COMPOSE) up
+
+run: up ## Alias: docker compose up (logs do backend)
+
+up-d: ## Sobe o stack em segundo plano
+	@$(DOCKER_COMPOSE) up -d
+
+logs-backend: ## Segue logs do container backend (use após make up-d)
+	@$(DOCKER_COMPOSE) logs -f backend
+
+tail-backend: ## Segue o log do backend local (run-local em background)
+	@test -f .front-backend.log && tail -f .front-backend.log || (echo "Sem .front-backend.log; rode make run-local primeiro."; exit 1)
+
+stop: ## Para os containers (volumes em ./data/db preservados)
+	@$(DOCKER_COMPOSE) down
+
+clean: ## Remove imagens órfãs e cache de build do Docker
+	docker image prune -f
+	docker builder prune -f
+
+docker-first-run: ## Primeira vez com Docker: setup, venv (se faltar), build, db, migrations, stack -d
+	@$(MAKE) setup
+	@test -d $(VENV) || $(MAKE) venv-setup
+	@$(DOCKER_COMPOSE) build
+	@$(DOCKER_COMPOSE) up -d db
+	@echo "[docker-first-run] Aguardando MongoDB (healthcheck em rpg-db)..."
+	@i=0; while [ $$i -lt 40 ]; do st=$$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' rpg-db 2>/dev/null); [ "$$st" = "healthy" ] && break; i=$$((i+1)); sleep 2; done; \
+		st=$$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' rpg-db 2>/dev/null); \
+		[ "$$st" = "healthy" ] || (echo "Mongo não ficou healthy a tempo. Ver: docker logs rpg-db"; exit 1)
+	@$(MAKE) db-migrate
+	@$(DOCKER_COMPOSE) up -d
+	@echo ""
+	@echo "Stack no ar. Frontend: http://localhost:5173"
+	@echo "API: http://127.0.0.1:5000/api/health  (use login na UI; rotas de jogo exigem JWT/campanha)"
+
+# ──────────────────────────────────────────────
 # Banco de dados
 # ──────────────────────────────────────────────
 
-db-up: ## Sobe o MongoDB via Docker (usa sudo; para make run use db-up-run)
-	sudo docker compose -f database/docker-compose.yml up -d
+db-up: ## Sobe só o MongoDB (compose na raiz; volume ./data/db; pode pedir sudo)
+	sudo $(DOCKER_COMPOSE) up -d db 2>/dev/null || $(DOCKER_COMPOSE) up -d db
 
-db-up-run: ## Sobe o MongoDB sem sudo (para make run; falha se precisar de sudo)
-	docker compose -f database/docker-compose.yml up -d
+db-up-run: ## Sobe o MongoDB sem sudo (para make run-local)
+	$(DOCKER_COMPOSE) up -d db
 
-db-down: ## Para o MongoDB
-	sudo docker compose -f database/docker-compose.yml down
+db-down: ## Para o serviço db do compose da raiz
+	$(DOCKER_COMPOSE) stop db
 
 db-restart: db-down db-up ## Reinicia o MongoDB
 
-db-logs: ## Mostra os logs do MongoDB
-	sudo docker compose -f database/docker-compose.yml logs -f
+db-logs: ## Logs do MongoDB (compose na raiz)
+	$(DOCKER_COMPOSE) logs -f db
 
 db-migrate: ## Executa as migrations Python
 	$(PYTHON) database/migrations/01_init_armas.py
@@ -222,7 +277,7 @@ front-backend: ## Sobe a API do front em http://127.0.0.1:5000 (requer MongoDB e
 	@echo "[front-backend] Se a API retornar 500 com 'Connection refused', suba o MongoDB: make db-up-run (ou make front-backend-with-db)"
 	cd front/backend && $(CURDIR)/$(VENV)/bin/python3 app.py
 
-front-backend-with-db: ## Sobe o MongoDB e em seguida o backend (um comando só; use após make stop)
+front-backend-with-db: ## Sobe o MongoDB e em seguida o backend (um comando só; use após make stop-local)
 	@echo "[front-backend-with-db] Subindo MongoDB..."
 	@$(MAKE) db-up-run 2>/dev/null || $(MAKE) db-up
 	@echo "[front-backend-with-db] Aguardando MongoDB em localhost:27017..."
@@ -238,43 +293,45 @@ front-run: front-backend ## Alias: sobe apenas o backend (rode front-frontend em
 # Run (não bloqueia: banco + migrations + setup + backend + frontend em background)
 # ──────────────────────────────────────────────
 
-run: ## Sobe tudo em background; terminal não trava. Use 'make stop' para encerrar.
-	@echo "[run] Verificando ambiente..."
-	@test -d $(VENV) || ($(MAKE) setup && echo "[run] Venv criado.")
+run-local: ## Sobe venv + Mongo + migrations + backend + frontend em background (use 'make stop-local')
+	@echo "[run-local] Verificando ambiente..."
+	@test -d $(VENV) || ($(MAKE) venv-setup && echo "[run-local] Venv criado.")
 	@$(MAKE) front-setup
-	@echo "[run] Subindo banco (tentativa sem sudo)..."
-	@$(MAKE) db-up-run 2>/dev/null || echo "[run] Aviso: não foi possível subir o banco. Se precisar, rode 'make db-up' num terminal (pede senha). Continuando..."
-	@echo "[run] Executando migrations..."
+	@echo "[run-local] Subindo banco (tentativa sem sudo)..."
+	@$(MAKE) db-up-run 2>/dev/null || echo "[run-local] Aviso: não foi possível subir o banco. Se precisar, rode 'make db-up' num terminal (pede senha). Continuando..."
+	@echo "[run-local] Executando migrations..."
 	@$(MAKE) db-migrate
-	@echo "[run] Iniciando backend (porta 5000)..."
+	@echo "[run-local] Iniciando backend (porta 5000)..."
 	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
 	@sleep 1
 	@cd front/backend && RUN_IN_BACKGROUND=1 nohup $(CURDIR)/$(VENV)/bin/python3 app.py >> $(CURDIR)/.front-backend.log 2>&1 & echo $$! > $(CURDIR)/.front-backend.pid
-	@echo "[run] Backend em background (PID $$(cat $(CURDIR)/.front-backend.pid)). Aguardando API responder..."
-	@i=0; while [ $$i -lt 20 ]; do code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/api/npcs 2>/dev/null); [ "$$code" = "200" ] && echo "[run] Backend OK (porta 5000)." && break; i=$$((i+1)); sleep 1; done
-	@echo "[run] Iniciando frontend (porta 5173)..."
+	@echo "[run-local] Backend em background (PID $$(cat $(CURDIR)/.front-backend.pid)). Aguardando API responder..."
+	@i=0; while [ $$i -lt 20 ]; do code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/api/health 2>/dev/null); [ "$$code" = "200" ] && echo "[run-local] Backend OK (porta 5000, /api/health)." && break; i=$$((i+1)); sleep 1; done
+	@echo "[run-local] Iniciando frontend (porta 5173)..."
 	@-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
 	@sleep 1
 	@cd front/frontend && nohup npm run dev >> $(CURDIR)/.front-frontend.log 2>&1 & echo $$! > $(CURDIR)/.front-frontend.pid
-	@echo "[run] Frontend em background (PID $$(cat $(CURDIR)/.front-frontend.pid)). Log: .front-frontend.log"
+	@echo "[run-local] Frontend em background (PID $$(cat $(CURDIR)/.front-frontend.pid)). Log: .front-frontend.log"
 	@echo ""
 	@echo "Sistema em execução. Frontend: http://localhost:5173  |  Backend: http://127.0.0.1:5000"
-	@echo "Para encerrar tudo: make stop"
+	@echo "Logs do backend em tempo real: make tail-backend   (ou: tail -f .front-backend.log)"
+	@echo "Para encerrar tudo: make stop-local"
 
 # ──────────────────────────────────────────────
 # Stop (frontend + backend + containers do banco)
 # ──────────────────────────────────────────────
 
-stop: ## Encerra frontend, backend e containers do banco; exibe 'Sistema finalizado com sucesso!'
-	@echo "[stop] Encerrando frontend (porta 5173)..."
+stop-local: ## Encerra processos locais (venv) e tenta parar o Mongo do compose da raiz
+	@echo "[stop-local] Encerrando frontend (porta 5173)..."
 	@-lsof -ti:5173 | xargs kill -9 2>/dev/null || true
 	@-test -f .front-frontend.pid && kill -9 $$(cat .front-frontend.pid) 2>/dev/null || true
-	@echo "[stop] Encerrando backend (porta 5000)..."
+	@echo "[stop-local] Encerrando backend (porta 5000)..."
 	@-lsof -ti:5000 | xargs kill -9 2>/dev/null || true
 	@-test -f .front-backend.pid && kill -9 $$(cat .front-backend.pid) 2>/dev/null || true
-	@echo "[stop] Parando containers do banco..."
+	@echo "[stop-local] Parando MongoDB (compose na raiz ou legado database/)..."
+	@$(DOCKER_COMPOSE) stop db 2>/dev/null || true
 	@docker compose -f database/docker-compose.yml down 2>/dev/null || sudo docker compose -f database/docker-compose.yml down 2>/dev/null || true
 	@echo "Sistema finalizado com sucesso!"
 
 
-full-reset: db-clean stop run
+full-reset: db-clean stop-local run-local

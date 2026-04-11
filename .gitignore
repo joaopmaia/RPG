@@ -1,5 +1,6 @@
 # Ignorar volume de dados do MongoDB
 database/data/
+data/
 
 # Ambiente virtual Python
 .venv/

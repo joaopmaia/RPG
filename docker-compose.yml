@@ -1,0 +1,77 @@
+# Stack local: MongoDB + API Flask + Vite (dev).
+# Rede interna: apenas backend fala com o db pelo hostname "db" (MongoDB não exposto ao host).
+name: rpg
+
+services:
+  db:
+    image: mongo:latest
+    container_name: rpg-db
+    volumes:
+      - ./data/db:/data/db
+    # Apenas loopback: migrations na máquina host e ferramentas locais (não expõe na LAN).
+    ports:
+      - "127.0.0.1:27017:27017"
+    networks:
+      - rpg-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: front/backend/Dockerfile
+    container_name: rpg-backend
+    environment:
+      PORT: ${PORT:-5000}
+      FLASK_HOST: 0.0.0.0
+      # Hostname "db" só existe na rede Docker; não use isto em scripts na máquina host.
+      MONGO_URI: mongodb://db:27017
+      RPG_DATABASE: ${RPG_DATABASE:-rpg}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-docker}
+      FLASK_ENV: ${FLASK_ENV:-development}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      RUN_IN_BACKGROUND: "1"
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rpg-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: front/frontend/Dockerfile
+    container_name: rpg-frontend
+    environment:
+      # Browser no host fala com a API na porta publicada do backend (ajuste se BACKEND_PORT ≠ 5000).
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:5000}
+      # Servidor Vite (dentro do container) encaminha /api para o serviço backend.
+      VITE_DEV_PROXY_TARGET: http://backend:5000
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./front/frontend:/app
+      # Preserva node_modules da imagem em vez do diretório vazio do host montado em /app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - rpg-network
+    restart: unless-stopped
+
+networks:
+  rpg-network:
+    name: rpg-network
+    driver: bridge

@@ -1,0 +1,7 @@
+# Usado se o contexto de build for restrito a esta pasta; no compose atual o contexto é a raiz (.dockerignore lá).
+__pycache__
+*.pyc
+.venv
+.env
+.env.*
+uploads

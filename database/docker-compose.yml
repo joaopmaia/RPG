@@ -1,3 +1,5 @@
+# Legado: Mongo isolado em database/data. Preferível usar o compose na raiz do repositório
+# (make setup && make up) com volume ./data/db e rede rpg-network.
 services:
   mongodb:
     image: mongo:7
